@@ -104,6 +104,12 @@
 </head>
 <body>
 
+<!-- 탭 네비게이션 -->
+<div style="background:#0f172a;display:flex;padding:0 20px">
+  <a href="finance.html" style="display:inline-block;padding:10px 20px;color:#fff;font-size:13px;font-weight:700;border-bottom:3px solid #3b82f6;text-decoration:none">💰 재정 계산기</a>
+  <a href="compare.html" style="display:inline-block;padding:10px 20px;color:#94a3b8;font-size:13px;font-weight:600;border-bottom:3px solid transparent;text-decoration:none" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'">📊 입지 비교</a>
+</div>
+
 <header>
   <h1>🏠 부동산 재정 계산기</h1>
   <div class="header-actions">
@@ -385,13 +391,20 @@
           <input type="number" id="parkingRate" value="3.3" step="0.1" oninput="calc()">
         </div>
         <div class="field">
-          <label>총 잔여 영유 분기</label>
-          <input type="number" id="totalDaycareQ" value="10" min="1" max="20" oninput="calc()">
+          <label>총 영유 계획 분기</label>
+          <input type="number" id="totalPlannedQ" value="12" min="1" max="20" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>기납부 분기</label>
+          <input type="number" id="paidQ" value="1" min="0" oninput="calc()">
         </div>
       </div>
-      <div class="info" style="margin-bottom:10px">* 포함 분기수 · 분기 영유비는 섹션 3에서 입력</div>
+      <div class="info" style="margin-bottom:10px">* 총 잔여 영유 분기 = 계획 − 기납부 (자동계산) | 포함 분기수 · 분기 영유비는 섹션 3에서 입력</div>
 
       <div class="result-box" style="margin-bottom:12px">
+        <div class="result-row"><span>총 잔여 영유 분기 (자동)</span><span id="r_totalDaycareQ">-</span></div>
+        <div class="result-row indent"><span>선납 운용 분기 (섹션 3)</span><span id="r_includedQ">-</span></div>
+        <div class="result-row indent"><span>직접 지불 분기</span><span id="r_directQ">-</span></div>
         <div class="result-row"><span>총 영유비 포함액</span><span id="r_daycareTotal">-</span></div>
         <div class="result-row"><span>파킹통장 운용 이자수익 (세전)</span><span id="r_parkingIncome">-</span></div>
         <div class="result-row"><span>주담대 이자 부담 (포함액 비례)</span><span id="r_loanInterestCost">-</span></div>
@@ -427,8 +440,8 @@
           <input type="number" id="daycareMonthly" value="263" oninput="calc()">
         </div>
         <div class="field">
-          <label>영유기간 (개월)</label>
-          <input type="number" id="daycarePeriod" value="30" oninput="calc()">
+          <label>영유기간 (개월) <small style="color:var(--sub)">잔여분기×3 자동</small></label>
+          <input type="number" id="daycarePeriod" value="33" readonly style="background:var(--input-bg);opacity:0.7">
         </div>
       </div>
 
@@ -760,17 +773,27 @@ function calc() {
   dsrEl.className   = actualDsr <= 35 ? 'color-green' : actualDsr <= 40 ? 'color-yellow' : 'color-red';
 
   // ─── 섹션 5: 영유비 운용 ───
-  const parkingRate   = val('parkingRate') / 100 / 4;
-  const totalDaycareQ = val('totalDaycareQ');
-  const includedQ     = daycareQ;
-  const daycareTotal  = includedQ * daycarePerQ;
+  const parkingRate    = val('parkingRate') / 100 / 4;
+  const totalPlannedQ  = val('totalPlannedQ');
+  const paidQ          = val('paidQ');
+  const totalDaycareQ  = Math.max(0, totalPlannedQ - paidQ);
+  const includedQ      = daycareQ;
+  const directQ        = Math.max(0, totalDaycareQ - includedQ);
+  const daycareTotal   = includedQ * daycarePerQ;
 
-  // 분기 테이블 생성
+  $('r_totalDaycareQ').textContent = totalDaycareQ + '분기 (' + (totalDaycareQ * 3) + '개월)';
+  $('r_includedQ').textContent     = includedQ + '분기';
+  $('r_directQ').textContent       = directQ + '분기 (월급 직접 지불)';
+
+  // 영유기간 자동 연동
+  $('daycarePeriod').value = totalDaycareQ * 3;
+
+  // 분기 테이블 생성 (includedQ가 totalDaycareQ보다 클 경우도 전부 표시)
   let balance = daycareTotal;
   let totalParkingIncome = 0;
   let totalLoanInterest = 0;
   const rows = [];
-  for (let q = 1; q <= totalDaycareQ; q++) {
+  for (let q = 1; q <= Math.max(totalDaycareQ, includedQ); q++) {
     const interest = q <= includedQ ? balance * parkingRate : 0;
     const loanInt  = q <= includedQ ? balance * (newLoanRate / 100 / 4) : 0;
     const expense  = daycarePerQ;

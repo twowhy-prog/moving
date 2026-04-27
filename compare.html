@@ -883,7 +883,8 @@ async function loadSchoolData() {
 let chartAir = null;
 async function loadAirData() {
   try {
-    const url = `http://openapi.seoul.go.kr:8088/${SEOUL_AIR_API_KEY}/json/RealtimeCityAir/1/25/`;
+    const rawUrl = `http://openapi.seoul.go.kr:8088/${SEOUL_AIR_API_KEY}/json/RealtimeCityAir/1/25/`;
+    const url = `https://corsproxy.io/?url=${encodeURIComponent(rawUrl)}`;
     const res  = await fetch(url);
     const json = await res.json();
     const rows = json?.RealtimeCityAir?.row ?? [];
