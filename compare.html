@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>단지 입지 비교 | 삼익그린2차 vs 사당우성3단지</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+/* ── 공통 ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --a:#2563eb; --b:#16a34a;
+  --a-light:#dbeafe; --b-light:#dcfce7;
+  --border:#e2e8f0; --text:#1e293b; --muted:#64748b;
+  --radius:12px;
+}
+body{font-family:'Pretendard',-apple-system,sans-serif;background:#f1f5f9;color:var(--text);font-size:14px;line-height:1.6}
+h1,h2,h3{line-height:1.3}
+
+/* ── 헤더 ── */
+.header{background:linear-gradient(135deg,#1e293b,#334155);color:#fff;padding:28px 24px 24px;text-align:center}
+.header h1{font-size:22px;font-weight:700;margin-bottom:6px}
+.header p{font-size:13px;color:#94a3b8}
+.badge-row{display:flex;justify-content:center;gap:10px;margin-top:14px;flex-wrap:wrap}
+.badge{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600}
+.badge-a{background:var(--a);color:#fff}
+.badge-b{background:var(--b);color:#fff}
+
+/* ── API 상태 패널 ── */
+.api-status-panel{background:#fff;border-bottom:1px solid var(--border);padding:10px 16px}
+.api-status-inner{max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.api-status-inner span{font-size:11px;font-weight:600;color:var(--muted)}
+.api-chip{font-size:11px;padding:3px 10px;border-radius:12px;font-weight:600;display:inline-flex;align-items:center;gap:4px}
+.api-chip.loading{background:#f1f5f9;color:#94a3b8}
+.api-chip.live{background:#dcfce7;color:#166534}
+.api-chip.sample{background:#fef3c7;color:#92400e}
+.api-chip.error{background:#fee2e2;color:#991b1b}
+
+/* ── 레이아웃 ── */
+.container{max-width:1200px;margin:0 auto;padding:20px 16px}
+.section{background:#fff;border-radius:var(--radius);padding:20px;margin-bottom:18px;border:1px solid var(--border)}
+.section-title{font-size:15px;font-weight:700;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:8px}
+.section-title .icon{font-size:18px}
+.tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-left:auto;white-space:nowrap}
+.tag-loading{background:#f1f5f9;color:#94a3b8}
+.tag-live{background:#dcfce7;color:#166534}
+.tag-sample{background:#fef3c7;color:#92400e}
+.tag-hard{background:#e0e7ff;color:#3730a3}
+
+/* ── 지도 ── */
+#map-container{position:relative;width:100%;height:400px;border-radius:8px;overflow:hidden;background:#e2e8f0}
+/* Leaflet 커스텀 마커 핀 */
+.lf-pin{width:34px;height:34px;border-radius:50% 50% 50% 0;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#fff;transform:rotate(-45deg);box-shadow:0 2px 8px rgba(0,0,0,.35)}
+.lf-pin-a{background:var(--a)} .lf-pin-b{background:var(--b)}
+.lf-inner{transform:rotate(45deg)}
+/* 초기 로딩 플레이스홀더 */
+.map-mock{width:100%;height:100%;background:linear-gradient(180deg,#c8d8e8,#d4e6c3);display:flex;align-items:center;justify-content:center}
+
+
+/* ── 비교표 ── */
+.tbl-wrap{overflow-x:auto}
+.ctbl{width:100%;border-collapse:collapse;font-size:13px}
+.ctbl th,.ctbl td{padding:9px 12px;border:1px solid var(--border);text-align:center;vertical-align:middle}
+.ctbl thead th{background:#f8fafc;font-weight:700}
+.ctbl thead .th-a{background:var(--a-light);color:var(--a)}
+.ctbl thead .th-b{background:var(--b-light);color:var(--b)}
+.ctbl tbody tr:hover{background:#f8fafc}
+.ctbl .lbl{text-align:left;font-weight:600}
+.win-a{background:var(--a-light);font-weight:700;color:var(--a)}
+.win-b{background:var(--b-light);font-weight:700;color:var(--b)}
+.wtag{display:inline-block;font-size:10px;padding:1px 6px;border-radius:8px;margin-left:4px;font-weight:600}
+.wtag-a{background:var(--a);color:#fff}
+.wtag-b{background:var(--b);color:#fff}
+.wtag-tie{background:#94a3b8;color:#fff}
+
+/* ── 2열 그리드 ── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:680px){.grid-2{grid-template-columns:1fr}}
+
+/* ── 차트 ── */
+.chart-wrap{position:relative;height:280px}
+.chart-wrap-tall{position:relative;height:340px}
+
+/* ── 정보 카드 ── */
+.info-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:560px){.info-cards{grid-template-columns:1fr}}
+.icard{border-radius:8px;padding:12px 14px;border:1.5px solid var(--border)}
+.icard.a{border-color:var(--a);background:var(--a-light)}
+.icard.b{border-color:var(--b);background:var(--b-light)}
+.icard h4{font-size:13px;font-weight:700;margin-bottom:8px}
+.icard .row{font-size:12px;margin-bottom:4px;display:flex;gap:6px}
+.icard .row .k{color:var(--muted);min-width:62px;flex-shrink:0}
+.icard .row .v{font-weight:600}
+
+/* ── 리모델링 배너 ── */
+.remodel{background:linear-gradient(135deg,#14532d,#16a34a);color:#fff;border-radius:8px;padding:14px 16px;margin-top:12px}
+.remodel h3{font-size:13px;margin-bottom:5px}
+.remodel p{font-size:12px;color:#bbf7d0;line-height:1.7}
+
+/* ── 스피너 ── */
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid #e2e8f0;border-top-color:var(--a);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-row td{color:#94a3b8;font-style:italic}
+
+/* ── 현재 수치 카드 ── */
+.stat-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+@media(max-width:480px){.stat-cards{grid-template-columns:1fr}}
+.stat-card{border-radius:8px;padding:14px;text-align:center;border:1.5px solid var(--border)}
+.stat-card.a{border-color:var(--a);background:var(--a-light)}
+.stat-card.b{border-color:var(--b);background:var(--b-light)}
+.stat-card .val{font-size:28px;font-weight:900;line-height:1}
+.stat-card .grade{font-size:12px;margin-top:4px;font-weight:600}
+.stat-card .sub{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* ── 종합점수 ── */
+.score-section{background:linear-gradient(135deg,#1e293b,#0f172a);color:#fff;border-radius:var(--radius);padding:24px}
+.score-title{font-size:18px;font-weight:800;margin-bottom:20px;text-align:center}
+.score-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+@media(max-width:480px){.score-grid{grid-template-columns:1fr}}
+.score-card{background:rgba(255,255,255,.08);border-radius:10px;padding:16px;text-align:center}
+.score-card.winner{background:rgba(22,163,74,.25);border:1.5px solid #16a34a}
+.score-card h3{font-size:14px;font-weight:700;margin-bottom:12px}
+.score-card .total{font-size:42px;font-weight:900;line-height:1;margin-bottom:6px}
+.score-card.winner .total{color:#4ade80}
+.score-rows{text-align:left}
+.score-row{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px}
+.score-row .sl{color:#94a3b8}
+.score-row .sv{font-weight:600}
+.score-row .sv.best{color:#4ade80}
+.verdict{text-align:center;padding:16px;background:rgba(255,255,255,.05);border-radius:8px;font-size:13px;color:#cbd5e1;line-height:1.8}
+.verdict strong{color:#4ade80;font-size:15px}
+</style>
+</head>
+<body>
+
+<!-- ──────────────────────────────────────
+  ★ 상단 API 키 설정 (여기만 수정)
+────────────────────────────────────── -->
+<script>
+const KAKAO_REST_API_KEY = "6f04e55d9a006612a6f29c4c21f855ea";
+const MOLIT_API_KEY      = "kw4kGaaVazDLCC9Yzy6zY9Ze5DS45DpDJc1iiTRNe%2FaoYOv%2BmeJSw4EIVUl7qAOSfWU9yJbchwHH29TWd7ADxA%3D%3D";
+const NEIS_API_KEY       = "06956e052ffe473281917d9be11c7c62";
+const SEOUL_AIR_API_KEY  = "684c4a667374776f3436726c4a6a76";
+const POLICE_API_KEY     = "8QO4T1FV-8QO4-8QO4-8QO4-8QO4T1FV73"; /* 향후 경찰청 엔드포인트 확인 필요 */
+
+/* 단지 기본 좌표·필터 정보 */
+const A = { id:'a', name:'삼익그린2차',   lat:37.5526, lng:127.1485, lawdCd:'11740', aptKw:'삼익그린2차' };
+const B = { id:'b', name:'사당우성3단지', lat:37.4899, lng:126.9759, lawdCd:'11590', aptKw:'우성3'       };
+
+/* 카카오 카테고리 코드 */
+const CATS = [
+  { code:'SW8', label:'지하철역', icon:'🚇' },
+  { code:'MT1', label:'대형마트', icon:'🛒' },
+  { code:'HP8', label:'병원',    icon:'🏥' },
+  { code:'SC4', label:'학교',    icon:'🏫' },
+  { code:'AC5', label:'학원',    icon:'📚' },
+  { code:'CS2', label:'편의점',  icon:'🏪' },
+  { code:'FD6', label:'음식점',  icon:'🍽️' },
+];
+</script>
+
+<!-- 탭 네비게이션 -->
+<div style="background:#0f172a;display:flex;padding:0 20px">
+  <a href="compare.html" style="display:inline-block;padding:10px 20px;color:#fff;font-size:13px;font-weight:700;border-bottom:3px solid #2563eb;text-decoration:none">📊 입지 비교</a>
+  <a href="finance.html" style="display:inline-block;padding:10px 20px;color:#94a3b8;font-size:13px;font-weight:600;border-bottom:3px solid transparent;text-decoration:none" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'">💰 재정 계산기</a>
+</div>
+
+<!-- 헤더 -->
+<div class="header">
+  <h1>🏠 두 단지 입지 비교 분석</h1>
+  <p>데이터 기준일: 2026년 4월 25일 · API 실시간 연동</p>
+  <div class="badge-row">
+    <span class="badge badge-a">A. 삼익그린2차 (현 거주지)</span>
+    <span class="badge badge-b">B. 사당우성3단지 (매수 목표)</span>
+  </div>
+</div>
+
+<!-- API 상태 패널 -->
+<div class="api-status-panel">
+  <div class="api-status-inner">
+    <span>API 상태:</span>
+    <span class="api-chip loading" id="st-map">🗺️ 카카오지도 <span class="spinner"></span></span>
+    <span class="api-chip loading" id="st-fac">📍 시설검색 <span class="spinner"></span></span>
+    <span class="api-chip loading" id="st-price">💰 실거래가 <span class="spinner"></span></span>
+    <span class="api-chip loading" id="st-school">🎓 학교알리미 <span class="spinner"></span></span>
+    <span class="api-chip loading" id="st-air">🌬️ 대기환경 <span class="spinner"></span></span>
+    <span class="api-chip sample" id="st-crime">🚔 범죄통계 샘플</span>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ══ 1. 지도 ══ -->
+<div class="section">
+  <div class="section-title">
+    <span class="icon">🗺️</span> 위치 지도
+    <span class="tag tag-loading" id="tag-map">로딩중…</span>
+  </div>
+  <div id="map-container">
+    <div class="map-mock" id="map-mock">
+      <p style="font-size:13px;color:#64748b"><span class="spinner"></span> 지도 로딩 중…</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 2. 단지 기본정보 ══ -->
+<div class="section">
+  <div class="section-title"><span class="icon">🏢</span> 단지 기본 정보<span class="tag tag-hard" style="margin-left:auto">하드코딩</span></div>
+  <div class="info-cards">
+    <div class="icard a">
+      <h4>A. 삼익그린2차</h4>
+      <div class="row"><span class="k">주소</span><span class="v">강동구 명일동 15번지 일대 (고덕로210)</span></div>
+      <div class="row"><span class="k">지하철</span><span class="v">5호선 고덕·상일동역 도보 5~10분</span></div>
+      <div class="row"><span class="k">9호선</span><span class="v">9호선 4단계 공사 중 (고덕역 환승, 2028년 개통 예정)</span></div>
+      <div class="row"><span class="k">노선수</span><span class="v">1개 (9호선 4단계 2028년 개통 예정 → 더블역세권 전환)</span></div>
+      <div class="row"><span class="k">재건축</span><span class="v">조합설립 완료 · 정비계획 공람 중 (→3,353가구 재건축)</span></div>
+      <div class="row"><span class="k">개발호재</span><span class="v">🏢 고덕비즈밸리 (약 23만㎡, 2025년 기업 입주 완료 · 이케아·이마트·CGV 입점)</span></div>
+      <div class="row"><span class="k">고덕강일지구</span><span class="v">신규 아파트·상업·학교 조성 (완성 시 생활권 업그레이드)</span></div>
+      <div class="row"><span class="k">지형</span><span class="v">평지 (우수)</span></div>
+      <div class="row"><span class="k">강남접근</span><span class="v">5호선 → 2호선 환승 약 45분</span></div>
+      <div class="row"><span class="k">상권</span><span class="v">고덕상업지구·이마트 고덕점·스타필드시티 하남 인근</span></div>
+      <div class="row"><span class="k">주차</span><span class="v">세대당 약 0.5대 (주차 부족), 전기차 충전 제한적</span></div>
+      <div class="row"><span class="k">배정초</span><span class="v">서울고명초등학교 (단지 내, 초품아)</span></div>
+      <div class="row"><span class="k">배정중</span><span class="v">배재중학교</span></div>
+      <div class="row"><span class="k">학원가</span><span class="v">배재중고 인근 학원가 (명일동)</span></div>
+    </div>
+    <div class="icard b">
+      <h4>B. 사당우성3단지</h4>
+      <div class="row"><span class="k">주소</span><span class="v">동작구 사당동</span></div>
+      <div class="row"><span class="k">지하철</span><span class="v">4·7호선 이수역 도보 7~10분</span></div>
+      <div class="row"><span class="k">노선수</span><span class="v">2개 (더블역세권) ⭐ ⚠️ 4↔7호선 환승통로 긺 (막장환승 주의)</span></div>
+      <div class="row"><span class="k">리모델링</span><span class="v">포스코이앤씨 더샵이수역엘플레노</span></div>
+      <div class="row"><span class="k">이주예정</span><span class="v">2027~2028 / 준공 2031~2032</span></div>
+      <div class="row"><span class="k">세대수</span><span class="v">855세대 (우성3차 단독) · 리모델링 조합(극동+우성2·3차 합산) 3,485세대</span></div>
+      <div class="row"><span class="k">세대증가</span><span class="v">3개 단지(극동·우성2·3차) 합산 3,485세대 → 4,006세대 (+521세대)</span></div>
+      <div class="row"><span class="k">지형</span><span class="v">완만한 오르막 (리모델링 후 개선)</span></div>
+      <div class="row"><span class="k">강남접근</span><span class="v">4·7호선 직결 우수 ⭐</span></div>
+      <div class="row"><span class="k">상권</span><span class="v">남성사계시장·이마트이수·메가박스</span></div>
+      <div class="row"><span class="k">배정초</span><span class="v">서울삼일초</span></div>
+      <div class="row"><span class="k">배정중</span><span class="v">사당중 (전국18%·서울62%) ⭐</span></div>
+    </div>
+  </div>
+  <div class="remodel">
+    <h3>🔨 사당우성3단지 리모델링 (포스코이앤씨 더샵이수역엘플레노)</h3>
+    <p>이주예정 2027~2028 | 준공목표 2031~2032 | 3개 단지(극동·우성2·3차) 합산 3,485세대 → 4,006세대 (+521세대) | 리모델링 후 신축급 프리미엄 기대</p>
+  </div>
+</div>
+
+<!-- ══ 3. 교통 ══ -->
+<div class="section">
+  <div class="section-title"><span class="icon">🚇</span> 교통 비교<span class="tag tag-hard" style="margin-left:auto">하드코딩</span></div>
+  <div class="tbl-wrap">
+    <table class="ctbl">
+      <thead><tr><th class="lbl">항목</th><th class="th-a">A. 삼익그린2차</th><th class="th-b">B. 사당우성3단지</th><th>우위</th></tr></thead>
+      <tbody>
+        <tr><td class="lbl">최근접역</td><td>5호선 고덕역·상일동역 (도보 5~10분)</td><td class="win-b">4·7호선 이수역 (도보 7~10분)</td><td><span class="wtag wtag-b">B</span></td></tr>
+        <tr><td class="lbl">이용 노선수</td><td>1개 (9호선 4단계 2028년 개통 예정)</td><td class="win-b">2개 (더블역세권) ⭐ ⚠️ 막장환승 주의</td><td><span class="wtag wtag-b">B</span></td></tr>
+        <tr><td class="lbl">9호선</td><td class="win-a">9호선 4단계 공사 중 (2028년 개통 예정)</td><td>7호선→고속터미널역 환승 접근 가능 (직접 이용 아님)</td><td><span class="wtag wtag-a">A</span></td></tr>
+        <tr><td class="lbl">강남(강남역)</td><td>5호선→2호선 환승 약 45~50분</td><td class="win-b">4호선 직결 약 20~25분</td><td><span class="wtag wtag-b">B</span></td></tr>
+        <tr><td class="lbl">도심(광화문)</td><td>5호선 직결 약 40분</td><td>4호선→1호선 환승 약 35분</td><td><span class="wtag wtag-tie">동일</span></td></tr>
+        <tr><td class="lbl">삼일대로330 (직장)</td><td>5호선 고덕역 → 을지로3가역 환승 1회 약 35~40분</td><td class="win-b">4호선 이수역 → 을지로3가역 직통 약 25~30분 ⭐</td><td><span class="wtag wtag-b">B</span></td></tr>
+        <tr><td class="lbl">GTX</td><td>GTX-D 강동구 경유 노선 반영 확정 (2024.1 국토부 발표, 착공 미확정)</td><td>수서·삼성역 GTX-A 접근 가능</td><td><span class="wtag wtag-tie">상황별</span></td></tr>
+        <tr><td class="lbl">비즈밸리</td><td class="win-a">⭐ 고덕비즈밸리 인근 (약 23만㎡, 업무단지 완성)</td><td>사당·이수 상권</td><td><span class="wtag wtag-a">A</span></td></tr>
+        <tr><td class="lbl">지형 편의성</td><td class="win-a">평지 (우수)</td><td>완만한 오르막 (리모델링 후 개선)</td><td><span class="wtag wtag-a">A</span></td></tr>
+        <tr><td class="lbl">버스 허브</td><td>중간 (고덕·강일 노선)</td><td class="win-b">풍부 (사당·이수 교통허브)</td><td><span class="wtag wtag-b">B</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ 3-B. 주차 · 전기차 충전 ══ -->
+<div class="section">
+  <div class="section-title"><span class="icon">🚗</span> 주차 · 전기차 충전 현황<span class="tag tag-hard" style="margin-left:auto">하드코딩</span></div>
+  <div class="tbl-wrap">
+    <table class="ctbl">
+      <thead><tr><th class="lbl">항목</th><th class="th-a">A. 삼익그린2차</th><th class="th-b">B. 사당우성3단지</th><th>우위</th></tr></thead>
+      <tbody>
+        <tr><td class="lbl">총 세대수</td><td>2,400세대</td><td>855세대 (우성3차 단독)</td><td><span class="wtag wtag-tie">-</span></td></tr>
+        <tr><td class="lbl">주차 대수</td><td>약 1,200대 (세대당 ≈0.5대)</td><td>약 1,850대 (세대당 ≈0.53대)</td><td><span class="wtag wtag-tie">동일</span></td></tr>
+        <tr><td class="lbl">주차 방식</td><td>지상+지하 혼합 (주차 부족)</td><td>지하+기계식 (주차 부족)</td><td><span class="wtag wtag-tie">동일</span></td></tr>
+        <tr><td class="lbl">전기차 충전</td><td>완속 충전기 일부 (세대당 1/20 미만)</td><td>완속 충전기 일부 설치</td><td><span class="wtag wtag-tie">동일</span></td></tr>
+        <tr><td class="lbl">리모델링 후</td><td>재건축 시 지하 확대 예정</td><td class="win-b">⭐ 지하주차장 확대 + EV충전 대폭 증설 예정</td><td><span class="wtag wtag-b">B</span></td></tr>
+        <tr><td class="lbl">방문자 주차</td><td>매우 부족 (주차난 심각)</td><td>부족 (대단지 특성)</td><td><span class="wtag wtag-b">B</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size:11px;color:#94a3b8;margin-top:8px">⚠ 두 단지 모두 구축 아파트로 전기차 충전 인프라가 부족합니다. 사당우성3단지는 리모델링(2031~2032 준공) 후 지하주차장 확장과 함께 EV충전 인프라가 크게 개선될 예정입니다.</p>
+</div>
+
+<!-- ══ 4. 카카오 시설 ══ -->
+<div class="section">
+  <div class="section-title">
+    <span class="icon">📍</span> 반경 1km 생활편의시설
+    <span class="tag tag-loading" id="tag-fac" style="margin-left:auto">로딩중…</span>
+  </div>
+  <div class="tbl-wrap">
+    <table class="ctbl" id="fac-table">
+      <thead>
+        <tr>
+          <th class="lbl">시설</th>
+          <th class="th-a">A 최근접 (거리)</th>
+          <th class="th-a">A 1km內 수</th>
+          <th class="th-b">B 최근접 (거리)</th>
+          <th class="th-b">B 1km內 수</th>
+          <th>우위</th>
+        </tr>
+      </thead>
+      <tbody id="fac-tbody">
+        <!-- 카카오 API 응답 후 동적 생성 -->
+        <tr class="loading-row"><td colspan="6" style="text-align:center"><span class="spinner"></span> 카카오 API 데이터 로딩중…</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ 4-B. 평면도 비교 ══ -->
+<div class="section">
+  <div class="section-title"><span class="icon">📐</span> 평면 비교<span class="tag tag-hard" style="margin-left:auto">하드코딩</span></div>
+
+  <!-- 주요 항목 비교 카드 -->
+  <div class="grid-2" style="margin-bottom:16px">
+    <div>
+      <table class="ctbl">
+        <thead><tr><th class="lbl">항목</th><th class="th-a">A. 삼익그린2차</th><th class="th-b">B. 사당우성3단지</th><th>우위</th></tr></thead>
+        <tbody>
+          <tr><td class="lbl">공급면적</td><td>90.04㎡ (27평)</td><td class="win-b">136.64㎡ (41평)</td><td><span class="wtag wtag-b">B</span></td></tr>
+          <tr><td class="lbl">전용면적</td><td>66.87㎡</td><td class="win-b">118.25㎡</td><td><span class="wtag wtag-b">B</span></td></tr>
+          <tr><td class="lbl">전용률</td><td>74.3%</td><td class="win-b">86.5% ⭐</td><td><span class="wtag wtag-b">B</span></td></tr>
+          <tr><td class="lbl">구조</td><td>복도식</td><td class="win-b">계단식 ⭐</td><td><span class="wtag wtag-b">B</span></td></tr>
+          <tr><td class="lbl">방수</td><td>3개</td><td class="win-b">4개</td><td><span class="wtag wtag-b">B</span></td></tr>
+          <tr><td class="lbl">욕실수</td><td>1개</td><td class="win-b">2개</td><td><span class="wtag wtag-b">B</span></td></tr>
+          <tr><td class="lbl">베란다 확장</td><td class="win-a">완료 ✅</td><td>미확장 (리모델링 예정)</td><td><span class="wtag wtag-a">A</span></td></tr>
+          <tr><td class="lbl">서비스면적</td><td>10.35㎡</td><td>미확인</td><td><span class="wtag wtag-a">A</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <div class="chart-wrap" style="height:220px"><canvas id="floorAreaChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- 공간별 면적 비교 -->
+  <div class="tbl-wrap" style="margin-bottom:14px">
+    <table class="ctbl">
+      <thead><tr><th class="lbl">공간</th><th class="th-a">A. 삼익그린2차</th><th class="th-b">B. 사당우성3단지</th><th>증감</th></tr></thead>
+      <tbody>
+        <tr><td class="lbl">거실</td><td>14.05㎡</td><td>16.40㎡</td><td class="win-b">+2.35㎡ ✅</td></tr>
+        <tr><td class="lbl">주방/식당</td><td>14.68㎡</td><td>17.12㎡</td><td class="win-b">+2.44㎡ ✅</td></tr>
+        <tr><td class="lbl">침실1 (안방)</td><td>14.05㎡</td><td>14.05㎡</td><td style="color:#64748b">동일</td></tr>
+        <tr><td class="lbl">침실2</td><td>5.75㎡ <span style="font-size:10px;color:#ef4444">좁음</span></td><td>17.52㎡</td><td class="win-b">+11.77㎡ ✅</td></tr>
+        <tr><td class="lbl">침실3</td><td>7.21㎡</td><td>9.72㎡</td><td class="win-b">+2.51㎡ ✅</td></tr>
+        <tr><td class="lbl">침실4</td><td style="color:#94a3b8">없음</td><td>11.70㎡</td><td class="win-b">+11.70㎡ ✅</td></tr>
+        <tr><td class="lbl">다용도실</td><td>있음</td><td>있음</td><td style="color:#64748b">동일</td></tr>
+        <tr><td class="lbl">발코니</td><td>있음 (확장완료)</td><td>전·후 (미확장)</td><td><span style="color:#64748b">-</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 리모델링 후 예상 면적 -->
+  <div style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-radius:10px;padding:16px;margin-bottom:12px">
+    <div style="font-weight:700;font-size:13px;color:#16a34a;margin-bottom:10px">🏗️ 리모델링 후 사당우성3단지 예상 면적</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">
+      <div style="text-align:center"><div style="font-size:11px;color:#64748b">현재 전용</div><div style="font-size:20px;font-weight:700;color:#16a34a">118.25㎡</div></div>
+      <div style="text-align:center"><div style="font-size:11px;color:#64748b">리모델링 후 (최대 +40%)</div><div style="font-size:20px;font-weight:700;color:#2563eb">≈165.6㎡</div><div style="font-size:10px;color:#64748b">약 50평</div></div>
+      <div style="text-align:center"><div style="font-size:11px;color:#64748b">삼익 대비 증가</div><div style="font-size:20px;font-weight:700;color:#8b5cf6">+98.7㎡</div></div>
+    </div>
+    <div style="background:#fff;border-radius:6px;padding:8px">
+      <div style="font-size:11px;color:#64748b;margin-bottom:4px">전용면적 증가 (삼익 66.87 → 우성 165.6㎡)</div>
+      <div style="background:#e2e8f0;border-radius:4px;height:12px;overflow:hidden">
+        <div style="background:#16a34a;height:100%;width:40.4%;border-radius:4px 0 0 4px;display:inline-block"></div>
+        <div style="background:#2563eb;height:100%;width:59.6%;display:inline-block"></div>
+      </div>
+      <div style="display:flex;gap:12px;margin-top:4px;font-size:10px">
+        <span style="color:#16a34a">■ 삼익 66.87㎡ (현재)</span>
+        <span style="color:#2563eb">■ 우성 리모델링 후 ≈165.6㎡</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 베란다 확장 경고 -->
+  <div style="background:#fffbeb;border:1px solid #f59e0b;border-radius:8px;padding:12px">
+    <div style="font-weight:700;color:#d97706;margin-bottom:4px">⚠️ 사당우성3단지 베란다 확장 비권장</div>
+    <div style="font-size:12px;color:#92400e">
+      현재 베란다 미확장 상태이며, 확장 시 약 500~800만원 비용이 발생합니다.<br>
+      <strong>단, 2027~2028년 리모델링 이주 예정으로 입주 후 베란다 확장은 비추천합니다.</strong><br>
+      리모델링 시 철거 예정이므로 확장 비용을 낭비하게 됩니다.
+    </div>
+  </div>
+</div>
+
+<!-- ══ 5. 실거래가 ══ -->
+<div class="section">
+  <div class="section-title">
+    <span class="icon">💰</span> 실거래가 추이 (84㎡ 기준, 최근 12개월)
+    <span class="tag tag-loading" id="tag-price" style="margin-left:auto">로딩중…</span>
+  </div>
+  <div id="price-info" style="font-size:12px;color:var(--muted);margin-bottom:10px">데이터를 불러오는 중입니다…</div>
+  <div class="chart-wrap-tall"><canvas id="priceChart"></canvas></div>
+</div>
+
+<!-- ══ 6. 학군 ══ -->
+<div class="section">
+  <div class="section-title">
+    <span class="icon">🎓</span> 학군 비교
+    <span class="tag tag-loading" id="tag-school" style="margin-left:auto">로딩중…</span>
+  </div>
+  <div class="grid-2">
+    <div>
+      <h3 style="font-size:13px;margin-bottom:8px;color:var(--a)">A. 삼익그린2차 배정학교</h3>
+      <table class="ctbl" id="school-a-tbl">
+        <thead><tr><th>학교명</th><th>구분</th><th>소재지</th></tr></thead>
+        <tbody>
+          <tr><td id="sa-elem-name">서울고명초등학교</td><td>초등</td><td id="sa-elem-addr">서울 강동구</td></tr>
+          <tr><td id="sa-mid-name">배재중학교</td><td>중학</td><td id="sa-mid-addr">서울 강동구</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <h3 style="font-size:13px;margin-bottom:8px;color:var(--b)">B. 사당우성3단지 배정학교</h3>
+      <table class="ctbl" id="school-b-tbl">
+        <thead><tr><th>학교명</th><th>구분</th><th>소재지</th></tr></thead>
+        <tbody>
+          <tr><td id="sb-elem-name">서울삼일초등학교</td><td>초등</td><td id="sb-elem-addr">서울 동작구</td></tr>
+          <tr><td id="sb-mid-name" class="win-b">사당중학교</td><td>중학</td><td id="sb-mid-addr">서울 동작구</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="tbl-wrap" style="margin-top:14px">
+    <table class="ctbl">
+      <thead><tr><th class="lbl">학군 항목</th><th class="th-a">A. 삼익그린2차</th><th class="th-b">B. 사당우성3단지</th><th>우위</th></tr></thead>
+      <tbody>
+        <tr><td class="lbl">배정 중학교</td><td>배재중</td><td class="win-b">사당중 (전국상위18%·서울상위62%)</td><td><span class="wtag wtag-b">B</span></td></tr>
+        <tr><td class="lbl">학군 특성</td><td>고덕지구 신흥학군</td><td class="win-b">사당·방배 중간학군</td><td><span class="wtag wtag-b">B</span></td></tr>
+        <tr><td class="lbl">인근 학원가</td><td>고덕 소규모</td><td class="win-b">이수·사당 대형 학원가</td><td><span class="wtag wtag-b">B</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="chart-wrap" style="margin-top:14px"><canvas id="schoolChart"></canvas></div>
+</div>
+
+<!-- ══ 6-B. 직주근접성 ══ -->
+<div class="section">
+  <div class="section-title"><span class="icon">🗺️</span> 직주근접성 & 가족 접근성<span class="tag tag-hard" style="margin-left:auto">하드코딩</span></div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;font-size:12px">
+    <div style="background:var(--a-light);padding:10px;border-radius:8px;border-left:3px solid var(--a)">
+      <div style="font-weight:700;color:var(--a);margin-bottom:4px">📍 주요 목적지</div>
+      <div>• 직장: 삼일대로330 (중구 저동1가, 을지로3가역 도보 5분)</div>
+      <div>• 아이 학원: 리비어어학원 (강남구 신사동, 언주로153길 10-8)</div>
+      <div>• 친가: 명일신동아파트 (강동구 명일동)</div>
+      <div>• 외가: 원베일리 (서초구 반포동)</div>
+    </div>
+    <div style="background:#f1f5f9;padding:10px;border-radius:8px;font-size:11px;color:#64748b">
+      * 지하철 소요시간은 네이버지도 기준 예상치 (환승 포함)<br>
+      * 직선거리는 Haversine 공식 적용
+    </div>
+  </div>
+
+  <div class="tbl-wrap">
+    <table class="ctbl">
+      <thead><tr><th class="lbl">목적지</th><th class="th-a">A. 삼익그린2차</th><th class="th-b">B. 사당우성3단지</th><th>우위</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="lbl">💼 직장<br><span style="font-size:10px;color:#94a3b8">삼일대로330 (을지로3가)</span></td>
+          <td>5호선 고덕역 → 을지로3가역<br>환승 1회 약 35~40분</td>
+          <td class="win-b">4호선 이수역 → 을지로3가역<br>직통 약 25~30분 ⭐</td>
+          <td><span class="wtag wtag-b">B</span></td>
+        </tr>
+        <tr>
+          <td class="lbl">📚 리비어어학원<br><span style="font-size:10px;color:#94a3b8">강남구 신사동</span></td>
+          <td>5호선→3호선 환승<br>약 30~35분</td>
+          <td class="win-b">7호선 논현역 하차<br>약 15~20분 ⭐</td>
+          <td><span class="wtag wtag-b">B</span></td>
+        </tr>
+        <tr>
+          <td class="lbl">🏠 친가<br><span style="font-size:10px;color:#94a3b8">명일신동아파트 (강동구)</span></td>
+          <td class="win-a">도보·버스 10~15분 ⭐<br>(직선 약 1.5km)</td>
+          <td>지하철 약 45~55분<br>(직선 약 18km)</td>
+          <td><span class="wtag wtag-a">A</span></td>
+        </tr>
+        <tr>
+          <td class="lbl">🏠 외가<br><span style="font-size:10px;color:#94a3b8">원베일리 (서초구 반포)</span></td>
+          <td>지하철+환승 약 50~60분<br>(직선 약 16km)</td>
+          <td class="win-b">버스·도보 15~20분 ⭐<br>(직선 약 2.5km)</td>
+          <td><span class="wtag wtag-b">B</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 종합 접근성 정리 -->
+  <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <div style="background:var(--a-light);border-radius:8px;padding:12px">
+      <div style="font-weight:700;color:var(--a);margin-bottom:6px">🔵 A. 삼익그린2차 유리한 점</div>
+      <div style="font-size:12px;line-height:1.8">
+        ✅ 친가(명일신동아) 10~15분<br>
+        ❌ 직장까지 35~40분 (불리)<br>
+        ❌ 리비어어학원 30~35분 (불리, B보다 멀어짐)<br>
+        ❌ 외가(원베일리) 50~60분 (불리)
+      </div>
+    </div>
+    <div style="background:var(--b-light);border-radius:8px;padding:12px">
+      <div style="font-weight:700;color:var(--b);margin-bottom:6px">🟢 B. 사당우성3단지 유리한 점</div>
+      <div style="font-size:12px;line-height:1.8">
+        ✅ 직장까지 25~30분 (최우선 ⭐)<br>
+        ✅ 리비어어학원(신사동) 15~20분 ⭐<br>
+        ✅ 외가(원베일리) 도보·버스권<br>
+        ❌ 친가(명일신동아) 45~55분 (불리)
+      </div>
+    </div>
+  </div>
+  <p style="font-size:11px;color:#94a3b8;margin-top:8px">💡 직장·리비어학원(신사동)·외가 접근성은 B가 우위. 친가(명일신동아) 접근성은 A가 유리. 리비어어학원이 강남구 신사동 소재로 B에서도 7호선으로 15~20분 접근 가능.</p>
+</div>
+
+<!-- ══ 7. 치안 ══ -->
+<div class="section">
+  <div class="section-title"><span class="icon">🚔</span> 치안 (5대 범죄)<span class="tag tag-sample" style="margin-left:auto">샘플데이터</span></div>
+  <div class="chart-wrap"><canvas id="crimeChart"></canvas></div>
+  <div class="tbl-wrap" style="margin-top:12px">
+    <table class="ctbl">
+      <thead><tr><th class="lbl">범죄유형</th><th class="th-a">강동구 (건/년·샘플)</th><th class="th-b">동작구 (건/년·샘플)</th><th>우위</th></tr></thead>
+      <tbody>
+        <tr><td class="lbl">살인</td><td>3</td><td class="win-b">2</td><td><span class="wtag wtag-b">B</span></td></tr>
+        <tr><td class="lbl">강도</td><td>8</td><td class="win-b">6</td><td><span class="wtag wtag-b">B</span></td></tr>
+        <tr><td class="lbl">절도</td><td>890</td><td class="win-b">820</td><td><span class="wtag wtag-b">B</span></td></tr>
+        <tr><td class="lbl">폭력</td><td class="win-a">1240</td><td>1380</td><td><span class="wtag wtag-a">A</span></td></tr>
+        <tr><td class="lbl">성범죄</td><td class="win-a">95</td><td>110</td><td><span class="wtag wtag-a">A</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size:11px;color:#94a3b8;margin-top:6px">* 경찰청 범죄통계 API 엔드포인트 확인 후 실데이터로 교체 예정.</p>
+</div>
+
+<!-- ══ 8. 대기환경 ══ -->
+<div class="section">
+  <div class="section-title">
+    <span class="icon">🌬️</span> 대기환경 (서울시 실시간 PM2.5)
+    <span class="tag tag-loading" id="tag-air" style="margin-left:auto">로딩중…</span>
+  </div>
+  <div class="stat-cards">
+    <div class="stat-card a">
+      <div style="font-size:12px;font-weight:700;color:var(--a);margin-bottom:6px">A. 삼익그린2차 인근 (강동구)</div>
+      <div class="val" id="air-a-val">—</div>
+      <div class="grade" id="air-a-grade">로딩중…</div>
+      <div class="sub" id="air-a-time"></div>
+    </div>
+    <div class="stat-card b">
+      <div style="font-size:12px;font-weight:700;color:var(--b);margin-bottom:6px">B. 사당우성3단지 인근 (동작구)</div>
+      <div class="val" id="air-b-val">—</div>
+      <div class="grade" id="air-b-grade">로딩중…</div>
+      <div class="sub" id="air-b-time"></div>
+    </div>
+  </div>
+  <div class="chart-wrap"><canvas id="airChart"></canvas></div>
+  <p id="air-note" style="font-size:11px;color:#94a3b8;margin-top:6px"></p>
+</div>
+
+<!-- ══ 9. 투자가치 ══ -->
+<div class="section">
+  <div class="section-title"><span class="icon">📈</span> 투자 가치 비교<span class="tag tag-hard" style="margin-left:auto">분석 데이터</span></div>
+  <div class="tbl-wrap">
+    <table class="ctbl">
+      <thead><tr><th class="lbl">항목</th><th class="th-a">A. 삼익그린2차</th><th class="th-b">B. 사당우성3단지</th><th>우위</th></tr></thead>
+      <tbody>
+        <tr><td class="lbl">개발 호재</td><td>재건축 조합설립 완료 (정비계획 공람 중, →3,353가구)</td><td class="win-b">리모델링 확정 (포스코이앤씨, 2031~2032)</td><td><span class="wtag wtag-b">B</span></td></tr>
+        <tr><td class="lbl">이주 리스크</td><td class="win-a">낮음</td><td>있음 (2027~2028 이주 예정)</td><td><span class="wtag wtag-a">A</span></td></tr>
+        <tr><td class="lbl">준공 후 기대가치</td><td>보통</td><td class="win-b">신축급 프리미엄 + 더블역세권</td><td><span class="wtag wtag-b">B</span></td></tr>
+        <tr><td class="lbl">매수 후 실거주</td><td class="win-a">장기 안정</td><td>~1~2년 (이주 전까지)</td><td><span class="wtag wtag-a">A</span></td></tr>
+        <tr><td class="lbl">강남 접근성</td><td>보통</td><td class="win-b">우수 (4·7호선 더블)</td><td><span class="wtag wtag-b">B</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ 9-B. AI 분석 (Claude API) ══ -->
+<div class="section">
+  <div class="section-title"><span class="icon">🤖</span> AI 입지 분석 (Claude API)</div>
+  <div style="margin-bottom:12px">
+    <label style="font-size:12px;color:#64748b;display:block;margin-bottom:4px">Anthropic API Key (입력 후 분석 버튼 클릭)</label>
+    <div style="display:flex;gap:8px">
+      <input type="password" id="anthropicKey" placeholder="sk-ant-..." style="flex:1;padding:8px 12px;border:1px solid #e2e8f0;border-radius:6px;font-size:13px;background:#f8fafc">
+      <button onclick="runAiAnalysis()" style="padding:8px 18px;background:#6366f1;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600">🤖 분석 실행</button>
+    </div>
+    <p style="font-size:11px;color:#94a3b8;margin-top:4px">* API 키는 서버에 저장되지 않으며 브라우저에서 직접 Anthropic에 전송됩니다.</p>
+  </div>
+  <div id="aiResult" style="background:#f8fafc;border-radius:8px;padding:16px;min-height:80px;font-size:13px;line-height:1.8;color:#334155;white-space:pre-wrap">
+    API 키를 입력하고 분석 버튼을 클릭하면 Claude AI가 두 단지를 종합 분석합니다.
+  </div>
+  <div id="aiStatus" style="font-size:11px;color:#94a3b8;margin-top:6px"></div>
+</div>
+
+<!-- ══ 10. 종합점수 ══ -->
+<div class="score-section">
+  <div class="score-title">🏆 종합 입지 점수 (10점 만점)</div>
+  <div class="score-grid">
+    <div class="score-card">
+      <h3>🔵 A. 삼익그린2차</h3>
+      <div class="total">6.2</div>
+      <div class="score-rows">
+        <div class="score-row"><span class="sl">교통</span><span class="sv">⭐⭐⭐☆☆ 6.0</span></div>
+        <div class="score-row"><span class="sl">생활편의</span><span class="sv">⭐⭐⭐☆☆ 6.0</span></div>
+        <div class="score-row"><span class="sl">학군</span><span class="sv">⭐⭐⭐☆☆ 5.5</span></div>
+        <div class="score-row"><span class="sl">치안</span><span class="sv">⭐⭐⭐⭐☆ 7.0</span></div>
+        <div class="score-row"><span class="sl">환경·녹지</span><span class="sv best">⭐⭐⭐⭐⭐ 8.5</span></div>
+        <div class="score-row"><span class="sl">투자가치</span><span class="sv">⭐⭐⭐☆☆ 5.0</span></div>
+        <div class="score-row"><span class="sl">지형편의</span><span class="sv best">⭐⭐⭐⭐⭐ 9.0</span></div>
+      </div>
+    </div>
+    <div class="score-card winner">
+      <h3>🟢 B. 사당우성3단지 ← 추천</h3>
+      <div class="total">7.9</div>
+      <div class="score-rows">
+        <div class="score-row"><span class="sl">교통</span><span class="sv best">⭐⭐⭐⭐⭐ 9.5</span></div>
+        <div class="score-row"><span class="sl">생활편의</span><span class="sv best">⭐⭐⭐⭐☆ 8.5</span></div>
+        <div class="score-row"><span class="sl">학군</span><span class="sv best">⭐⭐⭐⭐☆ 7.5</span></div>
+        <div class="score-row"><span class="sl">치안</span><span class="sv">⭐⭐⭐⭐☆ 7.0</span></div>
+        <div class="score-row"><span class="sl">환경·녹지</span><span class="sv">⭐⭐⭐☆☆ 6.0</span></div>
+        <div class="score-row"><span class="sl">투자가치</span><span class="sv best">⭐⭐⭐⭐⭐ 9.0</span></div>
+        <div class="score-row"><span class="sl">지형편의</span><span class="sv">⭐⭐⭐☆☆ 5.5</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="verdict">
+    <strong>사당우성3단지</strong>가 교통·학군·생활편의·투자가치 모든 핵심 항목에서 우위.<br>
+    4·7호선 더블역세권 + 포스코이앤씨 리모델링(2031~2032 준공) 확정으로 강남 접근성과 신축 프리미엄 동시 기대.<br>
+    <span style="color:#fbbf24">⚠ 단, 2027~2028년 이주 리스크 및 거주 공백 기간을 사전에 반드시 고려해야 합니다.</span>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<!-- ══════════════════════════════════════════════
+  JavaScript · API 연동
+══════════════════════════════════════════════ -->
+<script>
+/* ─────────────────────────────────────
+  유틸
+───────────────────────────────────── */
+function setStatus(id, type, text) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.className = `api-chip ${type}`;
+  el.textContent = text;
+}
+function setTag(id, type, text) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.className = `tag tag-${type}`;
+  el.textContent = text;
+}
+
+/* PM2.5 등급 텍스트·색상 */
+function pm25Grade(v) {
+  if (v === null || v === undefined) return { text:'측정불가', color:'#94a3b8' };
+  if (v <= 15)  return { text:'좋음 😊',   color:'#16a34a' };
+  if (v <= 35)  return { text:'보통 🙂',   color:'#2563eb' };
+  if (v <= 75)  return { text:'나쁨 😷',   color:'#f59e0b' };
+  return               { text:'매우나쁨 ☠️', color:'#dc2626' };
+}
+
+/* 직선거리 m (Haversine) */
+function haversine(lat1, lng1, lat2, lng2) {
+  const R = 6371000, toRad = d => d * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1), dLng = toRad(lng2 - lng1);
+  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLng/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+/* ─────────────────────────────────────
+  1. Leaflet + OpenStreetMap 지도
+     (카카오 static map은 브라우저 CORS 미지원 → OSM으로 대체)
+───────────────────────────────────── */
+function loadMap() {
+  try {
+    /* 초기 플레이스홀더 제거 후 Leaflet 초기화 */
+    document.getElementById('map-mock').remove();
+    const map = L.map('map-container', { zoomControl: true })
+                 .setView([37.521, 127.062], 11);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      maxZoom: 19,
+    }).addTo(map);
+
+    /* 커스텀 핀 아이콘 생성 */
+    const makeIcon = (cls, letter) => L.divIcon({
+      html: `<div class="lf-pin ${cls}"><div class="lf-inner">${letter}</div></div>`,
+      iconSize: [34, 34], iconAnchor: [17, 34], popupAnchor: [0, -36],
+      className: '',
+    });
+
+    L.marker([A.lat, A.lng], { icon: makeIcon('lf-pin-a', 'A') })
+     .addTo(map)
+     .bindPopup(`<b>A. ${A.name}</b><br>서울 강동구 명일동`)
+     .openPopup();
+
+    L.marker([B.lat, B.lng], { icon: makeIcon('lf-pin-b', 'B') })
+     .addTo(map)
+     .bindPopup(`<b>B. ${B.name}</b><br>서울 동작구 사당동`);
+
+    setStatus('st-map', 'live', '🗺️ OpenStreetMap ✅');
+    setTag('tag-map', 'live', '실 지도');
+  } catch (e) {
+    console.warn('[지도]', e);
+    setStatus('st-map', 'error', '🗺️ 지도 ❌');
+    setTag('tag-map', 'sample', '지도 오류');
+  }
+}
+
+/* ─────────────────────────────────────
+  2. 카카오 카테고리 시설 검색
+───────────────────────────────────── */
+async function kakaoCategory(code, lat, lng) {
+  const res = await fetch(
+    `https://dapi.kakao.com/v2/local/search/category.json?category_group_code=${code}&y=${lat}&x=${lng}&radius=1000&sort=distance&size=15`,
+    { headers: { Authorization: `KakaoAK ${KAKAO_REST_API_KEY}` } }
+  );
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+async function loadFacilityData() {
+  try {
+    /* 7카테고리 × 2단지 = 14개 병렬 요청 */
+    const jobs = CATS.flatMap(cat => [
+      kakaoCategory(cat.code, A.lat, A.lng).then(d => ({ id:'a', cat, d })),
+      kakaoCategory(cat.code, B.lat, B.lng).then(d => ({ id:'b', cat, d })),
+    ]);
+    const results = await Promise.allSettled(jobs);
+
+    /* 결과 정리 */
+    const data = { a: {}, b: {} };
+    for (const r of results) {
+      if (r.status !== 'fulfilled') continue;
+      const { id, cat, d } = r.value;
+      const docs = d.documents || [];
+      data[id][cat.code] = {
+        count:   d.meta?.total_count ?? docs.length,
+        nearest: docs[0] ? { name: docs[0].place_name, dist: parseInt(docs[0].distance, 10) } : null,
+      };
+    }
+
+    /* 테이블 생성 */
+    const tbody = document.getElementById('fac-tbody');
+    tbody.innerHTML = '';
+    for (const cat of CATS) {
+      const ra = data.a[cat.code];
+      const rb = data.b[cat.code];
+      const na = ra?.nearest, nb = rb?.nearest;
+      let winner = 'tie';
+      if (na && nb) {
+        if (na.dist < nb.dist - 80) winner = 'a';
+        else if (nb.dist < na.dist - 80) winner = 'b';
+      } else if (na && !nb) winner = 'a';
+      else if (!na && nb) winner = 'b';
+
+      const fmtNearest = n => n ? `${n.name} <b>${n.dist}m</b>` : '—';
+      const fmtCount   = r => r ? `${r.count}개` : '—';
+      const wtag = winner === 'tie'
+        ? '<span class="wtag wtag-tie">동일</span>'
+        : winner === 'a'
+          ? '<span class="wtag wtag-a">A</span>'
+          : '<span class="wtag wtag-b">B</span>';
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="lbl">${cat.icon} ${cat.label}</td>
+        <td class="${winner==='a'?'win-a':''}">${fmtNearest(na)}</td>
+        <td class="${winner==='a'?'win-a':''}">${fmtCount(ra)}</td>
+        <td class="${winner==='b'?'win-b':''}">${fmtNearest(nb)}</td>
+        <td class="${winner==='b'?'win-b':''}">${fmtCount(rb)}</td>
+        <td>${wtag}</td>
+      `;
+      tbody.appendChild(tr);
+    }
+    setStatus('st-fac', 'live', '📍 시설검색 ✅');
+    setTag('tag-fac', 'live', '실데이터');
+  } catch (e) {
+    console.warn('[카카오시설]', e);
+    setStatus('st-fac', 'error', '📍 시설검색 ❌');
+    setTag('tag-fac', 'sample', '오류');
+    document.getElementById('fac-tbody').innerHTML =
+      `<tr class="loading-row"><td colspan="6">⚠ 카카오 시설 데이터 로드 실패: ${e.message}</td></tr>`;
+  }
+}
+
+/* ─────────────────────────────────────
+  3. 국토부 실거래가 (MOLIT)
+───────────────────────────────────── */
+let chartPrice = null;
+
+/* 최근 N개월 YYYYMM 배열 */
+function recentMonths(n) {
+  const list = [];
+  const now = new Date(2026, 3, 1); /* 2026-04 */
+  for (let i = n - 1; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    list.push(`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}`);
+  }
+  return list;
+}
+
+async function fetchMolitMonth(lawdCd, yyyymm) {
+  /* MOLIT_API_KEY는 이미 %2F 등으로 인코딩된 상태 → 디코딩 후 재인코딩해야 이중 인코딩 방지 */
+  const rawKey = decodeURIComponent(MOLIT_API_KEY);
+  const direct = `https://apis.data.go.kr/1613000/RTMSOBJSvc/getRTMSDataSvcAptTradeDev` +
+    `?serviceKey=${encodeURIComponent(rawKey)}&LAWD_CD=${lawdCd}&DEAL_YMD=${yyyymm}&numOfRows=200&pageNo=1`;
+  const proxy  = `https://corsproxy.io/?url=${encodeURIComponent(direct)}`;
+  const res = await fetch(proxy);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const txt = await res.text();
+  return new DOMParser().parseFromString(txt, 'application/xml');
+}
+
+function parseMolitXml(xml, aptKw, areaMin=80, areaMax=88) {
+  const items = xml.querySelectorAll('item');
+  const prices = [];
+  items.forEach(item => {
+    const name  = (item.querySelector('아파트')?.textContent ?? '').trim();
+    const area  = parseFloat(item.querySelector('전용면적')?.textContent ?? '0');
+    const priceRaw = (item.querySelector('거래금액')?.textContent ?? '').replace(/[,\s]/g,'');
+    const price = parseInt(priceRaw, 10); /* 단위: 만원 */
+    if (name.includes(aptKw) && area >= areaMin && area <= areaMax && !isNaN(price) && price > 0) {
+      prices.push(price);
+    }
+  });
+  if (prices.length === 0) return null;
+  prices.sort((a,b)=>a-b);
+  const mid = prices[Math.floor(prices.length / 2)]; /* 중앙값 */
+  return +(mid / 10000).toFixed(2); /* 억원 */
+}
+
+async function loadPriceData() {
+  try {
+    const months = recentMonths(12);
+    /* A, B 각 12개월 병렬 요청 */
+    const [xmlsA, xmlsB] = await Promise.all([
+      Promise.all(months.map(m => fetchMolitMonth(A.lawdCd, m).catch(() => null))),
+      Promise.all(months.map(m => fetchMolitMonth(B.lawdCd, m).catch(() => null))),
+    ]);
+
+    const priceA = xmlsA.map(x => x ? parseMolitXml(x, A.aptKw) : null);
+    const priceB = xmlsB.map(x => x ? parseMolitXml(x, B.aptKw) : null);
+
+    const labels = months.map(m => `${m.slice(0,4)}.${m.slice(4)}`);
+    const countA = priceA.filter(v => v !== null).length;
+    const countB = priceB.filter(v => v !== null).length;
+
+    /* Chart 업데이트 */
+    chartPrice.data.labels = labels;
+    chartPrice.data.datasets[0].data = priceA;
+    chartPrice.data.datasets[1].data = priceB;
+    chartPrice.update();
+
+    if (countA === 0 && countB === 0) {
+      /* 모든 월 데이터 없음 → 아파트명 필터 불일치 가능성 */
+      document.getElementById('price-info').textContent =
+        '⚠ 84㎡ 거래 내역 없음 — 아파트명 필터(삼익그린2차 / 우성3)를 확인하세요.';
+      setStatus('st-price', 'error', '💰 실거래가 ❌');
+      setTag('tag-price', 'sample', '데이터 없음');
+    } else {
+      document.getElementById('price-info').textContent =
+        `84㎡ 거래 확인 — A: ${countA}개월 / B: ${countB}개월 (거래 없는 월은 공백 처리)`;
+      setStatus('st-price', 'live', '💰 실거래가 ✅');
+      setTag('tag-price', 'live', '실데이터');
+    }
+  } catch (e) {
+    console.warn('[MOLIT]', e);
+    setStatus('st-price', 'error', '💰 실거래가 ❌');
+    setTag('tag-price', 'sample', '오류·샘플');
+    document.getElementById('price-info').textContent = `⚠ 실거래가 API 오류 (${e.message}) — 샘플 데이터 표시`;
+  }
+}
+
+/* ─────────────────────────────────────
+  4. NEIS 학교알리미
+───────────────────────────────────── */
+async function fetchNeisSchool(name) {
+  const url = `https://open.neis.go.kr/hub/schoolInfo?KEY=${NEIS_API_KEY}&Type=json` +
+    `&ATPT_OFCDC_SC_CODE=B10&SCHUL_NM=${encodeURIComponent(name)}&SCHUL_KND_SC_NM=`;
+  const res = await fetch(url);
+  const json = await res.json();
+  return json?.schoolInfo?.[1]?.row?.[0] ?? null;
+}
+
+async function loadSchoolData() {
+  try {
+    const [godeokElem, hansanMid, samil, sadang] = await Promise.all([
+      fetchNeisSchool('서울고명초등학교'),
+      fetchNeisSchool('배재중학교'),
+      fetchNeisSchool('서울삼일초등학교'),
+      fetchNeisSchool('사당중학교'),
+    ]);
+
+    function applySchool(nameId, addrId, row) {
+      if (!row) return;
+      document.getElementById(nameId).textContent = row.SCHUL_NM ?? '—';
+      document.getElementById(addrId).textContent = (row.ORG_RDNMA ?? '').slice(0, 14) + '…';
+    }
+    applySchool('sa-elem-name', 'sa-elem-addr', godeokElem);
+    applySchool('sa-mid-name',  'sa-mid-addr',  hansanMid);
+    applySchool('sb-elem-name', 'sb-elem-addr', samil);
+    applySchool('sb-mid-name',  'sb-mid-addr',  sadang);
+
+    setStatus('st-school', 'live', '🎓 학교알리미 ✅');
+    setTag('tag-school', 'live', '실데이터');
+  } catch (e) {
+    console.warn('[NEIS]', e);
+    setStatus('st-school', 'error', '🎓 학교알리미 ❌');
+    setTag('tag-school', 'sample', '오류·하드코딩');
+  }
+}
+
+/* ─────────────────────────────────────
+  5. 서울시 실시간 대기환경
+───────────────────────────────────── */
+let chartAir = null;
+
+async function loadAirData() {
+  try {
+    const url = `http://openapi.seoul.go.kr:8088/${SEOUL_AIR_API_KEY}/json/RealtimeCityAir/1/25/`;
+    const res  = await fetch(url);
+    const json = await res.json();
+    const rows = json?.RealtimeCityAir?.row ?? [];
+    if (rows.length === 0) throw new Error('빈 응답');
+
+    /* 강동구·동작구 행 찾기 */
+    const rowA = rows.find(r => r.MSRSTENAME?.includes('강동')) ?? null;
+    const rowB = rows.find(r => r.MSRSTENAME?.includes('동작')) ?? null;
+
+    function applyAir(valId, gradeId, timeId, row) {
+      if (!row) return;
+      const pm = parseFloat(row.PM25);
+      document.getElementById(valId).textContent = isNaN(pm) ? '—' : `${pm} μg/m³`;
+      const g = pm25Grade(isNaN(pm) ? null : pm);
+      const el = document.getElementById(gradeId);
+      el.textContent  = g.text;
+      el.style.color  = g.color;
+      document.getElementById(timeId).textContent = row.MSRDT ? `측정: ${row.MSRDT}` : '';
+    }
+    applyAir('air-a-val', 'air-a-grade', 'air-a-time', rowA);
+    applyAir('air-b-val', 'air-b-grade', 'air-b-time', rowB);
+
+    /* 차트: 전체 25개 구 PM2.5 막대 (A·B 강조) */
+    const labels = rows.map(r => r.MSRSTENAME ?? '');
+    const vals   = rows.map(r => parseFloat(r.PM25) || 0);
+    const colors = rows.map(r => {
+      if (r.MSRSTENAME?.includes('강동')) return '#2563eb';
+      if (r.MSRSTENAME?.includes('동작')) return '#16a34a';
+      return '#cbd5e1';
+    });
+    chartAir.data.labels = labels;
+    chartAir.data.datasets[0].data = vals;
+    chartAir.data.datasets[0].backgroundColor = colors;
+    chartAir.update();
+
+    document.getElementById('air-note').textContent =
+      `파란색: 강동구(A)  초록색: 동작구(B)  회색: 기타 자치구 | 출처: 서울시 대기환경정보`;
+    setStatus('st-air', 'live', '🌬️ 대기환경 ✅');
+    setTag('tag-air', 'live', '실데이터');
+  } catch (e) {
+    console.warn('[서울대기]', e);
+    /* 샘플 데이터 폴백 */
+    document.getElementById('air-a-val').textContent   = '17 μg/m³';
+    document.getElementById('air-b-val').textContent   = '20 μg/m³';
+    document.getElementById('air-a-grade').textContent = '보통 🙂';
+    document.getElementById('air-b-grade').textContent = '보통 🙂';
+    document.getElementById('air-note').textContent    = `⚠ 서울시 대기 API 오류(${e.message}) — 샘플값 표시 (HTTP 혼합콘텐츠 차단 가능, Chrome에서 --allow-insecure-localhost 옵션 필요)`;
+    setStatus('st-air', 'error', '🌬️ 대기환경 ❌');
+    setTag('tag-air', 'sample', '샘플');
+  }
+}
+
+/* ─────────────────────────────────────
+  차트 초기화 (샘플 데이터로 먼저 렌더)
+───────────────────────────────────── */
+function initCharts() {
+  const COLOR_A = '#2563eb', COLOR_B = '#16a34a';
+  const A_ALPHA = 'rgba(37,99,235,.15)', B_ALPHA = 'rgba(22,163,74,.15)';
+
+  /* ── 실거래가 ── */
+  const months12 = recentMonths(12).map(m => `${m.slice(0,4)}.${m.slice(4)}`);
+  const sampleA  = months12.map((_,i) => +(10.5 + i * 0.08 + Math.sin(i*.5)*.4).toFixed(2));
+  const sampleB  = months12.map((_,i) => +(11.2 + i * 0.12 + Math.sin(i*.4)*.5).toFixed(2));
+  chartPrice = new Chart(document.getElementById('priceChart'), {
+    type: 'line',
+    data: {
+      labels: months12,
+      datasets: [
+        { label:'A. 삼익그린2차 (억원)',   data: sampleA, borderColor: COLOR_A, backgroundColor: A_ALPHA, fill:true, tension:.4, pointRadius:3, spanGaps:true },
+        { label:'B. 사당우성3단지 (억원)', data: sampleB, borderColor: COLOR_B, backgroundColor: B_ALPHA, fill:true, tension:.4, pointRadius:3, spanGaps:true },
+      ],
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position:'top' }, tooltip:{ callbacks:{ label: c => ` ${c.dataset.label}: ${c.parsed.y}억원` } } },
+      scales:{ y:{ title:{ display:true, text:'실거래가 (억원)' }, min:8 } },
+    },
+  });
+
+  /* ── 학군 ── */
+  new Chart(document.getElementById('schoolChart'), {
+    type: 'bar',
+    data: {
+      labels: ['학급당 학생수 (초등·추정)', '학급당 학생수 (중학·추정)', '중학 전국 석차 백분위 (낮을수록 우수)'],
+      datasets: [
+        { label:'A. 삼익그린2차', data:[22,25,35], backgroundColor: COLOR_A },
+        { label:'B. 사당우성3단지', data:[21,23,18], backgroundColor: COLOR_B },
+      ],
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position:'top' } },
+      scales:{ y:{ beginAtZero:true, max:45, title:{ display:true, text:'명 / 백분위(%)' } } },
+    },
+  });
+
+  /* ── 범죄 ── */
+  new Chart(document.getElementById('crimeChart'), {
+    type: 'bar',
+    data: {
+      labels: ['살인','강도','절도','폭력','성범죄'],
+      datasets: [
+        { label:'A. 강동구 (샘플)', data:[3,8,890,1240,95],   backgroundColor: COLOR_A },
+        { label:'B. 동작구 (샘플)', data:[2,6,820,1380,110],  backgroundColor: COLOR_B },
+      ],
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position:'top' } },
+      scales:{ y:{ beginAtZero:true, title:{ display:true, text:'발생건수 (건/년)' } } },
+    },
+  });
+
+  /* ── 대기환경 (서울 25개 구 PM2.5 — 실 데이터 로드 전 샘플) ── */
+  const sampleDistricts = ['도봉','노원','강북','성북','중랑','동대문','광진','강동','송파','강남',
+    '서초','동작','관악','금천','구로','영등포','양천','강서','마포','용산','종로','중구','성동','은평','서대문'];
+  const samplePm = sampleDistricts.map(() => Math.floor(Math.random() * 30) + 10);
+  const sampleColors = sampleDistricts.map(d =>
+    d === '강동' ? COLOR_A : d === '동작' ? COLOR_B : '#cbd5e1');
+  chartAir = new Chart(document.getElementById('airChart'), {
+    type: 'bar',
+    data: {
+      labels: sampleDistricts,
+      datasets: [{ label:'PM2.5 (μg/m³)', data: samplePm, backgroundColor: sampleColors }],
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ display:false } },
+      scales:{ y:{ beginAtZero:true, title:{ display:true, text:'PM2.5 (μg/m³)' } } },
+    },
+  });
+}
+
+/* ─────────────────────────────────────
+  평면도 차트
+───────────────────────────────────── */
+function initFloorChart() {
+  const ctx = document.getElementById('floorAreaChart');
+  if (!ctx) return;
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['공급면적(㎡)', '전용면적(㎡)', '전용률(%)'],
+      datasets: [
+        { label:'A. 삼익그린2차', data:[90.04, 66.87, 74.3], backgroundColor:'rgba(37,99,235,.7)' },
+        { label:'B. 사당우성3단지', data:[136.64, 118.25, 86.5], backgroundColor:'rgba(22,163,74,.7)' },
+      ],
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position:'top' } },
+      scales:{ y:{ beginAtZero:true } },
+    },
+  });
+}
+
+/* ─────────────────────────────────────
+  AI 분석 (Claude API 직접 호출)
+───────────────────────────────────── */
+async function runAiAnalysis() {
+  const apiKey = document.getElementById('anthropicKey').value.trim();
+  const resultEl = document.getElementById('aiResult');
+  const statusEl = document.getElementById('aiStatus');
+  if (!apiKey) { resultEl.textContent = '⚠ API 키를 먼저 입력해주세요.'; return; }
+
+  resultEl.textContent = '⏳ Claude가 분석 중입니다...';
+  statusEl.textContent = '';
+
+  const prompt = `당신은 부동산 전문가입니다. 다음 두 아파트 단지를 구체적이고 솔직하게 비교 분석해주세요.
+
+【A. 삼익그린2차 (현 거주지)】
+- 위치: 서울 강동구 명일동
+- 전용: 66.87㎡ (27평), 공급 90.04㎡
+- 교통: 5호선 고덕·상일동역 도보 5~10분. 9호선 4단계 공사 중(2028년 개통 예정)
+- 재건축: 조합설립 완료, 정비계획 공람 중 (→3,353가구 목표)
+- 개발호재: 고덕비즈밸리(23만㎡) 업무단지 완성, GTX-D 강동구 경유 확정
+- 매도가 계획: 18.5억
+- 학군: 서울고명초(단지 내 초품아)·배재중 (명일동 학군)
+- 리비어어학원(강남구 신사동) 30~35분, 친가(명일신동아) 10분
+
+【B. 사당우성3단지 (매수 목표)】
+- 위치: 서울 동작구 사당동
+- 전용: 118.25㎡ (41평), 공급 136.64㎡
+- 교통: 4·7호선 이수역 도보 5분 (더블역세권)
+- 리모델링: 포스코이앤씨 더샵이수역엘플레노 (이주 2027~2028, 준공 2031~2032)
+- 세대: 우성3차 단독 855세대 / 리모델링 조합(3개단지 합산) 3,485→4,006세대
+- 매수가 계획: 17억
+- 학군: 서울삼일초·사당중 (전국상위18%)
+- 직장(삼일대로330, 중구 저동1가, 을지로3가역 도보 5분) 25~30분, 외가(원베일리, 반포) 15분
+- 리비어어학원(강남구 신사동) 15~20분
+
+【가족 상황】
+- 맞벌이 부부 (부부합산 월수입 960만원)
+- 영유아 자녀
+- 주담대 3억9700만원 예정 (금리 4.5%, 30년)
+- 월 원리금 약 201만원
+
+다음을 분석해주세요:
+1. 두 단지의 핵심 장단점 (각 3가지씩)
+2. 이 가족 상황에서 어느 단지가 더 적합한지 이유 포함 결론
+3. 가장 주의해야 할 리스크 2가지
+4. 10년 후 자산가치 전망
+
+한국어로 답변하고, 구체적 수치와 이유를 포함해 600자 이상 작성해주세요.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1500,
+        messages: [{ role: 'user', content: prompt }],
+      }),
+    });
+
+    if (!res.ok) {
+      const errJson = await res.json().catch(() => ({}));
+      throw new Error(`API 오류 ${res.status}: ${errJson?.error?.message ?? res.statusText}`);
+    }
+
+    const data = await res.json();
+    const text = data?.content?.[0]?.text ?? '응답 없음';
+    resultEl.textContent = text;
+    statusEl.textContent = `✅ 분석 완료 | 모델: claude-sonnet-4-6 | 토큰: ${data.usage?.output_tokens ?? '?'}`;
+  } catch (e) {
+    resultEl.textContent = `❌ 분석 실패: ${e.message}`;
+    statusEl.textContent = 'API 키를 확인하거나 잠시 후 다시 시도해주세요.';
+    console.error('[AI분석]', e);
+  }
+}
+
+/* ─────────────────────────────────────
+  메인 초기화
+───────────────────────────────────── */
+async function main() {
+  initCharts();
+  initFloorChart();
+  await Promise.allSettled([
+    Promise.resolve(loadMap()),
+    loadFacilityData(),
+    loadPriceData(),
+    loadSchoolData(),
+    loadAirData(),
+  ]);
+}
+
+window.addEventListener('load', main);
+</script>
+</body>
+</html>

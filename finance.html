@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>부동산 재정 계산기</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  :root {
+    --bg: #f8fafc; --card: #fff; --border: #e2e8f0;
+    --text: #1e293b; --sub: #64748b; --input-bg: #f1f5f9;
+    --red: #ef4444; --yellow: #f59e0b; --green: #10b981;
+    --blue: #3b82f6; --purple: #8b5cf6;
+  }
+  [data-theme="dark"] {
+    --bg: #0f172a; --card: #1e293b; --border: #334155;
+    --text: #f1f5f9; --sub: #94a3b8; --input-bg: #0f172a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; font-size: 14px; }
+  header { background: var(--card); border-bottom: 1px solid var(--border); padding: 12px 20px; display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 100; }
+  header h1 { font-size: 16px; font-weight: 700; }
+  .header-actions { margin-left: auto; display: flex; gap: 8px; }
+  .btn { padding: 6px 14px; border-radius: 6px; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; font-size: 12px; }
+  .btn:hover { background: var(--border); }
+  .btn-primary { background: var(--blue); color: #fff; border-color: var(--blue); }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 16px; }
+  .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-bottom: 16px; }
+  .summary-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
+  .summary-card .label { font-size: 11px; color: var(--sub); margin-bottom: 4px; }
+  .summary-card .value { font-size: 18px; font-weight: 700; }
+  .summary-card .sub { font-size: 11px; color: var(--sub); margin-top: 2px; }
+
+  .section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
+  .section-header { padding: 14px 18px; display: flex; align-items: center; cursor: pointer; user-select: none; }
+  .section-header h2 { font-size: 14px; font-weight: 600; flex: 1; }
+  .section-num { background: var(--blue); color: #fff; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; margin-right: 10px; flex-shrink: 0; }
+  .toggle-icon { font-size: 12px; color: var(--sub); transition: transform 0.2s; }
+  .section-body { padding: 0 18px 18px; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  @media (max-width: 640px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+  .field { margin-bottom: 10px; }
+  .field label { display: block; font-size: 12px; color: var(--sub); margin-bottom: 4px; }
+  .field input[type="number"], .field input[type="text"], .field select {
+    width: 100%; padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px;
+    background: var(--input-bg); color: var(--text); font-size: 14px;
+  }
+  .field input:focus, .field select:focus { outline: 2px solid var(--blue); border-color: var(--blue); }
+  .toggle-wrap { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+  .toggle { width: 40px; height: 22px; background: var(--border); border-radius: 11px; position: relative; cursor: pointer; transition: background 0.2s; border: none; }
+  .toggle.on { background: var(--green); }
+  .toggle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; background: #fff; border-radius: 50%; transition: left 0.2s; }
+  .toggle.on::after { left: 21px; }
+
+  .result-box { background: var(--input-bg); border-radius: 8px; padding: 14px; margin-top: 12px; }
+  .result-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid var(--border); }
+  .result-row:last-child { border-bottom: none; }
+  .result-row.total { font-weight: 700; font-size: 15px; margin-top: 4px; }
+  .result-row.indent { padding-left: 16px; color: var(--sub); font-size: 12px; }
+
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+  .badge-red { background: #fef2f2; color: var(--red); }
+  .badge-yellow { background: #fffbeb; color: var(--yellow); }
+  .badge-green { background: #f0fdf4; color: var(--green); }
+  [data-theme="dark"] .badge-red { background: #450a0a; }
+  [data-theme="dark"] .badge-yellow { background: #451a03; }
+  [data-theme="dark"] .badge-green { background: #052e16; }
+
+  .debt-item { display: flex; align-items: center; gap: 8px; padding: 8px; background: var(--input-bg); border-radius: 6px; margin-bottom: 6px; }
+  .debt-item label { flex: 1; font-size: 13px; }
+  .debt-item .amount { font-weight: 600; }
+  .debt-item input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; }
+
+  .chart-wrap { margin-top: 16px; }
+  canvas { max-height: 260px; }
+
+  .table-wrap { overflow-x: auto; margin-top: 12px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { background: var(--input-bg); padding: 8px 10px; text-align: right; font-weight: 600; color: var(--sub); }
+  th:first-child { text-align: left; }
+  td { padding: 7px 10px; text-align: right; border-bottom: 1px solid var(--border); }
+  td:first-child { text-align: left; }
+
+  .color-green { color: var(--green); font-weight: 600; }
+  .color-yellow { color: var(--yellow); font-weight: 600; }
+  .color-red { color: var(--red); font-weight: 600; }
+
+  .sep { height: 1px; background: var(--border); margin: 14px 0; }
+  .info { font-size: 11px; color: var(--sub); margin-top: 6px; }
+
+  .cashflow-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 12px; }
+  @media (max-width: 640px) { .cashflow-grid { grid-template-columns: 1fr; } }
+
+  @media print {
+    .header-actions { display: none; }
+    .section-header { cursor: default; }
+    .section-body { display: block !important; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🏠 부동산 재정 계산기</h1>
+  <div class="header-actions">
+    <button class="btn" onclick="toggleTheme()">🌙 다크모드</button>
+    <button class="btn btn-primary" onclick="window.print()">🖨️ 인쇄/PDF</button>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- ===== 종합 요약 카드 ===== -->
+  <div class="summary-grid" id="summaryGrid">
+    <div class="summary-card">
+      <div class="label">매도 세후 수령예정</div>
+      <div class="value color-green" id="s_saleNet">-</div>
+      <div class="sub">만원 (부채차감전)</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">매수 총비용</div>
+      <div class="value" id="s_buyCost">-</div>
+      <div class="sub">만원</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">주담대 한도</div>
+      <div class="value" id="s_loanLimit">-</div>
+      <div class="sub" id="s_loanStatus">-</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">월 여유 (영유기간)</div>
+      <div class="value" id="s_cfDuring">-</div>
+      <div class="sub">만원/월</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">월 여유 (영유 후)</div>
+      <div class="value" id="s_cfAfter">-</div>
+      <div class="sub">만원/월</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">DSR 비율</div>
+      <div class="value" id="s_dsr">-</div>
+      <div class="sub">한도 40%</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">리모델링 후 수익률</div>
+      <div class="value" id="s_remoRoi">-</div>
+      <div class="sub">예상</div>
+    </div>
+  </div>
+
+  <!-- ===== 섹션 1: 매도 분석 ===== -->
+  <div class="section" id="sec1">
+    <div class="section-header" onclick="toggleSection('sec1')">
+      <div class="section-num">1</div>
+      <h2>매도 분석</h2>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="grid-3">
+        <div class="field">
+          <label>매도가 (만원)</label>
+          <input type="number" id="salePrice" value="185000" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>취득가 (만원)</label>
+          <input type="number" id="acquirePrice" value="98000" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>이사비 (만원)</label>
+          <input type="number" id="moveCost" value="250" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>취득년도</label>
+          <input type="number" id="acquireYear" value="2020" min="2000" max="2030" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>취득월</label>
+          <input type="number" id="acquireMonth" value="8" min="1" max="12" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>공동명의</label>
+          <div class="toggle-wrap">
+            <button class="toggle on" id="jointToggle" onclick="toggleJoint()"></button>
+            <span id="jointLabel">공동명의 (각 50%)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-box" id="saleResult">
+        <div class="result-row"><span>보유기간</span><span id="r_holdPeriod">-</span></div>
+        <div class="result-row"><span>거주기간</span><span id="r_livePeriod">-</span></div>
+        <div class="result-row"><span>장기보유특별공제율</span><span id="r_longDeduct">-</span></div>
+        <div class="result-row"><span>양도차익</span><span id="r_gainTotal">-</span></div>
+        <div class="result-row indent"><span>장특공제 후 차익 (인당)</span><span id="r_gainAfterDeduct">-</span></div>
+        <div class="result-row indent"><span>과세표준 (인당)</span><span id="r_taxBase">-</span></div>
+        <div class="result-row"><span>양도세 합계</span><span id="r_transferTax" class="color-red">-</span></div>
+        <div class="result-row"><span>지방소득세</span><span id="r_localTax">-</span></div>
+        <div class="result-row"><span>매도 중개보수 (부가세포함)</span><span id="r_saleFee">-</span></div>
+        <div class="result-row"><span>이사비</span><span id="r_moveCost">-</span></div>
+        <div class="sep"></div>
+        <div class="result-row total"><span>💰 세후 수령예정액 <small style="font-weight:400;color:var(--sub)">(부채 차감 전)</small></span><span id="r_saleGross" class="color-green">-</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 섹션 2: 매수 분석 ===== -->
+  <div class="section" id="sec2">
+    <div class="section-header" onclick="toggleSection('sec2')">
+      <div class="section-num">2</div>
+      <h2>매수 분석</h2>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="grid-3">
+        <div class="field">
+          <label>매수가 (만원)</label>
+          <input type="number" id="buyPrice" value="170000" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>입주비용 (만원)</label>
+          <input type="number" id="moveinCost" value="480" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>등기비 (만원)</label>
+          <input type="number" id="registrationFee" value="150" oninput="calc()">
+        </div>
+      </div>
+
+      <div class="result-box">
+        <div class="result-row"><span>취득세 (3%)</span><span id="r_acquisitionTax">-</span></div>
+        <div class="result-row indent"><span>지방교육세 (취득세×10%)</span><span id="r_eduTax">-</span></div>
+        <div class="result-row indent"><span>농어촌특별세 (0.2%)</span><span id="r_ruralTax">-</span></div>
+        <div class="result-row"><span>취득세 합계</span><span id="r_taxTotal">-</span></div>
+        <div class="result-row"><span>매수 중개보수</span><span id="r_buyFee">-</span></div>
+        <div class="result-row"><span>등기비</span><span id="r_regFee">-</span></div>
+        <div class="result-row"><span>입주비용</span><span id="r_movein">-</span></div>
+        <div class="sep"></div>
+        <div class="result-row total"><span>🏠 매수 순수 비용 합계 <small style="font-weight:400;color:var(--sub)">(영유비·주담대 제외)</small></span><span id="r_buyCostBase">-</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 섹션 3: 주담대 필요액 산출 ===== -->
+  <div class="section" id="sec3">
+    <div class="section-header" onclick="toggleSection('sec3')">
+      <div class="section-num">3</div>
+      <h2>주담대 필요액 산출</h2>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="section-body">
+
+      <!-- 부채 상환 내역 -->
+      <div style="margin-bottom:10px"><strong>부채 상환 내역</strong> <small style="color:var(--sub)">— 매도 대금으로 상환할 부채</small></div>
+      <div class="debt-item">
+        <input type="checkbox" id="debt_mortgage" checked disabled>
+        <label>주담대</label>
+        <span class="badge badge-red">필수상환</span>
+        <input type="number" id="debtMortgage" value="27000" oninput="calc()" style="width:100px">
+        <span>만원 / 금리</span>
+        <input type="number" id="debtMortgageRate" value="2.61" step="0.01" oninput="calc()" style="width:60px">%
+      </div>
+      <div class="debt-item">
+        <input type="checkbox" id="debt_maton" checked onchange="calc()">
+        <label>마통</label>
+        <span class="badge badge-yellow">선택상환</span>
+        <input type="number" id="debtMaton" value="4000" oninput="calc()" style="width:100px">
+        <span>만원 / 금리</span>
+        <input type="number" id="debtMatonRate" value="6" step="0.1" oninput="calc()" style="width:60px">%
+      </div>
+      <div class="debt-item">
+        <input type="checkbox" id="debt_etc" checked onchange="calc()">
+        <label>기타대출</label>
+        <span class="badge badge-yellow">선택상환</span>
+        <input type="number" id="debtEtc" value="1500" oninput="calc()" style="width:100px">
+        <span>만원 / 금리</span>
+        <input type="number" id="debtEtcRate" value="6" step="0.1" oninput="calc()" style="width:60px">%
+      </div>
+      <div class="debt-item">
+        <input type="checkbox" id="debt_car" checked onchange="calc()">
+        <label>자동차대출</label>
+        <span class="badge badge-yellow">선택상환</span>
+        <input type="number" id="debtCar" value="3700" oninput="calc()" style="width:100px">
+        <span>만원 / 잔여</span>
+        <input type="number" id="debtCarMonths" value="30" oninput="calc()" style="width:50px">개월
+      </div>
+
+      <div class="sep"></div>
+
+      <!-- 영유비 포함 -->
+      <div style="margin-bottom:10px"><strong>영유비 포함액</strong> <small style="color:var(--sub)">— 주담대에 포함해 선납 후 파킹 운용</small></div>
+      <div class="grid-3">
+        <div class="field">
+          <label>영유비 포함 분기수 (0~10)</label>
+          <input type="number" id="daycareQuarters" value="7" min="0" max="10" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>분기 영유비 (만원)</label>
+          <input type="number" id="daycarePerQ" value="789" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>주담대 금액 (만원)</label>
+          <input type="number" id="newLoan" value="39706" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>주담대 금리 (%)</label>
+          <input type="number" id="newLoanRate" value="4.5" step="0.01" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>대출 기간 (년)</label>
+          <input type="number" id="newLoanYears" value="30" oninput="calc()">
+        </div>
+      </div>
+
+      <div class="result-box">
+        <div class="result-row"><span>세후 수령예정액 (S1)</span><span id="r_saleGrossRef">-</span></div>
+        <div class="result-row"><span>상환 부채 합계</span><span id="r_debtTotal">-</span></div>
+        <div class="result-row total"><span>가용자금 (수령 − 부채)</span><span id="r_availCash">-</span></div>
+        <div class="sep"></div>
+        <div class="result-row"><span>매수 순수비용 (S2)</span><span id="r_buyCostRef">-</span></div>
+        <div class="result-row"><span>영유비 포함액 (<span id="r_dqLabel">-</span>분기)</span><span id="r_daycareIncluded">-</span></div>
+        <div class="result-row total"><span>총 필요금액</span><span id="r_buyCostTotal">-</span></div>
+        <div class="sep"></div>
+        <div class="result-row total"><span>🏦 최소 필요 주담대</span><span id="r_minLoan" class="color-blue">-</span></div>
+        <div class="result-row"><span>신청 주담대</span><span id="r_loanApplied">-</span></div>
+        <div class="result-row"><span>월 원리금 (원리금균등)</span><span id="r_monthlyPayment" class="color-red">-</span></div>
+        <div class="info">* 최소필요주담대 = 총필요금액 − 가용자금</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 섹션 4: 주담대 한도 검증 ===== -->
+  <div class="section" id="sec4">
+    <div class="section-header" onclick="toggleSection('sec4')">
+      <div class="section-num">4</div>
+      <h2>주담대 한도 검증 (LTV / DSR)</h2>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="grid-3">
+        <div class="field">
+          <label>본인 세후 월수입 (만원)</label>
+          <input type="number" id="income1" value="480" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>배우자 세후 월수입 (만원)</label>
+          <input type="number" id="income2" value="480" oninput="calc()">
+        </div>
+      </div>
+
+      <div class="result-box">
+        <div class="result-row"><span>부부합산 연소득</span><span id="r_annualIncome">-</span></div>
+
+        <div class="result-row"><span>LTV 한도</span><span id="r_ltvLimit">-</span></div>
+        <div class="result-row"><span>DSR 40% 월한도</span><span id="r_dsrMonthlyLimit">-</span></div>
+        <div class="result-row indent"><span>마통 월이자 <small style="color:var(--sub)">(상환전 기준)</small></span><span id="r_matonMonthly">-</span></div>
+        <div class="result-row indent"><span>기타대출 월이자 <small style="color:var(--sub)">(상환전 기준)</small></span><span id="r_etcMonthly">-</span></div>
+        <div class="result-row indent"><span>자동차대출 월원리금 <small style="color:var(--sub)">(상환전 기준)</small></span><span id="r_carMonthly">-</span></div>
+        <div class="result-row"><span>기존부채 월상환 합계 <small style="color:var(--sub)">(대출신청 시점)</small></span><span id="r_existDebtMonthly">-</span></div>
+        <div class="result-row"><span>신규주담대 가능 월원리금</span><span id="r_newLoanMonthlyCap">-</span></div>
+        <div class="result-row"><span>역산 DSR 대출한도</span><span id="r_dsrLoanLimit">-</span></div>
+        <div class="sep"></div>
+        <div class="result-row total"><span>최종 한도 (MIN)</span><span id="r_finalLoanLimit">-</span></div>
+        <div class="result-row total"><span>신청 주담대 / 최종한도</span><span id="r_loanVsLimit">-</span></div>
+        <div class="result-row"><span>실제 DSR 비율</span><span id="r_actualDsr">-</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 섹션 5: 영유비 운용 ===== -->
+  <div class="section" id="sec5">
+    <div class="section-header" onclick="toggleSection('sec5')">
+      <div class="section-num">5</div>
+      <h2>영유비 운용 (파킹통장 vs 주담대 이자)</h2>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="grid-3">
+        <div class="field">
+          <label>파킹통장 금리 (%)</label>
+          <input type="number" id="parkingRate" value="3.3" step="0.1" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>총 잔여 영유 분기</label>
+          <input type="number" id="totalDaycareQ" value="10" min="1" max="20" oninput="calc()">
+        </div>
+      </div>
+      <div class="info" style="margin-bottom:10px">* 포함 분기수 · 분기 영유비는 섹션 3에서 입력</div>
+
+      <div class="result-box" style="margin-bottom:12px">
+        <div class="result-row"><span>총 영유비 포함액</span><span id="r_daycareTotal">-</span></div>
+        <div class="result-row"><span>파킹통장 운용 이자수익 (세전)</span><span id="r_parkingIncome">-</span></div>
+        <div class="result-row"><span>주담대 이자 부담 (포함액 비례)</span><span id="r_loanInterestCost">-</span></div>
+        <div class="result-row total"><span>실질 순비용 (이자부담 - 파킹이익)</span><span id="r_daycareNetCost">-</span></div>
+      </div>
+
+      <div class="table-wrap">
+        <table id="daycareTable">
+          <thead>
+            <tr><th>분기</th><th>기초잔액</th><th>파킹이자</th><th>영유비지출</th><th>기말잔액</th><th>주담대이자</th></tr>
+          </thead>
+          <tbody id="daycareTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 섹션 6: 월 현금흐름 ===== -->
+  <div class="section" id="sec6">
+    <div class="section-header" onclick="toggleSection('sec6')">
+      <div class="section-num">6</div>
+      <h2>월 현금흐름</h2>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="grid-3">
+        <div class="field">
+          <label>생활비 (만원/월)</label>
+          <input type="number" id="livingCost" value="350" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>월 영유비 (만원/월)</label>
+          <input type="number" id="daycareMonthly" value="263" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>영유기간 (개월)</label>
+          <input type="number" id="daycarePeriod" value="30" oninput="calc()">
+        </div>
+      </div>
+
+      <div class="cashflow-grid">
+        <div>
+          <div style="font-weight:600;margin-bottom:8px">영유기간 중</div>
+          <div class="result-box">
+            <div class="result-row"><span>월 수입 합계</span><span id="r_cf_income">-</span></div>
+            <div class="result-row"><span>주담대 원리금</span><span id="r_cf_loan1">-</span></div>
+            <div class="result-row"><span>영유비</span><span id="r_cf_daycare1">-</span></div>
+            <div class="result-row"><span>생활비</span><span id="r_cf_living1">-</span></div>
+            <div class="result-row"><span>기타부채 상환</span><span id="r_cf_other1">-</span></div>
+            <div class="sep"></div>
+            <div class="result-row total"><span>월 여유</span><span id="r_cf_surplus1">-</span></div>
+          </div>
+        </div>
+        <div>
+          <div style="font-weight:600;margin-bottom:8px">영유 후</div>
+          <div class="result-box">
+            <div class="result-row"><span>월 수입 합계</span><span id="r_cf_income2">-</span></div>
+            <div class="result-row"><span>주담대 원리금</span><span id="r_cf_loan2">-</span></div>
+            <div class="result-row"><span>영유비</span><span id="r_cf_daycare2">0</span></div>
+            <div class="result-row"><span>생활비</span><span id="r_cf_living2">-</span></div>
+            <div class="result-row"><span>기타부채 상환</span><span id="r_cf_other2">-</span></div>
+            <div class="sep"></div>
+            <div class="result-row total"><span>월 여유</span><span id="r_cf_surplus2">-</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-wrap">
+        <canvas id="cashflowChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 섹션 7: 절세/투자 계획 ===== -->
+  <div class="section" id="sec7">
+    <div class="section-header" onclick="toggleSection('sec7')">
+      <div class="section-num">7</div>
+      <h2>절세 / 투자 계획</h2>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="grid-3">
+        <div class="field">
+          <label>연금저축 (본인, 만원/월)</label>
+          <input type="number" id="pension1" value="50" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>연금저축 (배우자, 만원/월)</label>
+          <input type="number" id="pension2" value="50" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>IRP (본인, 만원/월)</label>
+          <input type="number" id="irp1" value="25" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>IRP (배우자, 만원/월)</label>
+          <input type="number" id="irp2" value="25" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>ISA (만원/월)</label>
+          <input type="number" id="isa" value="20" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>파킹통장 월납입 (만원)</label>
+          <input type="number" id="parkingMonthly" value="50" oninput="calc()">
+        </div>
+      </div>
+
+      <div class="result-box">
+        <div class="result-row"><span>연금저축+IRP 연납입 (본인)</span><span id="r_tax_p1">-</span></div>
+        <div class="result-row"><span>연금저축+IRP 연납입 (배우자)</span><span id="r_tax_p2">-</span></div>
+        <div class="result-row"><span>세액공제 (13.2%, 연)</span><span id="r_taxCredit">-</span></div>
+        <div class="result-row"><span>파킹통장 연이자 (세전)</span><span id="r_parkingYearly">-</span></div>
+        <div class="result-row"><span>연간 총 저축/투자액</span><span id="r_totalSave">-</span></div>
+      </div>
+
+      <div class="chart-wrap">
+        <canvas id="taxChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 섹션 8: 리모델링 비용 ===== -->
+  <div class="section" id="sec8">
+    <div class="section-header" onclick="toggleSection('sec8')">
+      <div class="section-num">8</div>
+      <h2>리모델링 비용 분석</h2>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="grid-3">
+        <div class="field">
+          <label>분담금 예상액 (만원)</label>
+          <input type="number" id="remoShare" value="24700" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>이주기간 (개월)</label>
+          <input type="number" id="remoPeriod" value="48" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>월 임시거주비 (만원)</label>
+          <input type="number" id="remoMonthly" value="150" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>리모델링 후 예상 시세 (만원)</label>
+          <input type="number" id="remoExpected" value="230000" oninput="calc()">
+        </div>
+      </div>
+
+      <div class="result-box">
+        <div class="result-row"><span>총 이주비</span><span id="r_remoMoveCost">-</span></div>
+        <div class="result-row"><span>총 추가비용</span><span id="r_remoExtra">-</span></div>
+        <div class="result-row"><span>총 투자비용 (매수가+추가)</span><span id="r_remoTotalCost">-</span></div>
+        <div class="result-row"><span>예상 시세차익</span><span id="r_remoGain" class="color-green">-</span></div>
+        <div class="result-row total"><span>투자수익률</span><span id="r_remoRoi">-</span></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+// ===== 상태 =====
+let isJoint = true;
+let cashflowChart = null;
+let taxChart = null;
+
+// ===== 유틸 =====
+const $ = id => document.getElementById(id);
+const fmt = v => isNaN(v) ? '-' : Math.round(v).toLocaleString('ko-KR');
+const fmtF = (v, d=1) => isNaN(v) ? '-' : v.toFixed(d);
+const val = id => parseFloat($(id)?.value) || 0;
+
+function setColor(el, v, greenThr, yellowThr) {
+  el.className = v >= greenThr ? 'color-green' : v >= yellowThr ? 'color-yellow' : 'color-red';
+}
+
+// 중개보수 계산 (2025년 서울 기준, 부가세 포함)
+function calcBrokerageFee(price) {
+  let fee = 0;
+  if (price < 5000)        fee = price * 0.006;
+  else if (price < 20000)  fee = Math.min(price * 0.005, 80);
+  else if (price < 90000)  fee = price * 0.004;
+  else if (price < 120000) fee = price * 0.005;
+  else if (price < 150000) fee = price * 0.006;
+  else                     fee = Math.min(price * 0.007, 900);
+  return Math.round(fee * 1.1); // 부가세 포함
+}
+
+// 양도세 구간 계산
+function calcTransferTax(taxBase) {
+  if (taxBase <= 0) return 0;
+  let tax = 0;
+  if      (taxBase <= 1400)  tax = taxBase * 0.06;
+  else if (taxBase <= 5000)  tax = taxBase * 0.15 - 126;
+  else if (taxBase <= 8800)  tax = taxBase * 0.24 - 576;
+  else if (taxBase <= 15000) tax = taxBase * 0.35 - 1544;
+  else if (taxBase <= 30000) tax = taxBase * 0.38 - 1994;
+  else if (taxBase <= 50000) tax = taxBase * 0.40 - 2594;
+  else                       tax = taxBase * 0.42 - 3594;
+  return Math.max(0, tax);
+}
+
+// 원리금균등 월납입액
+function calcMonthlyPayment(principal, annualRate, years) {
+  if (principal <= 0 || annualRate <= 0) return 0;
+  const r = annualRate / 100 / 12;
+  const n = years * 12;
+  return principal * r / (1 - Math.pow(1 + r, -n));
+}
+
+// DSR역산 대출한도
+function calcLoanFromMonthly(monthlyPayment, annualRate, years) {
+  if (monthlyPayment <= 0 || annualRate <= 0) return 0;
+  const r = annualRate / 100 / 12;
+  const n = years * 12;
+  return monthlyPayment * (1 - Math.pow(1 + r, -n)) / r;
+}
+
+// 보유/거주 기간 계산
+function calcPeriod() {
+  const now = new Date();
+  const acquireY = val('acquireYear');
+  const acquireM = val('acquireMonth');
+  const startDate = new Date(acquireY, acquireM - 1, 1);
+  const diffMs = now - startDate;
+  const diffMonths = Math.floor(diffMs / (1000 * 60 * 60 * 24 * 30.44));
+  const years = Math.floor(diffMonths / 12);
+  const months = diffMonths % 12;
+  return { years, months, totalMonths: diffMonths };
+}
+
+// ===== 메인 계산 =====
+function calc() {
+  // ─── 섹션 1: 매도 → 세후 수령예정액 (부채 차감 전) ───
+  const salePrice = val('salePrice');
+  const acqPrice  = val('acquirePrice');
+  const moveCost  = val('moveCost');
+
+  const period    = calcPeriod();
+  const holdYears = period.years;
+  const holdMonths= period.months;
+
+  // 장기보유특별공제율 (보유×4% + 거주×4%, 최대 80%)
+  const longDeductRate = Math.min((holdYears * 4 + holdYears * 4) / 100, 0.8);
+  const gain = salePrice - acqPrice;
+  const taxableRatio = salePrice > 120000 ? (salePrice - 120000) / salePrice : 0;
+
+  const persons = isJoint ? 2 : 1;
+  const gainPerPerson    = gain / persons;
+  const gainAfterDeduct  = gainPerPerson * (1 - longDeductRate);
+  const taxBasePerPerson = gainAfterDeduct * taxableRatio;
+  const transferTaxPP    = calcTransferTax(taxBasePerPerson);
+  const localTaxPP       = transferTaxPP * 0.1;
+  const transferTaxTotal = (transferTaxPP + localTaxPP) * persons;
+  const saleFee          = calcBrokerageFee(salePrice);
+
+  // 부채 차감 전 세후 수령예정액
+  const saleGross = salePrice - transferTaxTotal - saleFee - moveCost;
+
+  $('r_holdPeriod').textContent     = `${holdYears}년 ${holdMonths}개월`;
+  $('r_livePeriod').textContent     = `${holdYears}년 ${holdMonths}개월 (취득일 동일)`;
+  $('r_longDeduct').textContent     = `${(longDeductRate*100).toFixed(0)}%`;
+  $('r_gainTotal').textContent      = fmt(gain) + ' 만원';
+  $('r_gainAfterDeduct').textContent= fmt(gainAfterDeduct) + ' 만원';
+  $('r_taxBase').textContent        = fmt(taxBasePerPerson) + ' 만원';
+  $('r_transferTax').textContent    = fmt(transferTaxPP * persons) + ' 만원';
+  $('r_localTax').textContent       = fmt(localTaxPP * persons) + ' 만원';
+  $('r_saleFee').textContent        = fmt(saleFee) + ' 만원';
+  $('r_moveCost').textContent       = fmt(moveCost) + ' 만원';
+  $('r_saleGross').textContent      = fmt(saleGross) + ' 만원';
+
+  // ─── 섹션 2: 매수 → 순수 비용 합계 (영유비·주담대 제외) ───
+  const buyPrice   = val('buyPrice');
+  const moveinCost = val('moveinCost');
+  const regFee     = val('registrationFee');
+
+  const acqTax   = buyPrice * 0.03;
+  const eduTax   = acqTax * 0.10;
+  const ruralTax = buyPrice * 0.002;
+  const taxTotal = acqTax + eduTax + ruralTax;
+  const buyFee   = calcBrokerageFee(buyPrice);
+  const buyCostBase = buyPrice + taxTotal + buyFee + regFee + moveinCost;
+
+  $('r_acquisitionTax').textContent = fmt(acqTax) + ' 만원';
+  $('r_eduTax').textContent         = fmt(eduTax) + ' 만원';
+  $('r_ruralTax').textContent       = fmt(ruralTax) + ' 만원';
+  $('r_taxTotal').textContent       = fmt(taxTotal) + ' 만원';
+  $('r_buyFee').textContent         = fmt(buyFee) + ' 만원';
+  $('r_regFee').textContent         = fmt(regFee) + ' 만원';
+  $('r_movein').textContent         = fmt(moveinCost) + ' 만원';
+  $('r_buyCostBase').textContent    = fmt(buyCostBase) + ' 만원';
+
+  // ─── 섹션 3: 주담대 필요액 산출 ───
+  const newLoan      = val('newLoan');
+  const newLoanRate  = val('newLoanRate');
+  const newLoanYears = val('newLoanYears');
+  const daycareQ     = val('daycareQuarters');
+  const daycarePerQ  = val('daycarePerQ');
+
+  // 부채 상환 (체크박스 선택 여부에 따라)
+  const mortgageAmt = val('debtMortgage');
+  const matonAmt    = $('debt_maton').checked ? val('debtMaton') : 0;
+  const etcAmt      = $('debt_etc').checked   ? val('debtEtc')   : 0;
+  const carAmt      = $('debt_car').checked   ? val('debtCar')   : 0;
+  const debtTotal   = mortgageAmt + matonAmt + etcAmt + carAmt;
+
+  const availCash       = saleGross - debtTotal;         // 부채 차감 후 가용자금
+  const daycareIncluded = daycareQ * daycarePerQ;
+  const buyCostTotal    = buyCostBase + daycareIncluded; // 총 필요금액
+  const minLoan         = buyCostTotal - availCash;      // 최소 필요 주담대
+
+  const monthlyPayment = calcMonthlyPayment(newLoan, newLoanRate, newLoanYears);
+
+  $('r_saleGrossRef').textContent   = fmt(saleGross) + ' 만원';
+  $('r_debtTotal').textContent      = fmt(debtTotal) + ' 만원';
+  $('r_availCash').textContent      = fmt(availCash) + ' 만원';
+  $('r_buyCostRef').textContent     = fmt(buyCostBase) + ' 만원';
+  $('r_dqLabel').textContent        = daycareQ;
+  $('r_daycareIncluded').textContent= fmt(daycareIncluded) + ' 만원';
+  $('r_buyCostTotal').textContent   = fmt(buyCostTotal) + ' 만원';
+  $('r_minLoan').textContent        = fmt(minLoan) + ' 만원';
+  $('r_loanApplied').textContent    = fmt(newLoan) + ' 만원';
+  $('r_monthlyPayment').textContent = fmt(monthlyPayment) + ' 만원/월';
+
+  // ─── 섹션 4: 주담대 한도 검증 ───
+  const income1 = val('income1');
+  const income2 = val('income2');
+  const annualIncome    = (income1 + income2) * 12;
+  const dsrMonthlyLimit = annualIncome * 0.4 / 12;
+
+  let ltvLimit = 0;
+  if (buyPrice <= 150000)      ltvLimit = 60000;
+  else if (buyPrice <= 250000) ltvLimit = 40000;
+  else                         ltvLimit = 20000;
+
+  // DSR 기존부채: 대출 신청 시점 → 상환 여부와 무관하게 모두 포함
+  const matonMonthly  = val('debtMaton') * val('debtMatonRate') / 100 / 12;
+  const etcMonthly    = val('debtEtc')   * val('debtEtcRate')   / 100 / 12;
+  const carMonthly    = calcMonthlyPayment(val('debtCar'), 6, val('debtCarMonths') / 12);
+  const existDebtMonthly = matonMonthly + etcMonthly + carMonthly;
+
+  const newLoanMonthlyCap = dsrMonthlyLimit - existDebtMonthly;
+  const dsrLoanLimit  = calcLoanFromMonthly(newLoanMonthlyCap, newLoanRate, newLoanYears);
+  const finalLoanLimit= Math.min(ltvLimit, dsrLoanLimit);
+  const actualDsr     = ((monthlyPayment + existDebtMonthly) / (annualIncome / 12)) * 100;
+
+  $('r_annualIncome').textContent     = fmt(annualIncome) + ' 만원';
+  $('r_ltvLimit').textContent         = fmt(ltvLimit) + ' 만원';
+  $('r_dsrMonthlyLimit').textContent  = fmt(dsrMonthlyLimit) + ' 만원/월';
+  $('r_matonMonthly').textContent     = fmt(matonMonthly) + ' 만원';
+  $('r_etcMonthly').textContent       = fmt(etcMonthly) + ' 만원';
+  $('r_carMonthly').textContent       = fmt(carMonthly) + ' 만원';
+  $('r_existDebtMonthly').textContent = fmt(existDebtMonthly) + ' 만원';
+  $('r_newLoanMonthlyCap').textContent= fmt(newLoanMonthlyCap) + ' 만원';
+  $('r_dsrLoanLimit').textContent     = fmt(dsrLoanLimit) + ' 만원';
+  $('r_finalLoanLimit').textContent   = fmt(finalLoanLimit) + ' 만원';
+
+  const loanRatio    = newLoan / finalLoanLimit;
+  const loanStatusEl = $('r_loanVsLimit');
+  loanStatusEl.textContent = `${fmt(newLoan)} / ${fmt(finalLoanLimit)} 만원`;
+  loanStatusEl.className   = loanRatio < 0.9 ? 'color-green' : loanRatio <= 1 ? 'color-yellow' : 'color-red';
+
+  const dsrEl = $('r_actualDsr');
+  dsrEl.textContent = fmtF(actualDsr) + '%';
+  dsrEl.className   = actualDsr <= 35 ? 'color-green' : actualDsr <= 40 ? 'color-yellow' : 'color-red';
+
+  // ─── 섹션 5: 영유비 운용 ───
+  const parkingRate   = val('parkingRate') / 100 / 4;
+  const totalDaycareQ = val('totalDaycareQ');
+  const includedQ     = daycareQ;
+  const daycareTotal  = includedQ * daycarePerQ;
+
+  // 분기 테이블 생성
+  let balance = daycareTotal;
+  let totalParkingIncome = 0;
+  let totalLoanInterest = 0;
+  const rows = [];
+  for (let q = 1; q <= totalDaycareQ; q++) {
+    const interest = q <= includedQ ? balance * parkingRate : 0;
+    const loanInt  = q <= includedQ ? balance * (newLoanRate / 100 / 4) : 0;
+    const expense  = daycarePerQ;
+    const endBal   = q <= includedQ ? balance + interest - expense : 0;
+    if (q <= includedQ) {
+      totalParkingIncome += interest;
+      totalLoanInterest  += loanInt;
+    }
+    rows.push({ q, startBal: q <= includedQ ? balance : 0, interest, expense: q <= includedQ ? expense : 0, endBal, loanInt });
+    if (q <= includedQ) balance = endBal;
+  }
+
+  const tbody = $('daycareTableBody');
+  tbody.innerHTML = rows.map(r =>
+    `<tr>
+      <td>${r.q}분기</td>
+      <td>${r.startBal > 0 ? fmt(r.startBal) : '-'}</td>
+      <td class="color-green">${r.interest > 0 ? '+'+fmt(r.interest) : '-'}</td>
+      <td>${r.expense > 0 ? fmt(r.expense) : '-'}</td>
+      <td>${r.endBal > 0 ? fmt(r.endBal) : '-'}</td>
+      <td class="color-red">${r.loanInt > 0 ? fmt(r.loanInt) : '-'}</td>
+    </tr>`
+  ).join('');
+
+  const daycareNetCost = totalLoanInterest - totalParkingIncome;
+  $('r_daycareTotal').textContent = fmt(daycareTotal) + ' 만원';
+  $('r_parkingIncome').textContent = '+' + fmt(totalParkingIncome) + ' 만원';
+  $('r_loanInterestCost').textContent = fmt(totalLoanInterest) + ' 만원';
+  $('r_daycareNetCost').textContent = fmt(daycareNetCost) + ' 만원';
+
+  // --- 섹션 5: 현금흐름 ---
+  const livingCost     = val('livingCost');
+  const daycareMonthly = val('daycareMonthly');
+
+  // 기타부채 월상환 (영유 후에도 미상환 부채 이자)
+  const otherDebtMonthly = matonMonthly + etcMonthly + carMonthly;
+  const totalIncome = income1 + income2;
+
+  const surplus1 = totalIncome - monthlyPayment - daycareMonthly - livingCost - otherDebtMonthly;
+  const surplus2 = totalIncome - monthlyPayment - livingCost - otherDebtMonthly;
+
+  $('r_cf_income').textContent  = fmt(totalIncome) + ' 만원';
+  $('r_cf_loan1').textContent   = fmt(monthlyPayment) + ' 만원';
+  $('r_cf_daycare1').textContent = fmt(daycareMonthly) + ' 만원';
+  $('r_cf_living1').textContent  = fmt(livingCost) + ' 만원';
+  $('r_cf_other1').textContent   = fmt(otherDebtMonthly) + ' 만원';
+  $('r_cf_income2').textContent  = fmt(totalIncome) + ' 만원';
+  $('r_cf_loan2').textContent    = fmt(monthlyPayment) + ' 만원';
+  $('r_cf_living2').textContent  = fmt(livingCost) + ' 만원';
+  $('r_cf_other2').textContent   = fmt(otherDebtMonthly) + ' 만원';
+
+  const s1El = $('r_cf_surplus1');
+  s1El.textContent = fmt(surplus1) + ' 만원';
+  setColor(s1El, surplus1, 100, 50);
+
+  const s2El = $('r_cf_surplus2');
+  s2El.textContent = fmt(surplus2) + ' 만원';
+  setColor(s2El, surplus2, 100, 50);
+
+  // 현금흐름 차트
+  updateCashflowChart(totalIncome, monthlyPayment, daycareMonthly, livingCost, otherDebtMonthly, surplus1, surplus2);
+
+  // --- 섹션 6: 절세 ---
+  const p1Monthly = val('pension1') + val('irp1');
+  const p2Monthly = val('pension2') + val('irp2');
+  const p1Annual  = p1Monthly * 12;
+  const p2Annual  = p2Monthly * 12;
+  const capPerPerson = 900; // 연금저축600+IRP300
+  const taxCredit = Math.min(p1Annual, capPerPerson) * 0.132 + Math.min(p2Annual, capPerPerson) * 0.132;
+  const parkingMonthlySave = val('parkingMonthly');
+  const parkingYearly = parkingMonthlySave * 12 * (val('parkingRate') / 100);
+  const totalSave = (p1Monthly + p2Monthly + val('isa') + parkingMonthlySave) * 12;
+
+  $('r_tax_p1').textContent    = fmt(p1Annual) + ' 만원';
+  $('r_tax_p2').textContent    = fmt(p2Annual) + ' 만원';
+  $('r_taxCredit').textContent = fmt(taxCredit) + ' 만원';
+  $('r_parkingYearly').textContent = fmt(parkingYearly) + ' 만원';
+  $('r_totalSave').textContent = fmt(totalSave) + ' 만원';
+
+  updateTaxChart(p1Annual, p2Annual, val('isa') * 12, parkingMonthlySave * 12);
+
+  // --- 섹션 7: 리모델링 ---
+  const remoShare    = val('remoShare');
+  const remoPeriod   = val('remoPeriod');
+  const remoMonthly  = val('remoMonthly');
+  const remoExpected = val('remoExpected');
+  const remoMoveCost = remoPeriod * remoMonthly;
+  const remoExtra    = remoShare + remoMoveCost;
+  const remoTotalCost = buyPrice + remoExtra;
+  const remoGain     = remoExpected - remoTotalCost;
+  const remoRoi      = (remoGain / remoTotalCost) * 100;
+
+  $('r_remoMoveCost').textContent   = fmt(remoMoveCost) + ' 만원';
+  $('r_remoExtra').textContent      = fmt(remoExtra) + ' 만원';
+  $('r_remoTotalCost').textContent  = fmt(remoTotalCost) + ' 만원';
+  $('r_remoGain').textContent       = fmt(remoGain) + ' 만원';
+  const remoRoiEl = $('r_remoRoi');
+  remoRoiEl.textContent = fmtF(remoRoi) + '%';
+  remoRoiEl.className = remoRoi >= 20 ? 'color-green' : remoRoi >= 10 ? 'color-yellow' : 'color-red';
+
+  // ─── 종합 요약 카드 업데이트 ───
+  $('s_saleNet').textContent = fmt(saleGross);
+  setColor($('s_saleNet'), saleGross, 50000, 0);
+  $('s_buyCost').textContent = fmt(buyCostTotal);
+  $('s_loanLimit').textContent = fmt(finalLoanLimit);
+  const statusEl = $('s_loanStatus');
+  if (loanRatio < 0.9)     { statusEl.textContent = '여유'; statusEl.style.color = 'var(--green)'; }
+  else if (loanRatio <= 1) { statusEl.textContent = '한도 근접'; statusEl.style.color = 'var(--yellow)'; }
+  else                     { statusEl.textContent = '한도 초과!'; statusEl.style.color = 'var(--red)'; }
+
+  const s1Summary = $('s_cfDuring');
+  s1Summary.textContent = fmt(surplus1);
+  setColor(s1Summary, surplus1, 100, 50);
+  const s2Summary = $('s_cfAfter');
+  s2Summary.textContent = fmt(surplus2);
+  setColor(s2Summary, surplus2, 100, 50);
+
+  const dsrSummary = $('s_dsr');
+  dsrSummary.textContent = fmtF(actualDsr) + '%';
+  dsrSummary.className = actualDsr <= 35 ? 'value color-green' : actualDsr <= 40 ? 'value color-yellow' : 'value color-red';
+
+  $('s_remoRoi').textContent = fmtF(remoRoi) + '%';
+  $('s_remoRoi').className = remoRoi >= 20 ? 'value color-green' : remoRoi >= 10 ? 'value color-yellow' : 'value color-red';
+}
+
+// ===== 차트 =====
+function updateCashflowChart(income, loan, daycare, living, other, s1, s2) {
+  const ctx = $('cashflowChart').getContext('2d');
+  if (cashflowChart) cashflowChart.destroy();
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const labelColor = isDark ? '#94a3b8' : '#64748b';
+
+  cashflowChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['영유기간 중', '영유 후'],
+      datasets: [
+        { label: '주담대', data: [loan, loan], backgroundColor: '#ef4444' },
+        { label: '영유비', data: [daycare, 0], backgroundColor: '#f59e0b' },
+        { label: '생활비', data: [living, living], backgroundColor: '#8b5cf6' },
+        { label: '기타부채', data: [other, other], backgroundColor: '#94a3b8' },
+        { label: '월 여유', data: [s1, s2], backgroundColor: '#10b981' },
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: { stacked: true, ticks: { color: labelColor } },
+        y: { stacked: true, ticks: { color: labelColor } }
+      },
+      plugins: { legend: { labels: { color: labelColor } } }
+    }
+  });
+}
+
+function updateTaxChart(p1, p2, isa, parking) {
+  const ctx = $('taxChart').getContext('2d');
+  if (taxChart) taxChart.destroy();
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const labelColor = isDark ? '#94a3b8' : '#64748b';
+
+  taxChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['연금저축/IRP(본인)', '연금저축/IRP(배우자)', 'ISA', '파킹통장'],
+      datasets: [{
+        data: [p1, p2, isa, parking],
+        backgroundColor: ['#3b82f6','#8b5cf6','#10b981','#f59e0b']
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { labels: { color: labelColor } } }
+    }
+  });
+}
+
+// ===== 섹션 토글 =====
+function toggleSection(id) {
+  const sec = $(id);
+  const body = sec.querySelector('.section-body');
+  const icon = sec.querySelector('.toggle-icon');
+  const isOpen = body.style.display !== 'none';
+  body.style.display = isOpen ? 'none' : 'block';
+  icon.style.transform = isOpen ? 'rotate(-90deg)' : '';
+}
+
+// ===== 공동명의 토글 =====
+function toggleJoint() {
+  isJoint = !isJoint;
+  const btn = $('jointToggle');
+  const lbl = $('jointLabel');
+  btn.className = 'toggle' + (isJoint ? ' on' : '');
+  lbl.textContent = isJoint ? '공동명의 (각 50%)' : '단독명의';
+  calc();
+}
+
+// ===== 다크모드 =====
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  calc(); // 차트 색상 재렌더
+}
+
+// ===== 초기 실행 =====
+calc();
+</script>
+</body>
+</html>
