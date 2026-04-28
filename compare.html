@@ -810,7 +810,7 @@ async function fetchWithProxy(targetUrl) {
 
 async function fetchMolitMonth(lawdCd, yyyymm) {
   const rawKey = decodeURIComponent(MOLIT_API_KEY);
-  const direct = `https://apis.data.go.kr/1613000/RTMSOBJSvc/getRTMSDataSvcAptTradeDev` +
+  const direct = `https://apis.data.go.kr/1613000/RTMSDataSvcAptTrade/getRTMSDataSvcAptTrade` +
     `?serviceKey=${encodeURIComponent(rawKey)}&LAWD_CD=${lawdCd}&DEAL_YMD=${yyyymm}&numOfRows=200&pageNo=1`;
   const res = await fetchWithProxy(direct);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
