@@ -925,8 +925,11 @@ function calc() {
   const livingCost     = val('livingCost');
   const daycareMonthly = val('daycareMonthly');
 
-  // 기타부채 월상환 (영유 후에도 미상환 부채 이자)
-  const otherDebtMonthly = matonMonthly + etcMonthly + carMonthly;
+  // 기타부채 월상환: 체크박스 ON = 매도수익으로 상환 완료 → 월납입 없음, OFF = 계속 상환 중
+  const cfMatonMonthly = $('debt_maton').checked ? 0 : matonMonthly;
+  const cfEtcMonthly   = $('debt_etc').checked   ? 0 : etcMonthly;
+  const cfCarMonthly   = $('debt_car').checked   ? 0 : carMonthly;
+  const otherDebtMonthly = cfMatonMonthly + cfEtcMonthly + cfCarMonthly;
   const totalIncome = income1 + income2;
 
   const surplus1 = totalIncome - monthlyPayment - daycareMonthly - livingCost - otherDebtMonthly;
