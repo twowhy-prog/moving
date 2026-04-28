@@ -169,25 +169,25 @@
         <div class="field">
           <label>매도가 (만원)</label>
           <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('salePrice', -100000)">▼</button>
-            <input type="number" id="salePrice" value="1900000" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('salePrice', 100000)">▲</button>
+            <button class="adjust-btn" onclick="adjustValue('salePrice', -100)">▼</button>
+            <input type="number" id="salePrice" value="190000" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('salePrice', 100)">▲</button>
           </div>
         </div>
         <div class="field">
           <label>취득가 (만원)</label>
           <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('acquirePrice', -100000)">▼</button>
-            <input type="number" id="acquirePrice" value="980000" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('acquirePrice', 100000)">▲</button>
+            <button class="adjust-btn" onclick="adjustValue('acquirePrice', -100)">▼</button>
+            <input type="number" id="acquirePrice" value="98000" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('acquirePrice', 100)">▲</button>
           </div>
         </div>
         <div class="field">
           <label>이사비 (만원)</label>
           <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('moveCost', -10000)">▼</button>
-            <input type="number" id="moveCost" value="300000" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('moveCost', 10000)">▲</button>
+            <button class="adjust-btn" onclick="adjustValue('moveCost', -10)">▼</button>
+            <input type="number" id="moveCost" value="300" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('moveCost', 10)">▲</button>
           </div>
         </div>
         <div class="field">
@@ -229,25 +229,25 @@
         <div class="field">
           <label>매수가 (만원)</label>
           <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('buyPrice', -100000)">▼</button>
-            <input type="number" id="buyPrice" value="1650000" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('buyPrice', 100000)">▲</button>
+            <button class="adjust-btn" onclick="adjustValue('buyPrice', -100)">▼</button>
+            <input type="number" id="buyPrice" value="165000" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('buyPrice', 100)">▲</button>
           </div>
         </div>
         <div class="field">
           <label>입주비용 (만원)</label>
           <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('moveinCost', -100000)">▼</button>
-            <input type="number" id="moveinCost" value="500000" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('moveinCost', 100000)">▲</button>
+            <button class="adjust-btn" onclick="adjustValue('moveinCost', -10)">▼</button>
+            <input type="number" id="moveinCost" value="500" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('moveinCost', 10)">▲</button>
           </div>
         </div>
         <div class="field">
           <label>등기비 (만원)</label>
           <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('registrationFee', -10000)">▼</button>
-            <input type="number" id="registrationFee" value="150000" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('registrationFee', 10000)">▲</button>
+            <button class="adjust-btn" onclick="adjustValue('registrationFee', -10)">▼</button>
+            <input type="number" id="registrationFee" value="150" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('registrationFee', 10)">▲</button>
           </div>
         </div>
       </div>
@@ -281,9 +281,9 @@
         <input type="checkbox" id="debt_mortgage" checked disabled>
         <label>주담대</label>
         <span class="badge badge-red">필수상환</span>
-        <button class="adjust-btn" onclick="adjustValue('debtMortgage', -100000)">▼</button>
-        <input type="number" id="debtMortgage" value="2700000" oninput="calc()" style="width:80px">
-        <button class="adjust-btn" onclick="adjustValue('debtMortgage', 100000)">▲</button>
+        <button class="adjust-btn" onclick="adjustValue('debtMortgage', -100)">▼</button>
+        <input type="number" id="debtMortgage" value="27000" oninput="calc()" style="width:80px">
+        <button class="adjust-btn" onclick="adjustValue('debtMortgage', 100)">▲</button>
         <span>만원 / 금리</span>
         <input type="number" id="debtMortgageRate" value="2.61" step="0.01" oninput="calc()" style="width:60px">%
       </div>
@@ -291,9 +291,9 @@
         <input type="checkbox" id="debt_maton" checked onchange="calc()">
         <label>마통</label>
         <span class="badge badge-yellow">선택상환</span>
-        <button class="adjust-btn" onclick="adjustValue('debtMaton', -100000)">▼</button>
-        <input type="number" id="debtMaton" value="400000" oninput="calc()" style="width:80px">
-        <button class="adjust-btn" onclick="adjustValue('debtMaton', 100000)">▲</button>
+        <button class="adjust-btn" onclick="adjustValue('debtMaton', -100)">▼</button>
+        <input type="number" id="debtMaton" value="4000" oninput="calc()" style="width:80px">
+        <button class="adjust-btn" onclick="adjustValue('debtMaton', 100)">▲</button>
         <span>만원 / 금리</span>
         <input type="number" id="debtMatonRate" value="6" step="0.1" oninput="calc()" style="width:60px">%
       </div>
@@ -301,9 +301,9 @@
         <input type="checkbox" id="debt_etc" checked onchange="calc()">
         <label>기타대출</label>
         <span class="badge badge-yellow">선택상환</span>
-        <button class="adjust-btn" onclick="adjustValue('debtEtc', -100000)">▼</button>
-        <input type="number" id="debtEtc" value="150000" oninput="calc()" style="width:80px">
-        <button class="adjust-btn" onclick="adjustValue('debtEtc', 100000)">▲</button>
+        <button class="adjust-btn" onclick="adjustValue('debtEtc', -100)">▼</button>
+        <input type="number" id="debtEtc" value="1500" oninput="calc()" style="width:80px">
+        <button class="adjust-btn" onclick="adjustValue('debtEtc', 100)">▲</button>
         <span>만원 / 금리</span>
         <input type="number" id="debtEtcRate" value="6" step="0.1" oninput="calc()" style="width:60px">%
       </div>
@@ -311,9 +311,9 @@
         <input type="checkbox" id="debt_car" checked onchange="calc()">
         <label>자동차대출</label>
         <span class="badge badge-yellow">선택상환</span>
-        <button class="adjust-btn" onclick="adjustValue('debtCar', -100000)">▼</button>
-        <input type="number" id="debtCar" value="370000" oninput="calc()" style="width:80px">
-        <button class="adjust-btn" onclick="adjustValue('debtCar', 100000)">▲</button>
+        <button class="adjust-btn" onclick="adjustValue('debtCar', -100)">▼</button>
+        <input type="number" id="debtCar" value="3700" oninput="calc()" style="width:80px">
+        <button class="adjust-btn" onclick="adjustValue('debtCar', 100)">▲</button>
         <span>만원 / 잔여</span>
         <input type="number" id="debtCarMonths" value="30" oninput="calc()" style="width:50px">개월
       </div>
@@ -330,17 +330,17 @@
         <div class="field">
           <label>분기 영유비 (만원)</label>
           <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('daycarePerQ', -100000)">▼</button>
-            <input type="number" id="daycarePerQ" value="789000" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('daycarePerQ', 100000)">▲</button>
+            <button class="adjust-btn" onclick="adjustValue('daycarePerQ', -100)">▼</button>
+            <input type="number" id="daycarePerQ" value="789" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('daycarePerQ', 100)">▲</button>
           </div>
         </div>
         <div class="field">
           <label>주담대 금액 (만원)</label>
           <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('newLoan', -500000)">▼</button>
-            <input type="number" id="newLoan" value="3000000" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('newLoan', 500000)">▲</button>
+            <button class="adjust-btn" onclick="adjustValue('newLoan', -500)">▼</button>
+            <input type="number" id="newLoan" value="30000" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('newLoan', 500)">▲</button>
           </div>
         </div>
         <div class="field">
@@ -382,17 +382,17 @@
         <div class="field">
           <label>본인 세후 월수입 (만원)</label>
           <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('income1', -100000)">▼</button>
-            <input type="number" id="income1" value="480000" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('income1', 100000)">▲</button>
+            <button class="adjust-btn" onclick="adjustValue('income1', -10)">▼</button>
+            <input type="number" id="income1" value="480" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('income1', 10)">▲</button>
           </div>
         </div>
         <div class="field">
           <label>배우자 세후 월수입 (만원)</label>
           <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('income2', -100000)">▼</button>
-            <input type="number" id="income2" value="480000" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('income2', 100000)">▲</button>
+            <button class="adjust-btn" onclick="adjustValue('income2', -10)">▼</button>
+            <input type="number" id="income2" value="480" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('income2', 10)">▲</button>
           </div>
         </div>
       </div>
@@ -466,17 +466,17 @@
         <div class="field">
           <label>생활비 (만원/월)</label>
           <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('livingCost', -100000)">▼</button>
-            <input type="number" id="livingCost" value="350000" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('livingCost', 100000)">▲</button>
+            <button class="adjust-btn" onclick="adjustValue('livingCost', -10)">▼</button>
+            <input type="number" id="livingCost" value="350" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('livingCost', 10)">▲</button>
           </div>
         </div>
         <div class="field">
           <label>월 영유비 (만원/월)</label>
           <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('daycareMonthly', -100000)">▼</button>
-            <input type="number" id="daycareMonthly" value="263000" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('daycareMonthly', 100000)">▲</button>
+            <button class="adjust-btn" onclick="adjustValue('daycareMonthly', -10)">▼</button>
+            <input type="number" id="daycareMonthly" value="263" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('daycareMonthly', 10)">▲</button>
           </div>
         </div>
         <div class="field">
@@ -530,49 +530,49 @@
         <div class="field">
           <label>연금저축 (본인, 만원/월)</label>
           <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('pension1', -50000)">▼</button>
-            <input type="number" id="pension1" value="50000" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('pension1', 50000)">▲</button>
+            <button class="adjust-btn" onclick="adjustValue('pension1', -5)">▼</button>
+            <input type="number" id="pension1" value="50" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('pension1', 5)">▲</button>
           </div>
         </div>
         <div class="field">
           <label>연금저축 (배우자, 만원/월)</label>
           <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('pension2', -50000)">▼</button>
-            <input type="number" id="pension2" value="50000" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('pension2', 50000)">▲</button>
+            <button class="adjust-btn" onclick="adjustValue('pension2', -5)">▼</button>
+            <input type="number" id="pension2" value="50" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('pension2', 5)">▲</button>
           </div>
         </div>
         <div class="field">
           <label>IRP (본인, 만원/월)</label>
           <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('irp1', -25000)">▼</button>
-            <input type="number" id="irp1" value="25000" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('irp1', 25000)">▲</button>
+            <button class="adjust-btn" onclick="adjustValue('irp1', -5)">▼</button>
+            <input type="number" id="irp1" value="25" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('irp1', 5)">▲</button>
           </div>
         </div>
         <div class="field">
           <label>IRP (배우자, 만원/월)</label>
           <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('irp2', -25000)">▼</button>
-            <input type="number" id="irp2" value="25000" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('irp2', 25000)">▲</button>
+            <button class="adjust-btn" onclick="adjustValue('irp2', -5)">▼</button>
+            <input type="number" id="irp2" value="25" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('irp2', 5)">▲</button>
           </div>
         </div>
         <div class="field">
           <label>ISA (만원/월)</label>
           <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('isa', -20000)">▼</button>
-            <input type="number" id="isa" value="20000" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('isa', 20000)">▲</button>
+            <button class="adjust-btn" onclick="adjustValue('isa', -5)">▼</button>
+            <input type="number" id="isa" value="20" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('isa', 5)">▲</button>
           </div>
         </div>
         <div class="field">
           <label>파킹통장 월납입 (만원)</label>
           <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('parkingMonthly', -50000)">▼</button>
-            <input type="number" id="parkingMonthly" value="50000" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('parkingMonthly', 50000)">▲</button>
+            <button class="adjust-btn" onclick="adjustValue('parkingMonthly', -5)">▼</button>
+            <input type="number" id="parkingMonthly" value="50" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('parkingMonthly', 5)">▲</button>
           </div>
         </div>
       </div>
@@ -603,9 +603,9 @@
         <div class="field">
           <label>분담금 예상액 (만원)</label>
           <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('remoShare', -1000000)">▼</button>
-            <input type="number" id="remoShare" value="2470000" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('remoShare', 1000000)">▲</button>
+            <button class="adjust-btn" onclick="adjustValue('remoShare', -1000)">▼</button>
+            <input type="number" id="remoShare" value="24700" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('remoShare', 1000)">▲</button>
           </div>
         </div>
         <div class="field">
@@ -615,17 +615,17 @@
         <div class="field">
           <label>월 임시거주비 (만원)</label>
           <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('remoMonthly', -100000)">▼</button>
-            <input type="number" id="remoMonthly" value="150000" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('remoMonthly', 100000)">▲</button>
+            <button class="adjust-btn" onclick="adjustValue('remoMonthly', -10)">▼</button>
+            <input type="number" id="remoMonthly" value="150" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('remoMonthly', 10)">▲</button>
           </div>
         </div>
         <div class="field">
           <label>리모델링 후 예상 시세 (만원)</label>
           <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('remoExpected', -1000000)">▼</button>
-            <input type="number" id="remoExpected" value="2300000" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('remoExpected', 1000000)">▲</button>
+            <button class="adjust-btn" onclick="adjustValue('remoExpected', -1000)">▼</button>
+            <input type="number" id="remoExpected" value="230000" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('remoExpected', 1000)">▲</button>
           </div>
         </div>
       </div>
