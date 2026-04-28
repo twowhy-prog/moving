@@ -98,6 +98,9 @@
 
   .cashflow-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 12px; }
   @media (max-width: 640px) { .cashflow-grid { grid-template-columns: 1fr; } }
+  .cashflow-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 12px; }
+  @media (max-width: 860px) { .cashflow-grid-3 { grid-template-columns: 1fr; } }
+  .period-header { font-weight: 600; font-size: 13px; padding: 10px 12px; border-radius: 8px 8px 0 0; line-height: 1.6; }
 
   @media print {
     .header-actions { display: none; }
@@ -142,7 +145,7 @@
       <div class="sub" id="s_loanStatus">-</div>
     </div>
     <div class="summary-card">
-      <div class="label">월 여유 (영유기간)</div>
+      <div class="label">월 여유 (영유기간2·직납)</div>
       <div class="value" id="s_cfDuring">-</div>
       <div class="sub">만원/월</div>
     </div>
@@ -485,7 +488,7 @@
           </div>
         </div>
         <div class="field">
-          <label>월 영유비 (만원/월)</label>
+          <label>월 영유비 (만원/월) <small>— ② 직납 기간</small></label>
           <div class="field-adjust">
             <button class="adjust-btn" onclick="adjustValue('daycareMonthly', -10)">▼</button>
             <input type="number" id="daycareMonthly" value="263" oninput="calc()">
@@ -493,34 +496,58 @@
           </div>
         </div>
         <div class="field">
-          <label>영유기간 (개월) <small style="color:var(--sub)">잔여분기×3 자동</small></label>
-          <input type="number" id="daycarePeriod" value="33" readonly style="background:var(--input-bg);opacity:0.7">
+          <label>초등교육비 (만원/월) <small>— ③ 영유 후</small></label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('elemSchoolMonthly', -5)">▼</button>
+            <input type="number" id="elemSchoolMonthly" value="50" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('elemSchoolMonthly', 5)">▲</button>
+          </div>
         </div>
       </div>
 
-      <div class="cashflow-grid">
+      <div class="cashflow-grid-3">
+        <!-- ① 영유기간1 -->
         <div>
-          <div style="font-weight:600;margin-bottom:8px">영유기간 중</div>
-          <div class="result-box">
-            <div class="result-row"><span>월 수입 합계</span><span id="r_cf_income">-</span></div>
-            <div class="result-row"><span>주담대 원리금</span><span id="r_cf_loan1">-</span></div>
-            <div class="result-row"><span>영유비</span><span id="r_cf_daycare1">-</span></div>
-            <div class="result-row"><span>생활비</span><span id="r_cf_living1">-</span></div>
-            <div class="result-row"><span>기타부채 상환</span><span id="r_cf_other1">-</span></div>
+          <div class="period-header" style="background:#dbeafe;color:#1d4ed8;border:1.5px solid #93c5fd">
+            ① 영유기간1<br><small style="font-weight:400">영유비 주담대 포함 · <span id="r_cf1_months">-</span>개월</small>
+          </div>
+          <div class="result-box" style="border-radius:0 0 8px 8px;margin-top:0">
+            <div class="result-row"><span>월 수입 합계</span><span id="r_cf1_income">-</span></div>
+            <div class="result-row"><span>주담대 원리금</span><span id="r_cf1_loan">-</span></div>
+            <div class="result-row"><span>생활비</span><span id="r_cf1_living">-</span></div>
+            <div class="result-row"><span>기타부채 상환</span><span id="r_cf1_other">-</span></div>
             <div class="sep"></div>
-            <div class="result-row total"><span>월 여유</span><span id="r_cf_surplus1">-</span></div>
+            <div class="result-row total"><span>월 여유</span><span id="r_cf1_surplus">-</span></div>
           </div>
         </div>
+        <!-- ② 영유기간2 -->
         <div>
-          <div style="font-weight:600;margin-bottom:8px">영유 후</div>
-          <div class="result-box">
-            <div class="result-row"><span>월 수입 합계</span><span id="r_cf_income2">-</span></div>
-            <div class="result-row"><span>주담대 원리금</span><span id="r_cf_loan2">-</span></div>
-            <div class="result-row"><span>영유비</span><span id="r_cf_daycare2">0</span></div>
-            <div class="result-row"><span>생활비</span><span id="r_cf_living2">-</span></div>
-            <div class="result-row"><span>기타부채 상환</span><span id="r_cf_other2">-</span></div>
+          <div class="period-header" style="background:#fef3c7;color:#92400e;border:1.5px solid #fbbf24">
+            ② 영유기간2<br><small style="font-weight:400">영유비 직납 · <span id="r_cf2_months">-</span>개월</small>
+          </div>
+          <div class="result-box" style="border-radius:0 0 8px 8px;margin-top:0">
+            <div class="result-row"><span>월 수입 합계</span><span id="r_cf2_income">-</span></div>
+            <div class="result-row"><span>주담대 원리금</span><span id="r_cf2_loan">-</span></div>
+            <div class="result-row"><span>영유비 (직납)</span><span id="r_cf2_daycare">-</span></div>
+            <div class="result-row"><span>생활비</span><span id="r_cf2_living">-</span></div>
+            <div class="result-row"><span>기타부채 상환</span><span id="r_cf2_other">-</span></div>
             <div class="sep"></div>
-            <div class="result-row total"><span>월 여유</span><span id="r_cf_surplus2">-</span></div>
+            <div class="result-row total"><span>월 여유</span><span id="r_cf2_surplus">-</span></div>
+          </div>
+        </div>
+        <!-- ③ 영유기간 후 -->
+        <div>
+          <div class="period-header" style="background:#d1fae5;color:#065f46;border:1.5px solid #6ee7b7">
+            ③ 영유기간 후<br><small style="font-weight:400">초등학교 입학</small>
+          </div>
+          <div class="result-box" style="border-radius:0 0 8px 8px;margin-top:0">
+            <div class="result-row"><span>월 수입 합계</span><span id="r_cf3_income">-</span></div>
+            <div class="result-row"><span>주담대 원리금</span><span id="r_cf3_loan">-</span></div>
+            <div class="result-row"><span>초등교육비</span><span id="r_cf3_elem">-</span></div>
+            <div class="result-row"><span>생활비</span><span id="r_cf3_living">-</span></div>
+            <div class="result-row"><span>기타부채 상환</span><span id="r_cf3_other">-</span></div>
+            <div class="sep"></div>
+            <div class="result-row total"><span>월 여유</span><span id="r_cf3_surplus">-</span></div>
           </div>
         </div>
       </div>
@@ -882,9 +909,6 @@ function calc() {
   $('r_includedQ').textContent     = includedQ + '분기';
   $('r_directQ').textContent       = directQ + '분기 (월급 직접 지불)';
 
-  // 영유기간 자동 연동
-  $('daycarePeriod').value = totalDaycareQ * 3;
-
   // 분기 테이블 생성 (includedQ가 totalDaycareQ보다 클 경우도 전부 표시)
   let balance = daycareTotal;
   let totalParkingIncome = 0;
@@ -921,9 +945,10 @@ function calc() {
   $('r_loanInterestCost').textContent = fmt(totalLoanInterest) + ' 만원';
   $('r_daycareNetCost').textContent = fmt(daycareNetCost) + ' 만원';
 
-  // --- 섹션 5: 현금흐름 ---
-  const livingCost     = val('livingCost');
-  const daycareMonthly = val('daycareMonthly');
+  // --- 섹션 6: 월 현금흐름 ---
+  const livingCost        = val('livingCost');
+  const daycareMonthly    = val('daycareMonthly');
+  const elemSchoolMonthly = val('elemSchoolMonthly');
 
   // 기타부채 월상환: 체크박스 ON = 매도수익으로 상환 완료 → 월납입 없음, OFF = 계속 상환 중
   const cfMatonMonthly = $('debt_maton').checked ? 0 : matonMonthly;
@@ -932,29 +957,40 @@ function calc() {
   const otherDebtMonthly = cfMatonMonthly + cfEtcMonthly + cfCarMonthly;
   const totalIncome = income1 + income2;
 
-  const surplus1 = totalIncome - monthlyPayment - daycareMonthly - livingCost - otherDebtMonthly;
-  const surplus2 = totalIncome - monthlyPayment - livingCost - otherDebtMonthly;
+  // ① 영유기간1: 영유비가 주담대에 포함 → 월 직납 없음
+  const surplus_p1 = totalIncome - monthlyPayment - livingCost - otherDebtMonthly;
+  // ② 영유기간2: 영유비 직납
+  const surplus_p2 = totalIncome - monthlyPayment - daycareMonthly - livingCost - otherDebtMonthly;
+  // ③ 영유기간 후: 초등교육비
+  const surplus_p3 = totalIncome - monthlyPayment - elemSchoolMonthly - livingCost - otherDebtMonthly;
 
-  $('r_cf_income').textContent  = fmt(totalIncome) + ' 만원';
-  $('r_cf_loan1').textContent   = fmt(monthlyPayment) + ' 만원';
-  $('r_cf_daycare1').textContent = fmt(daycareMonthly) + ' 만원';
-  $('r_cf_living1').textContent  = fmt(livingCost) + ' 만원';
-  $('r_cf_other1').textContent   = fmt(otherDebtMonthly) + ' 만원';
-  $('r_cf_income2').textContent  = fmt(totalIncome) + ' 만원';
-  $('r_cf_loan2').textContent    = fmt(monthlyPayment) + ' 만원';
-  $('r_cf_living2').textContent  = fmt(livingCost) + ' 만원';
-  $('r_cf_other2').textContent   = fmt(otherDebtMonthly) + ' 만원';
+  const p1_months = includedQ * 3;
+  const p2_months = directQ * 3;
 
-  const s1El = $('r_cf_surplus1');
-  s1El.textContent = fmt(surplus1) + ' 만원';
-  setColor(s1El, surplus1, 1, 0.5);
+  $('r_cf1_months').textContent  = p1_months;
+  $('r_cf1_income').textContent  = fmt(totalIncome) + ' 만원';
+  $('r_cf1_loan').textContent    = fmt(monthlyPayment) + ' 만원';
+  $('r_cf1_living').textContent  = fmt(livingCost) + ' 만원';
+  $('r_cf1_other').textContent   = fmt(otherDebtMonthly) + ' 만원';
+  const s1El = $('r_cf1_surplus'); s1El.textContent = fmt(surplus_p1) + ' 만원'; setColor(s1El, surplus_p1, 1, 0.5);
 
-  const s2El = $('r_cf_surplus2');
-  s2El.textContent = fmt(surplus2) + ' 만원';
-  setColor(s2El, surplus2, 1, 0.5);
+  $('r_cf2_months').textContent  = p2_months;
+  $('r_cf2_income').textContent  = fmt(totalIncome) + ' 만원';
+  $('r_cf2_loan').textContent    = fmt(monthlyPayment) + ' 만원';
+  $('r_cf2_daycare').textContent = fmt(daycareMonthly) + ' 만원';
+  $('r_cf2_living').textContent  = fmt(livingCost) + ' 만원';
+  $('r_cf2_other').textContent   = fmt(otherDebtMonthly) + ' 만원';
+  const s2El = $('r_cf2_surplus'); s2El.textContent = fmt(surplus_p2) + ' 만원'; setColor(s2El, surplus_p2, 1, 0.5);
+
+  $('r_cf3_income').textContent  = fmt(totalIncome) + ' 만원';
+  $('r_cf3_loan').textContent    = fmt(monthlyPayment) + ' 만원';
+  $('r_cf3_elem').textContent    = fmt(elemSchoolMonthly) + ' 만원';
+  $('r_cf3_living').textContent  = fmt(livingCost) + ' 만원';
+  $('r_cf3_other').textContent   = fmt(otherDebtMonthly) + ' 만원';
+  const s3El = $('r_cf3_surplus'); s3El.textContent = fmt(surplus_p3) + ' 만원'; setColor(s3El, surplus_p3, 1, 0.5);
 
   // 현금흐름 차트
-  updateCashflowChart(totalIncome, monthlyPayment, daycareMonthly, livingCost, otherDebtMonthly, surplus1, surplus2);
+  updateCashflowChart(totalIncome, monthlyPayment, daycareMonthly, elemSchoolMonthly, livingCost, otherDebtMonthly, surplus_p1, surplus_p2, surplus_p3);
 
   // --- 섹션 6: 절세 ---
   const p1Monthly = val('pension1') + val('irp1');
@@ -1005,11 +1041,11 @@ function calc() {
   else                     { statusEl.textContent = '한도 초과!'; statusEl.style.color = 'var(--red)'; }
 
   const s1Summary = $('s_cfDuring');
-  s1Summary.textContent = fmt(surplus1);
-  setColor(s1Summary, surplus1, 1, 0.5);
+  s1Summary.textContent = fmt(surplus_p2);
+  setColor(s1Summary, surplus_p2, 1, 0.5);
   const s2Summary = $('s_cfAfter');
-  s2Summary.textContent = fmt(surplus2);
-  setColor(s2Summary, surplus2, 1, 0.5);
+  s2Summary.textContent = fmt(surplus_p3);
+  setColor(s2Summary, surplus_p3, 1, 0.5);
 
   const dsrSummary = $('s_dsr');
   dsrSummary.textContent = fmtF(actualDsr) + '%';
@@ -1020,7 +1056,7 @@ function calc() {
 }
 
 // ===== 차트 =====
-function updateCashflowChart(income, loan, daycare, living, other, s1, s2) {
+function updateCashflowChart(income, loan, daycare, elemSchool, living, other, s1, s2, s3) {
   const ctx = $('cashflowChart').getContext('2d');
   if (cashflowChart) cashflowChart.destroy();
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -1029,13 +1065,14 @@ function updateCashflowChart(income, loan, daycare, living, other, s1, s2) {
   cashflowChart = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: ['영유기간 중', '영유 후'],
+      labels: ['① 영유기간1\n(영유비 포함)', '② 영유기간2\n(영유비 직납)', '③ 영유기간 후\n(초등)'],
       datasets: [
-        { label: '주담대', data: [loan, loan], backgroundColor: '#ef4444' },
-        { label: '영유비', data: [daycare, 0], backgroundColor: '#f59e0b' },
-        { label: '생활비', data: [living, living], backgroundColor: '#8b5cf6' },
-        { label: '기타부채', data: [other, other], backgroundColor: '#94a3b8' },
-        { label: '월 여유', data: [s1, s2], backgroundColor: '#10b981' },
+        { label: '주담대',     data: [loan,  loan,     loan],     backgroundColor: '#ef4444' },
+        { label: '영유비(직납)', data: [0,     daycare,  0],        backgroundColor: '#f59e0b' },
+        { label: '초등교육비',  data: [0,     0,        elemSchool], backgroundColor: '#f97316' },
+        { label: '생활비',     data: [living, living,  living],   backgroundColor: '#8b5cf6' },
+        { label: '기타부채',   data: [other,  other,   other],    backgroundColor: '#94a3b8' },
+        { label: '월 여유',    data: [s1,     s2,      s3],       backgroundColor: '#10b981' },
       ]
     },
     options: {
