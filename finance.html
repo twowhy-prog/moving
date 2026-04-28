@@ -50,6 +50,10 @@
     background: var(--input-bg); color: var(--text); font-size: 14px;
   }
   .field input:focus, .field select:focus { outline: 2px solid var(--blue); border-color: var(--blue); }
+  .field-adjust { display: flex; align-items: center; gap: 4px; }
+  .field-adjust input { flex: 1; }
+  .adjust-btn { width: 28px; height: 28px; padding: 0; border: 1px solid var(--border); border-radius: 4px; background: var(--input-bg); color: var(--text); cursor: pointer; font-size: 12px; font-weight: 600; }
+  .adjust-btn:hover { background: var(--border); }
   .toggle-wrap { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
   .toggle { width: 40px; height: 22px; background: var(--border); border-radius: 11px; position: relative; cursor: pointer; transition: background 0.2s; border: none; }
   .toggle.on { background: var(--green); }
@@ -125,12 +129,12 @@
     <div class="summary-card">
       <div class="label">매도 세후 수령예정</div>
       <div class="value color-green" id="s_saleNet">-</div>
-      <div class="sub">백만원 (부채차감전)</div>
+      <div class="sub">만원 (부채차감전)</div>
     </div>
     <div class="summary-card">
       <div class="label">매수 총비용</div>
       <div class="value" id="s_buyCost">-</div>
-      <div class="sub">백만원</div>
+      <div class="sub">만원</div>
     </div>
     <div class="summary-card">
       <div class="label">주담대 한도</div>
@@ -140,12 +144,12 @@
     <div class="summary-card">
       <div class="label">월 여유 (영유기간)</div>
       <div class="value" id="s_cfDuring">-</div>
-      <div class="sub">백만원/월</div>
+      <div class="sub">만원/월</div>
     </div>
     <div class="summary-card">
       <div class="label">월 여유 (영유 후)</div>
       <div class="value" id="s_cfAfter">-</div>
-      <div class="sub">백만원/월</div>
+      <div class="sub">만원/월</div>
     </div>
     <div class="summary-card">
       <div class="label">DSR 비율</div>
@@ -169,16 +173,28 @@
     <div class="section-body">
       <div class="grid-3">
         <div class="field">
-          <label>매도가 (백만원)</label>
-          <input type="number" id="salePrice" value="1900" oninput="calc()">
+          <label>매도가 (만원)</label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('salePrice', -100)">▼</button>
+            <input type="number" id="salePrice" value="190000" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('salePrice', 100)">▲</button>
+          </div>
         </div>
         <div class="field">
-          <label>취득가 (백만원)</label>
-          <input type="number" id="acquirePrice" value="980" oninput="calc()">
+          <label>취득가 (만원)</label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('acquirePrice', -100)">▼</button>
+            <input type="number" id="acquirePrice" value="98000" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('acquirePrice', 100)">▲</button>
+          </div>
         </div>
         <div class="field">
-          <label>이사비 (백만원)</label>
-          <input type="number" id="moveCost" value="3" oninput="calc()">
+          <label>이사비 (만원)</label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('moveCost', -10)">▼</button>
+            <input type="number" id="moveCost" value="300" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('moveCost', 10)">▲</button>
+          </div>
         </div>
         <div class="field">
           <label>취득년도</label>
@@ -217,16 +233,28 @@
     <div class="section-body">
       <div class="grid-3">
         <div class="field">
-          <label>매수가 (백만원)</label>
-          <input type="number" id="buyPrice" value="1650" oninput="calc()">
+          <label>매수가 (만원)</label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('buyPrice', -100)">▼</button>
+            <input type="number" id="buyPrice" value="165000" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('buyPrice', 100)">▲</button>
+          </div>
         </div>
         <div class="field">
-          <label>입주비용 (백만원)</label>
-          <input type="number" id="moveinCost" value="5" oninput="calc()">
+          <label>입주비용 (만원)</label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('moveinCost', -10)">▼</button>
+            <input type="number" id="moveinCost" value="500" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('moveinCost', 10)">▲</button>
+          </div>
         </div>
         <div class="field">
-          <label>등기비 (백만원)</label>
-          <input type="number" id="registrationFee" value="1.5" oninput="calc()">
+          <label>등기비 (만원)</label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('registrationFee', -10)">▼</button>
+            <input type="number" id="registrationFee" value="150" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('registrationFee', 10)">▲</button>
+          </div>
         </div>
       </div>
 
@@ -259,32 +287,40 @@
         <input type="checkbox" id="debt_mortgage" checked disabled>
         <label>주담대</label>
         <span class="badge badge-red">필수상환</span>
-        <input type="number" id="debtMortgage" value="270" oninput="calc()" style="width:100px">
-        <span>백만원 / 금리</span>
+        <button class="adjust-btn" onclick="adjustValue('debtMortgage', -100)">▼</button>
+        <input type="number" id="debtMortgage" value="27000" oninput="calc()" style="width:80px">
+        <button class="adjust-btn" onclick="adjustValue('debtMortgage', 100)">▲</button>
+        <span>만원 / 금리</span>
         <input type="number" id="debtMortgageRate" value="2.61" step="0.01" oninput="calc()" style="width:60px">%
       </div>
       <div class="debt-item">
         <input type="checkbox" id="debt_maton" checked onchange="calc()">
         <label>마통</label>
         <span class="badge badge-yellow">선택상환</span>
-        <input type="number" id="debtMaton" value="40" oninput="calc()" style="width:100px">
-        <span>백만원 / 금리</span>
+        <button class="adjust-btn" onclick="adjustValue('debtMaton', -100)">▼</button>
+        <input type="number" id="debtMaton" value="4000" oninput="calc()" style="width:80px">
+        <button class="adjust-btn" onclick="adjustValue('debtMaton', 100)">▲</button>
+        <span>만원 / 금리</span>
         <input type="number" id="debtMatonRate" value="6" step="0.1" oninput="calc()" style="width:60px">%
       </div>
       <div class="debt-item">
         <input type="checkbox" id="debt_etc" checked onchange="calc()">
         <label>기타대출</label>
         <span class="badge badge-yellow">선택상환</span>
-        <input type="number" id="debtEtc" value="15" oninput="calc()" style="width:100px">
-        <span>백만원 / 금리</span>
+        <button class="adjust-btn" onclick="adjustValue('debtEtc', -100)">▼</button>
+        <input type="number" id="debtEtc" value="1500" oninput="calc()" style="width:80px">
+        <button class="adjust-btn" onclick="adjustValue('debtEtc', 100)">▲</button>
+        <span>만원 / 금리</span>
         <input type="number" id="debtEtcRate" value="6" step="0.1" oninput="calc()" style="width:60px">%
       </div>
       <div class="debt-item">
         <input type="checkbox" id="debt_car" checked onchange="calc()">
         <label>자동차대출</label>
         <span class="badge badge-yellow">선택상환</span>
-        <input type="number" id="debtCar" value="37" oninput="calc()" style="width:100px">
-        <span>백만원 / 잔여</span>
+        <button class="adjust-btn" onclick="adjustValue('debtCar', -100)">▼</button>
+        <input type="number" id="debtCar" value="3700" oninput="calc()" style="width:80px">
+        <button class="adjust-btn" onclick="adjustValue('debtCar', 100)">▲</button>
+        <span>만원 / 잔여</span>
         <input type="number" id="debtCarMonths" value="30" oninput="calc()" style="width:50px">개월
       </div>
 
@@ -298,12 +334,20 @@
           <input type="number" id="daycareQuarters" value="7" min="0" max="10" oninput="calc()">
         </div>
         <div class="field">
-          <label>분기 영유비 (백만원)</label>
-          <input type="number" id="daycarePerQ" value="7.89" step="0.01" oninput="calc()">
+          <label>분기 영유비 (만원)</label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('daycarePerQ', -100)">▼</button>
+            <input type="number" id="daycarePerQ" value="789" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('daycarePerQ', 100)">▲</button>
+          </div>
         </div>
         <div class="field">
-          <label>주담대 금액 (백만원)</label>
-          <input type="number" id="newLoan" value="300" oninput="calc()">
+          <label>주담대 금액 (만원)</label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('newLoan', -500)">▼</button>
+            <input type="number" id="newLoan" value="30000" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('newLoan', 500)">▲</button>
+          </div>
         </div>
         <div class="field">
           <label>주담대 금리 (%)</label>
@@ -342,12 +386,20 @@
     <div class="section-body">
       <div class="grid-3">
         <div class="field">
-          <label>본인 세후 월수입 (백만원)</label>
-          <input type="number" id="income1" value="4.8" step="0.1" oninput="calc()">
+          <label>본인 세후 월수입 (만원)</label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('income1', -10)">▼</button>
+            <input type="number" id="income1" value="480" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('income1', 10)">▲</button>
+          </div>
         </div>
         <div class="field">
-          <label>배우자 세후 월수입 (백만원)</label>
-          <input type="number" id="income2" value="4.8" step="0.1" oninput="calc()">
+          <label>배우자 세후 월수입 (만원)</label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('income2', -10)">▼</button>
+            <input type="number" id="income2" value="480" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('income2', 10)">▲</button>
+          </div>
         </div>
       </div>
 
@@ -425,12 +477,20 @@
     <div class="section-body">
       <div class="grid-3">
         <div class="field">
-          <label>생활비 (백만원/월)</label>
-          <input type="number" id="livingCost" value="3.5" step="0.1" oninput="calc()">
+          <label>생활비 (만원/월)</label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('livingCost', -10)">▼</button>
+            <input type="number" id="livingCost" value="350" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('livingCost', 10)">▲</button>
+          </div>
         </div>
         <div class="field">
-          <label>월 영유비 (백만원/월)</label>
-          <input type="number" id="daycareMonthly" value="2.63" step="0.01" oninput="calc()">
+          <label>월 영유비 (만원/월)</label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('daycareMonthly', -10)">▼</button>
+            <input type="number" id="daycareMonthly" value="263" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('daycareMonthly', 10)">▲</button>
+          </div>
         </div>
         <div class="field">
           <label>영유기간 (개월) <small style="color:var(--sub)">잔여분기×3 자동</small></label>
@@ -481,28 +541,52 @@
     <div class="section-body">
       <div class="grid-3">
         <div class="field">
-          <label>연금저축 (본인, 백만원/월)</label>
-          <input type="number" id="pension1" value="0.5" step="0.1" oninput="calc()">
+          <label>연금저축 (본인, 만원/월)</label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('pension1', -5)">▼</button>
+            <input type="number" id="pension1" value="50" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('pension1', 5)">▲</button>
+          </div>
         </div>
         <div class="field">
-          <label>연금저축 (배우자, 백만원/월)</label>
-          <input type="number" id="pension2" value="0.5" step="0.1" oninput="calc()">
+          <label>연금저축 (배우자, 만원/월)</label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('pension2', -5)">▼</button>
+            <input type="number" id="pension2" value="50" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('pension2', 5)">▲</button>
+          </div>
         </div>
         <div class="field">
-          <label>IRP (본인, 백만원/월)</label>
-          <input type="number" id="irp1" value="0.25" step="0.05" oninput="calc()">
+          <label>IRP (본인, 만원/월)</label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('irp1', -5)">▼</button>
+            <input type="number" id="irp1" value="25" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('irp1', 5)">▲</button>
+          </div>
         </div>
         <div class="field">
-          <label>IRP (배우자, 백만원/월)</label>
-          <input type="number" id="irp2" value="0.25" step="0.05" oninput="calc()">
+          <label>IRP (배우자, 만원/월)</label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('irp2', -5)">▼</button>
+            <input type="number" id="irp2" value="25" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('irp2', 5)">▲</button>
+          </div>
         </div>
         <div class="field">
-          <label>ISA (백만원/월)</label>
-          <input type="number" id="isa" value="0.2" step="0.1" oninput="calc()">
+          <label>ISA (만원/월)</label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('isa', -5)">▼</button>
+            <input type="number" id="isa" value="20" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('isa', 5)">▲</button>
+          </div>
         </div>
         <div class="field">
-          <label>파킹통장 월납입 (백만원)</label>
-          <input type="number" id="parkingMonthly" value="0.5" step="0.1" oninput="calc()">
+          <label>파킹통장 월납입 (만원)</label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('parkingMonthly', -5)">▼</button>
+            <input type="number" id="parkingMonthly" value="50" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('parkingMonthly', 5)">▲</button>
+          </div>
         </div>
       </div>
 
@@ -530,20 +614,32 @@
     <div class="section-body">
       <div class="grid-3">
         <div class="field">
-          <label>분담금 예상액 (백만원)</label>
-          <input type="number" id="remoShare" value="247" oninput="calc()">
+          <label>분담금 예상액 (만원)</label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('remoShare', -1000)">▼</button>
+            <input type="number" id="remoShare" value="24700" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('remoShare', 1000)">▲</button>
+          </div>
         </div>
         <div class="field">
           <label>이주기간 (개월)</label>
           <input type="number" id="remoPeriod" value="48" oninput="calc()">
         </div>
         <div class="field">
-          <label>월 임시거주비 (백만원)</label>
-          <input type="number" id="remoMonthly" value="1.5" step="0.1" oninput="calc()">
+          <label>월 임시거주비 (만원)</label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('remoMonthly', -10)">▼</button>
+            <input type="number" id="remoMonthly" value="150" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('remoMonthly', 10)">▲</button>
+          </div>
         </div>
         <div class="field">
-          <label>리모델링 후 예상 시세 (백만원)</label>
-          <input type="number" id="remoExpected" value="2300" oninput="calc()">
+          <label>리모델링 후 예상 시세 (만원)</label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('remoExpected', -1000)">▼</button>
+            <input type="number" id="remoExpected" value="230000" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('remoExpected', 1000)">▲</button>
+          </div>
         </div>
       </div>
 
@@ -566,11 +662,7 @@ let taxChart = null;
 
 // ===== 유틸 =====
 const $ = id => document.getElementById(id);
-const fmt = v => {
-  if (isNaN(v)) return '-';
-  if (Math.abs(v) < 10 && v !== Math.round(v)) return (Math.round(v * 100) / 100).toLocaleString('ko-KR');
-  return Math.round(v).toLocaleString('ko-KR');
-};
+const fmt = v => isNaN(v) ? '-' : Math.round(v).toLocaleString('ko-KR');
 const fmtF = (v, d=1) => isNaN(v) ? '-' : v.toFixed(d);
 const val = id => parseFloat($(id)?.value) || 0;
 
@@ -578,29 +670,38 @@ function setColor(el, v, greenThr, yellowThr) {
   el.className = v >= greenThr ? 'color-green' : v >= yellowThr ? 'color-yellow' : 'color-red';
 }
 
-// 중개보수 계산 (2025년 서울 기준, 부가세 포함) - 단위: 백만원
-function calcBrokerageFee(price) {
-  let fee = 0;
-  if (price < 50)        fee = price * 0.006;
-  else if (price < 200)  fee = Math.min(price * 0.005, 0.8);
-  else if (price < 900)  fee = price * 0.004;
-  else if (price < 1200) fee = price * 0.005;
-  else if (price < 1500) fee = price * 0.006;
-  else                   fee = Math.min(price * 0.007, 9);
-  return Math.round(fee * 1.1 * 10) / 10; // 부가세 포함
+// 금액 조정 (100만원 = 100,000 만원씩)
+function adjustValue(fieldId, amount) {
+  const field = $(fieldId);
+  if (field) {
+    field.value = Math.max(0, (parseFloat(field.value) || 0) + amount);
+    calc();
+  }
 }
 
-// 양도세 구간 계산 - 단위: 백만원
+// 중개보수 계산 (2025년 서울 기준, 부가세 포함)
+function calcBrokerageFee(price) {
+  let fee = 0;
+  if (price < 5000)        fee = price * 0.006;
+  else if (price < 20000)  fee = Math.min(price * 0.005, 80);
+  else if (price < 90000)  fee = price * 0.004;
+  else if (price < 120000) fee = price * 0.005;
+  else if (price < 150000) fee = price * 0.006;
+  else                     fee = Math.min(price * 0.007, 900);
+  return Math.round(fee * 1.1); // 부가세 포함
+}
+
+// 양도세 구간 계산
 function calcTransferTax(taxBase) {
   if (taxBase <= 0) return 0;
   let tax = 0;
-  if      (taxBase <= 14)   tax = taxBase * 0.06;
-  else if (taxBase <= 50)   tax = taxBase * 0.15 - 1.26;
-  else if (taxBase <= 88)   tax = taxBase * 0.24 - 5.76;
-  else if (taxBase <= 150)  tax = taxBase * 0.35 - 15.44;
-  else if (taxBase <= 300)  tax = taxBase * 0.38 - 19.94;
-  else if (taxBase <= 500)  tax = taxBase * 0.40 - 25.94;
-  else                      tax = taxBase * 0.42 - 35.94;
+  if      (taxBase <= 1400)  tax = taxBase * 0.06;
+  else if (taxBase <= 5000)  tax = taxBase * 0.15 - 126;
+  else if (taxBase <= 8800)  tax = taxBase * 0.24 - 576;
+  else if (taxBase <= 15000) tax = taxBase * 0.35 - 1544;
+  else if (taxBase <= 30000) tax = taxBase * 0.38 - 1994;
+  else if (taxBase <= 50000) tax = taxBase * 0.40 - 2594;
+  else                       tax = taxBase * 0.42 - 3594;
   return Math.max(0, tax);
 }
 
@@ -649,7 +750,7 @@ function calc() {
   const gain = salePrice - acqPrice;
   // 공동명의 고정 (각 50%)
   const persons = 2;
-  const taxableRatio = salePrice > 1200 ? (salePrice - 1200) / salePrice : 0;
+  const taxableRatio = salePrice > 120000 ? (salePrice - 120000) / salePrice : 0;
   const gainPerPerson    = gain / persons;
   const gainAfterDeduct  = gainPerPerson * (1 - longDeductRate);
   const taxBasePerPerson = gainAfterDeduct * taxableRatio;
@@ -664,14 +765,14 @@ function calc() {
   $('r_holdPeriod').textContent     = `${holdYears}년 ${holdMonths}개월`;
   $('r_livePeriod').textContent     = `${holdYears}년 ${holdMonths}개월 (취득일 동일)`;
   $('r_longDeduct').textContent     = `${(longDeductRate*100).toFixed(0)}%`;
-  $('r_gainTotal').textContent      = fmt(gain) + ' 백만원';
-  $('r_gainAfterDeduct').textContent= fmt(gainAfterDeduct) + ' 백만원';
-  $('r_taxBase').textContent        = fmt(taxBasePerPerson) + ' 백만원';
-  $('r_transferTax').textContent    = fmt(transferTaxPP * persons) + ' 백만원';
-  $('r_localTax').textContent       = fmt(localTaxPP * persons) + ' 백만원';
-  $('r_saleFee').textContent        = fmt(saleFee) + ' 백만원';
-  $('r_moveCost').textContent       = fmt(moveCost) + ' 백만원';
-  $('r_saleGross').textContent      = fmt(saleGross) + ' 백만원';
+  $('r_gainTotal').textContent      = fmt(gain) + ' 만원';
+  $('r_gainAfterDeduct').textContent= fmt(gainAfterDeduct) + ' 만원';
+  $('r_taxBase').textContent        = fmt(taxBasePerPerson) + ' 만원';
+  $('r_transferTax').textContent    = fmt(transferTaxPP * persons) + ' 만원';
+  $('r_localTax').textContent       = fmt(localTaxPP * persons) + ' 만원';
+  $('r_saleFee').textContent        = fmt(saleFee) + ' 만원';
+  $('r_moveCost').textContent       = fmt(moveCost) + ' 만원';
+  $('r_saleGross').textContent      = fmt(saleGross) + ' 만원';
 
   // ─── 섹션 2: 매수 → 순수 비용 합계 (영유비·주담대 제외) ───
   const buyPrice   = val('buyPrice');
@@ -685,14 +786,14 @@ function calc() {
   const buyFee   = calcBrokerageFee(buyPrice);
   const buyCostBase = buyPrice + taxTotal + buyFee + regFee + moveinCost;
 
-  $('r_acquisitionTax').textContent = fmt(acqTax) + ' 백만원';
-  $('r_eduTax').textContent         = fmt(eduTax) + ' 백만원';
-  $('r_ruralTax').textContent       = fmt(ruralTax) + ' 백만원';
-  $('r_taxTotal').textContent       = fmt(taxTotal) + ' 백만원';
-  $('r_buyFee').textContent         = fmt(buyFee) + ' 백만원';
-  $('r_regFee').textContent         = fmt(regFee) + ' 백만원';
-  $('r_movein').textContent         = fmt(moveinCost) + ' 백만원';
-  $('r_buyCostBase').textContent    = fmt(buyCostBase) + ' 백만원';
+  $('r_acquisitionTax').textContent = fmt(acqTax) + ' 만원';
+  $('r_eduTax').textContent         = fmt(eduTax) + ' 만원';
+  $('r_ruralTax').textContent       = fmt(ruralTax) + ' 만원';
+  $('r_taxTotal').textContent       = fmt(taxTotal) + ' 만원';
+  $('r_buyFee').textContent         = fmt(buyFee) + ' 만원';
+  $('r_regFee').textContent         = fmt(regFee) + ' 만원';
+  $('r_movein').textContent         = fmt(moveinCost) + ' 만원';
+  $('r_buyCostBase').textContent    = fmt(buyCostBase) + ' 만원';
 
   // ─── 섹션 3: 주담대 필요액 산출 ───
   const newLoan      = val('newLoan');
@@ -715,16 +816,16 @@ function calc() {
 
   const monthlyPayment = calcMonthlyPayment(newLoan, newLoanRate, newLoanYears);
 
-  $('r_saleGrossRef').textContent   = fmt(saleGross) + ' 백만원';
-  $('r_debtTotal').textContent      = fmt(debtTotal) + ' 백만원';
-  $('r_availCash').textContent      = fmt(availCash) + ' 백만원';
-  $('r_buyCostRef').textContent     = fmt(buyCostBase) + ' 백만원';
+  $('r_saleGrossRef').textContent   = fmt(saleGross) + ' 만원';
+  $('r_debtTotal').textContent      = fmt(debtTotal) + ' 만원';
+  $('r_availCash').textContent      = fmt(availCash) + ' 만원';
+  $('r_buyCostRef').textContent     = fmt(buyCostBase) + ' 만원';
   $('r_dqLabel').textContent        = daycareQ;
-  $('r_daycareIncluded').textContent= fmt(daycareIncluded) + ' 백만원';
-  $('r_buyCostTotal').textContent   = fmt(buyCostTotal) + ' 백만원';
-  $('r_minLoan').textContent        = fmt(minLoan) + ' 백만원';
-  $('r_loanApplied').textContent    = fmt(newLoan) + ' 백만원';
-  $('r_monthlyPayment').textContent = fmt(monthlyPayment) + ' 백만원/월';
+  $('r_daycareIncluded').textContent= fmt(daycareIncluded) + ' 만원';
+  $('r_buyCostTotal').textContent   = fmt(buyCostTotal) + ' 만원';
+  $('r_minLoan').textContent        = fmt(minLoan) + ' 만원';
+  $('r_loanApplied').textContent    = fmt(newLoan) + ' 만원';
+  $('r_monthlyPayment').textContent = fmt(monthlyPayment) + ' 만원/월';
 
   // ─── 섹션 4: 주담대 한도 검증 ───
   const income1 = val('income1');
@@ -733,9 +834,9 @@ function calc() {
   const dsrMonthlyLimit = annualIncome * 0.4 / 12;
 
   let ltvLimit = 0;
-  if (buyPrice <= 1500)      ltvLimit = 600;
-  else if (buyPrice <= 2500) ltvLimit = 400;
-  else                       ltvLimit = 200;
+  if (buyPrice <= 150000)      ltvLimit = 60000;
+  else if (buyPrice <= 250000) ltvLimit = 40000;
+  else                         ltvLimit = 20000;
 
   // DSR 기존부채: 대출 신청 시점 → 상환 여부와 무관하게 모두 포함
   const matonMonthly  = val('debtMaton') * val('debtMatonRate') / 100 / 12;
@@ -748,20 +849,20 @@ function calc() {
   const finalLoanLimit= Math.min(ltvLimit, dsrLoanLimit);
   const actualDsr     = ((monthlyPayment + existDebtMonthly) / (annualIncome / 12)) * 100;
 
-  $('r_annualIncome').textContent     = fmt(annualIncome) + ' 백만원';
-  $('r_ltvLimit').textContent         = fmt(ltvLimit) + ' 백만원';
-  $('r_dsrMonthlyLimit').textContent  = fmt(dsrMonthlyLimit) + ' 백만원/월';
-  $('r_matonMonthly').textContent     = fmt(matonMonthly) + ' 백만원';
-  $('r_etcMonthly').textContent       = fmt(etcMonthly) + ' 백만원';
-  $('r_carMonthly').textContent       = fmt(carMonthly) + ' 백만원';
-  $('r_existDebtMonthly').textContent = fmt(existDebtMonthly) + ' 백만원';
-  $('r_newLoanMonthlyCap').textContent= fmt(newLoanMonthlyCap) + ' 백만원';
-  $('r_dsrLoanLimit').textContent     = fmt(dsrLoanLimit) + ' 백만원';
-  $('r_finalLoanLimit').textContent   = fmt(finalLoanLimit) + ' 백만원';
+  $('r_annualIncome').textContent     = fmt(annualIncome) + ' 만원';
+  $('r_ltvLimit').textContent         = fmt(ltvLimit) + ' 만원';
+  $('r_dsrMonthlyLimit').textContent  = fmt(dsrMonthlyLimit) + ' 만원/월';
+  $('r_matonMonthly').textContent     = fmt(matonMonthly) + ' 만원';
+  $('r_etcMonthly').textContent       = fmt(etcMonthly) + ' 만원';
+  $('r_carMonthly').textContent       = fmt(carMonthly) + ' 만원';
+  $('r_existDebtMonthly').textContent = fmt(existDebtMonthly) + ' 만원';
+  $('r_newLoanMonthlyCap').textContent= fmt(newLoanMonthlyCap) + ' 만원';
+  $('r_dsrLoanLimit').textContent     = fmt(dsrLoanLimit) + ' 만원';
+  $('r_finalLoanLimit').textContent   = fmt(finalLoanLimit) + ' 만원';
 
   const loanRatio    = newLoan / finalLoanLimit;
   const loanStatusEl = $('r_loanVsLimit');
-  loanStatusEl.textContent = `${fmt(newLoan)} / ${fmt(finalLoanLimit)} 백만원`;
+  loanStatusEl.textContent = `${fmt(newLoan)} / ${fmt(finalLoanLimit)} 만원`;
   loanStatusEl.className   = loanRatio < 0.9 ? 'color-green' : loanRatio <= 1 ? 'color-yellow' : 'color-red';
 
   const dsrEl = $('r_actualDsr');
@@ -815,10 +916,10 @@ function calc() {
   ).join('');
 
   const daycareNetCost = totalLoanInterest - totalParkingIncome;
-  $('r_daycareTotal').textContent = fmt(daycareTotal) + ' 백만원';
-  $('r_parkingIncome').textContent = '+' + fmt(totalParkingIncome) + ' 백만원';
-  $('r_loanInterestCost').textContent = fmt(totalLoanInterest) + ' 백만원';
-  $('r_daycareNetCost').textContent = fmt(daycareNetCost) + ' 백만원';
+  $('r_daycareTotal').textContent = fmt(daycareTotal) + ' 만원';
+  $('r_parkingIncome').textContent = '+' + fmt(totalParkingIncome) + ' 만원';
+  $('r_loanInterestCost').textContent = fmt(totalLoanInterest) + ' 만원';
+  $('r_daycareNetCost').textContent = fmt(daycareNetCost) + ' 만원';
 
   // --- 섹션 5: 현금흐름 ---
   const livingCost     = val('livingCost');
@@ -831,22 +932,22 @@ function calc() {
   const surplus1 = totalIncome - monthlyPayment - daycareMonthly - livingCost - otherDebtMonthly;
   const surplus2 = totalIncome - monthlyPayment - livingCost - otherDebtMonthly;
 
-  $('r_cf_income').textContent  = fmt(totalIncome) + ' 백만원';
-  $('r_cf_loan1').textContent   = fmt(monthlyPayment) + ' 백만원';
-  $('r_cf_daycare1').textContent = fmt(daycareMonthly) + ' 백만원';
-  $('r_cf_living1').textContent  = fmt(livingCost) + ' 백만원';
-  $('r_cf_other1').textContent   = fmt(otherDebtMonthly) + ' 백만원';
-  $('r_cf_income2').textContent  = fmt(totalIncome) + ' 백만원';
-  $('r_cf_loan2').textContent    = fmt(monthlyPayment) + ' 백만원';
-  $('r_cf_living2').textContent  = fmt(livingCost) + ' 백만원';
-  $('r_cf_other2').textContent   = fmt(otherDebtMonthly) + ' 백만원';
+  $('r_cf_income').textContent  = fmt(totalIncome) + ' 만원';
+  $('r_cf_loan1').textContent   = fmt(monthlyPayment) + ' 만원';
+  $('r_cf_daycare1').textContent = fmt(daycareMonthly) + ' 만원';
+  $('r_cf_living1').textContent  = fmt(livingCost) + ' 만원';
+  $('r_cf_other1').textContent   = fmt(otherDebtMonthly) + ' 만원';
+  $('r_cf_income2').textContent  = fmt(totalIncome) + ' 만원';
+  $('r_cf_loan2').textContent    = fmt(monthlyPayment) + ' 만원';
+  $('r_cf_living2').textContent  = fmt(livingCost) + ' 만원';
+  $('r_cf_other2').textContent   = fmt(otherDebtMonthly) + ' 만원';
 
   const s1El = $('r_cf_surplus1');
-  s1El.textContent = fmt(surplus1) + ' 백만원';
+  s1El.textContent = fmt(surplus1) + ' 만원';
   setColor(s1El, surplus1, 1, 0.5);
 
   const s2El = $('r_cf_surplus2');
-  s2El.textContent = fmt(surplus2) + ' 백만원';
+  s2El.textContent = fmt(surplus2) + ' 만원';
   setColor(s2El, surplus2, 1, 0.5);
 
   // 현금흐름 차트
@@ -857,17 +958,17 @@ function calc() {
   const p2Monthly = val('pension2') + val('irp2');
   const p1Annual  = p1Monthly * 12;
   const p2Annual  = p2Monthly * 12;
-  const capPerPerson = 9; // 연금저축6+IRP3 백만원
+  const capPerPerson = 900; // 연금저축600+IRP300
   const taxCredit = Math.min(p1Annual, capPerPerson) * 0.132 + Math.min(p2Annual, capPerPerson) * 0.132;
   const parkingMonthlySave = val('parkingMonthly');
   const parkingYearly = parkingMonthlySave * 12 * (val('parkingRate') / 100);
   const totalSave = (p1Monthly + p2Monthly + val('isa') + parkingMonthlySave) * 12;
 
-  $('r_tax_p1').textContent    = fmt(p1Annual) + ' 백만원';
-  $('r_tax_p2').textContent    = fmt(p2Annual) + ' 백만원';
-  $('r_taxCredit').textContent = fmt(taxCredit) + ' 백만원';
-  $('r_parkingYearly').textContent = fmt(parkingYearly) + ' 백만원';
-  $('r_totalSave').textContent = fmt(totalSave) + ' 백만원';
+  $('r_tax_p1').textContent    = fmt(p1Annual) + ' 만원';
+  $('r_tax_p2').textContent    = fmt(p2Annual) + ' 만원';
+  $('r_taxCredit').textContent = fmt(taxCredit) + ' 만원';
+  $('r_parkingYearly').textContent = fmt(parkingYearly) + ' 만원';
+  $('r_totalSave').textContent = fmt(totalSave) + ' 만원';
 
   updateTaxChart(p1Annual, p2Annual, val('isa') * 12, parkingMonthlySave * 12);
 
@@ -882,10 +983,10 @@ function calc() {
   const remoGain     = remoExpected - remoTotalCost;
   const remoRoi      = (remoGain / remoTotalCost) * 100;
 
-  $('r_remoMoveCost').textContent   = fmt(remoMoveCost) + ' 백만원';
-  $('r_remoExtra').textContent      = fmt(remoExtra) + ' 백만원';
-  $('r_remoTotalCost').textContent  = fmt(remoTotalCost) + ' 백만원';
-  $('r_remoGain').textContent       = fmt(remoGain) + ' 백만원';
+  $('r_remoMoveCost').textContent   = fmt(remoMoveCost) + ' 만원';
+  $('r_remoExtra').textContent      = fmt(remoExtra) + ' 만원';
+  $('r_remoTotalCost').textContent  = fmt(remoTotalCost) + ' 만원';
+  $('r_remoGain').textContent       = fmt(remoGain) + ' 만원';
   const remoRoiEl = $('r_remoRoi');
   remoRoiEl.textContent = fmtF(remoRoi) + '%';
   remoRoiEl.className = remoRoi >= 20 ? 'color-green' : remoRoi >= 10 ? 'color-yellow' : 'color-red';
