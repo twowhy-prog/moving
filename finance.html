@@ -180,6 +180,12 @@
       <div class="value" id="s_remoRoi">-</div>
       <div class="sub">예상</div>
     </div>
+    <div class="summary-card" style="border-left-color:#0ea5e9">
+      <div class="s-num">S9 · 자녀 증여</div>
+      <div class="s-title">만기 예상 자산 (윤호)</div>
+      <div class="value color-green" id="s_giftFV">-</div>
+      <div class="sub">만원</div>
+    </div>
   </div>
 
   <!-- ===== 섹션 1: 매도 분석 ===== -->
@@ -707,12 +713,105 @@
     </div>
   </div>
 
+  <!-- ===== 섹션 9: 자녀 증여 계획 ===== -->
+  <div class="section" id="sec9">
+    <div class="section-header" onclick="toggleSection('sec9')">
+      <div class="section-num">9</div>
+      <h2>자녀 증여 계획 (윤호)</h2>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="grid-3">
+        <div class="field">
+          <label>윤호 현재 나이 (만 나이)</label>
+          <input type="number" id="yunhoAge" value="2" min="0" max="18" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>기납부 증여액 (10년 내, 만원)</label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('giftPrior', -100)">▼</button>
+            <input type="number" id="giftPrior" value="0" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('giftPrior', 100)">▲</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>신규 증여액 (만원)</label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('giftLump', -100)">▼</button>
+            <input type="number" id="giftLump" value="1000" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('giftLump', 100)">▲</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>월 정기납입 (만원)</label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('giftMonthly', -5)">▼</button>
+            <input type="number" id="giftMonthly" value="10" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('giftMonthly', 5)">▲</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>연 예상 수익률 (%)</label>
+          <input type="number" id="giftRate" value="7" step="0.5" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>운용 기간 (년)</label>
+          <input type="number" id="giftYears" value="15" min="1" max="30" oninput="calc()">
+        </div>
+      </div>
+
+      <!-- 증여세 한도 -->
+      <div style="margin-bottom:12px;padding:10px 14px;border-radius:8px;background:var(--input-bg);font-size:12px">
+        <span style="font-weight:600">📋 증여세 공제 한도</span>&nbsp;&nbsp;
+        미성년(10년) <strong>2,000만원</strong> · 성인(10년) <strong>5,000만원</strong> · 초과 시 10%(1억 이하)
+        &nbsp;|&nbsp; 한도 내라도 <strong>신고 권장</strong> (자금출처 소명 대비)
+      </div>
+
+      <div class="grid-2">
+        <!-- 증여세 한도 체크 -->
+        <div class="result-box">
+          <div style="font-weight:600;margin-bottom:8px">증여세 한도 체크</div>
+          <div class="result-row"><span>현재 나이 → 만기 나이</span><span id="r_gift_ages">-</span></div>
+          <div class="result-row"><span>기납부 증여액</span><span id="r_gift_prior">-</span></div>
+          <div class="result-row"><span>신규 증여액</span><span id="r_gift_lump">-</span></div>
+          <div class="result-row"><span>월납입 10년분</span><span id="r_gift_monthly10">-</span></div>
+          <div class="result-row"><span>10년 내 총 증여 합산</span><span id="r_gift_total10">-</span></div>
+          <div class="sep"></div>
+          <div class="result-row"><span>미성년 공제 한도</span><span>2,000 만원</span></div>
+          <div class="result-row total"><span>한도 상태</span><span id="r_gift_limitStatus">-</span></div>
+          <div class="result-row"><span>증여세 (추정)</span><span id="r_gift_tax">-</span></div>
+        </div>
+        <!-- 수익 시뮬레이션 -->
+        <div class="result-box">
+          <div style="font-weight:600;margin-bottom:8px">복리 수익 시뮬레이션</div>
+          <div class="result-row"><span>총 납입 원금</span><span id="r_gift_principal">-</span></div>
+          <div class="result-row"><span>예상 수익</span><span id="r_gift_return" class="color-green">-</span></div>
+          <div class="result-row total"><span>만기 예상 자산</span><span id="r_gift_fv" class="color-green">-</span></div>
+          <div class="sep"></div>
+          <div style="font-size:12px;color:var(--sub);margin-bottom:6px">구간별 예상</div>
+          <div class="result-row"><span>5년 후</span><span id="r_gift_5y">-</span></div>
+          <div class="result-row"><span>10년 후</span><span id="r_gift_10y">-</span></div>
+          <div class="result-row"><span id="r_gift_endLabel">만기</span></span><span id="r_gift_end">-</span></div>
+        </div>
+      </div>
+
+      <div class="chart-wrap">
+        <canvas id="giftChart"></canvas>
+      </div>
+
+      <div class="info" style="margin-top:10px">
+        * 증여세 신고: 증여일로부터 3개월 내 홈택스 자진신고 권장 (한도 내 무세도 신고 유리) · 수익률은 과거 S&amp;P500 연평균(약 10%) 기준 보수적 적용 시 7% 권장
+      </div>
+    </div>
+  </div>
+
 </div><!-- /container -->
 
 <script>
 // ===== 상태 =====
 let cashflowChart = null;
 let taxChart = null;
+let giftChart = null;
 
 // ===== 유틸 =====
 const $ = id => document.getElementById(id);
@@ -1101,6 +1200,68 @@ function calc() {
   // S8
   $('s_remoRoi').textContent = fmtF(remoRoi) + '%';
   $('s_remoRoi').className = remoRoi >= 20 ? 'value color-green' : remoRoi >= 10 ? 'value color-yellow' : 'value color-red';
+
+  // --- 섹션 9: 자녀 증여 계획 ---
+  const yunhoAge   = val('yunhoAge');
+  const giftPrior  = val('giftPrior');
+  const giftLump   = val('giftLump');
+  const giftMo     = val('giftMonthly');
+  const giftRate   = val('giftRate') / 100;
+  const giftYears  = val('giftYears');
+
+  // 증여세 한도 체크 (미성년 10년 공제 2,000만원)
+  const monthly10y    = giftMo * 12 * Math.min(giftYears, 10);
+  const total10y      = giftPrior + giftLump + monthly10y;
+  const minorLimit    = 2000;
+  const giftTaxBase   = Math.max(0, total10y - minorLimit);
+  const giftTax       = giftTaxBase <= 0 ? 0
+                      : giftTaxBase <= 10000 ? giftTaxBase * 0.10
+                      : giftTaxBase <= 50000 ? giftTaxBase * 0.20 - 1000
+                      : giftTaxBase * 0.30 - 6000;
+
+  // 복리 시뮬레이션 (월복리)
+  function giftFV(years) {
+    const r = giftRate / 12;
+    const n = years * 12;
+    const lumpFV = giftLump * Math.pow(1 + r, n);
+    const moFV   = r > 0 ? giftMo * (Math.pow(1 + r, n) - 1) / r : giftMo * n;
+    return lumpFV + moFV;
+  }
+
+  const fv5  = giftFV(Math.min(5, giftYears));
+  const fv10 = giftFV(Math.min(10, giftYears));
+  const fvEnd = giftFV(giftYears);
+  const principal = giftLump + giftMo * 12 * giftYears;
+  const totalReturn = fvEnd - principal;
+
+  $('r_gift_ages').textContent    = `${yunhoAge}세 → ${yunhoAge + giftYears}세`;
+  $('r_gift_prior').textContent   = fmt(giftPrior) + ' 만원';
+  $('r_gift_lump').textContent    = fmt(giftLump) + ' 만원';
+  $('r_gift_monthly10').textContent = fmt(monthly10y) + ' 만원';
+  $('r_gift_total10').textContent = fmt(total10y) + ' 만원';
+  const limitEl = $('r_gift_limitStatus');
+  if (total10y <= minorLimit) {
+    limitEl.textContent = `한도 내 ✓ (잔여 ${fmt(minorLimit - total10y)}만)`;
+    limitEl.className = 'color-green';
+  } else {
+    limitEl.textContent = `초과 +${fmt(total10y - minorLimit)}만`;
+    limitEl.className = 'color-red';
+  }
+  $('r_gift_tax').textContent = giftTax > 0 ? fmt(giftTax) + ' 만원' : '없음 (한도 내)';
+  $('r_gift_tax').className   = giftTax > 0 ? 'color-red' : 'color-green';
+
+  $('r_gift_principal').textContent = fmt(principal) + ' 만원';
+  $('r_gift_return').textContent    = '+' + fmt(totalReturn) + ' 만원';
+  $('r_gift_fv').textContent        = fmt(fvEnd) + ' 만원';
+  $('r_gift_5y').textContent        = fmt(fv5) + ' 만원';
+  $('r_gift_10y').textContent       = fmt(fv10) + ' 만원';
+  $('r_gift_endLabel').textContent  = giftYears + '년 후';
+  $('r_gift_end').textContent       = fmt(fvEnd) + ' 만원';
+
+  // S9 대시보드
+  $('s_giftFV').textContent = fmt(fvEnd) + ' 만원';
+
+  updateGiftChart(principal, totalReturn, giftYears, giftRate, giftLump, giftMo);
 }
 
 // ===== 차트 =====
@@ -1128,6 +1289,42 @@ function updateCashflowChart(income, loan, daycare, elemSchool, living, other, s
       scales: {
         x: { stacked: true, ticks: { color: labelColor } },
         y: { stacked: true, ticks: { color: labelColor } }
+      },
+      plugins: { legend: { labels: { color: labelColor } } }
+    }
+  });
+}
+
+function updateGiftChart(principal, totalReturn, years, rate, lump, mo) {
+  const ctx = $('giftChart').getContext('2d');
+  if (giftChart) giftChart.destroy();
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const labelColor = isDark ? '#94a3b8' : '#64748b';
+  const step = years <= 10 ? 1 : years <= 20 ? 2 : 5;
+  const labels = [], principalData = [], returnData = [];
+  for (let y = 0; y <= years; y += step) {
+    labels.push(`${y}년`);
+    const r = rate / 12, n = y * 12;
+    const lumpFV = lump * Math.pow(1 + r, n);
+    const moFV   = r > 0 ? mo * (Math.pow(1 + r, n) - 1) / r : mo * n;
+    const dep    = lump + mo * n;
+    principalData.push(Math.round(dep));
+    returnData.push(Math.round(Math.max(0, lumpFV + moFV - dep)));
+  }
+  giftChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label: '납입원금', data: principalData, backgroundColor: '#3b82f6' },
+        { label: '투자수익', data: returnData,    backgroundColor: '#10b981' },
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: { stacked: true, ticks: { color: labelColor } },
+        y: { stacked: true, ticks: { color: labelColor, callback: v => v.toLocaleString('ko-KR') + '만' } }
       },
       plugins: { legend: { labels: { color: labelColor } } }
     }
