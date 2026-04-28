@@ -782,12 +782,26 @@ function recentMonths(n) {
   }
   return list;
 }
+async function fetchWithProxy(targetUrl) {
+  const proxies = [
+    url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+    url => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
+    url => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+  ];
+  for (const mkProxy of proxies) {
+    try {
+      const res = await fetch(mkProxy(targetUrl), { signal: AbortSignal.timeout(8000) });
+      if (res.ok) return res;
+    } catch {}
+  }
+  throw new Error('모든 프록시 실패');
+}
+
 async function fetchMolitMonth(lawdCd, yyyymm) {
   const rawKey = decodeURIComponent(MOLIT_API_KEY);
   const direct = `https://apis.data.go.kr/1613000/RTMSOBJSvc/getRTMSDataSvcAptTradeDev` +
     `?serviceKey=${encodeURIComponent(rawKey)}&LAWD_CD=${lawdCd}&DEAL_YMD=${yyyymm}&numOfRows=200&pageNo=1`;
-  const proxy  = `https://corsproxy.io/?url=${encodeURIComponent(direct)}`;
-  const res = await fetch(proxy);
+  const res = await fetchWithProxy(direct);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const txt = await res.text();
   return new DOMParser().parseFromString(txt, 'application/xml');
@@ -884,8 +898,7 @@ let chartAir = null;
 async function loadAirData() {
   try {
     const rawUrl = `http://openapi.seoul.go.kr:8088/${SEOUL_AIR_API_KEY}/json/RealtimeCityAir/1/25/`;
-    const url = `https://corsproxy.io/?url=${encodeURIComponent(rawUrl)}`;
-    const res  = await fetch(url);
+    const res  = await fetchWithProxy(rawUrl);
     const json = await res.json();
     const rows = json?.RealtimeCityAir?.row ?? [];
     if (rows.length === 0) throw new Error('빈 응답');
