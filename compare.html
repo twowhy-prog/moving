@@ -849,22 +849,25 @@ async function loadPriceData() {
       Promise.all(months.map(m => fetchMolitMonth(B.lawdCd, m).catch(() => null))),
       Promise.all(months.map(m => fetchMolitMonth(C.lawdCd, m).catch(() => null))),
     ]);
-    const priceA = xmlsA.map(x => x ? parseMolitXml(x, A.aptKw, 60,  75,  A.umdNm) : null);
-    const priceB = xmlsB.map(x => x ? parseMolitXml(x, B.aptKw, 110, 125, B.umdNm) : null);
-    const priceC = xmlsC.map(x => x ? parseMolitXml(x, C.aptKw, 80, 90,  C.umdNm) : null);
+    const priceA  = xmlsA.map(x => x ? parseMolitXml(x, A.aptKw, 60,  75,  A.umdNm) : null);
+    const priceB  = xmlsB.map(x => x ? parseMolitXml(x, B.aptKw, 110, 125, B.umdNm) : null);
+    const priceC  = xmlsC.map(x => x ? parseMolitXml(x, C.aptKw, 80,  95,  C.umdNm) : null);
+    const priceC2 = xmlsC.map(x => x ? parseMolitXml(x, C.aptKw, 105, 140, C.umdNm) : null);
     const labels = months.map(m => `${m.slice(0,4)}.${m.slice(4)}`);
     chartPrice.data.labels = labels;
     chartPrice.data.datasets[0].data = priceA;
     chartPrice.data.datasets[1].data = priceB;
     chartPrice.data.datasets[2].data = priceC;
+    chartPrice.data.datasets[3].data = priceC2;
     chartPrice.update();
-    const cA = priceA.filter(v=>v!==null).length;
-    const cB = priceB.filter(v=>v!==null).length;
-    const cC = priceC.filter(v=>v!==null).length;
+    const cA  = priceA.filter(v=>v!==null).length;
+    const cB  = priceB.filter(v=>v!==null).length;
+    const cC  = priceC.filter(v=>v!==null).length;
+    const cC2 = priceC2.filter(v=>v!==null).length;
     document.getElementById('price-info').textContent =
-      `거래 확인 — A: ${cA}개월 / B: ${cB}개월 / C: ${cC}개월 (거래 없는 월은 공백)`;
-    setStatus('st-price', (cA+cB+cC)>0?'live':'error', `💰 실거래가 ${(cA+cB+cC)>0?'✅':'❌'}`);
-    setTag('tag-price', (cA+cB+cC)>0?'live':'sample', (cA+cB+cC)>0?'실데이터':'데이터 없음');
+      `거래 확인 — A: ${cA}개월 / B: ${cB}개월 / C-30평대: ${cC}개월 / C-40평대: ${cC2}개월 (거래 없는 월은 공백)`;
+    setStatus('st-price', (cA+cB+cC+cC2)>0?'live':'error', `💰 실거래가 ${(cA+cB+cC+cC2)>0?'✅':'❌'}`);
+    setTag('tag-price', (cA+cB+cC+cC2)>0?'live':'sample', (cA+cB+cC+cC2)>0?'실데이터':'데이터 없음');
   } catch (e) {
     console.warn('[MOLIT]', e);
     setStatus('st-price', 'error', '💰 실거래가 ❌');
@@ -967,19 +970,21 @@ async function loadAirData() {
 
 /* ── 차트 초기화 ── */
 function initCharts() {
-  const CA = '#2563eb', CB = '#16a34a', CC = '#7c3aed';
+  const CA = '#2563eb', CB = '#16a34a', CC = '#7c3aed', CC2 = '#db2777';
   const months12 = recentMonths(12).map(m => `${m.slice(0,4)}.${m.slice(4)}`);
   const sampleA  = months12.map((_,i) => +(10.5 + i*0.08 + Math.sin(i*.5)*.4).toFixed(2));
   const sampleB  = months12.map((_,i) => +(11.2 + i*0.12 + Math.sin(i*.4)*.5).toFixed(2));
   const sampleC  = months12.map((_,i) => +(12.0 + i*0.10 + Math.sin(i*.6)*.3).toFixed(2));
+  const sampleC2 = months12.map((_,i) => +(15.5 + i*0.12 + Math.sin(i*.6)*.4).toFixed(2));
   chartPrice = new Chart(document.getElementById('priceChart'), {
     type: 'line',
     data: {
       labels: months12,
       datasets: [
-        { label:'A. 삼익그린2차 (억)',      data:sampleA, borderColor:CA, backgroundColor:'rgba(37,99,235,.1)',  fill:true, tension:.4, pointRadius:3, spanGaps:true },
-        { label:'B. 사당우성3단지 (억)',     data:sampleB, borderColor:CB, backgroundColor:'rgba(22,163,74,.1)',  fill:true, tension:.4, pointRadius:3, spanGaps:true },
-        { label:'C. 노량진신동아리버파크 (억)', data:sampleC, borderColor:CC, backgroundColor:'rgba(124,58,237,.1)', fill:true, tension:.4, pointRadius:3, spanGaps:true },
+        { label:'A. 삼익그린2차 (억)',           data:sampleA,  borderColor:CA,  backgroundColor:'rgba(37,99,235,.1)',   fill:true, tension:.4, pointRadius:3, spanGaps:true },
+        { label:'B. 사당우성3단지 (억)',          data:sampleB,  borderColor:CB,  backgroundColor:'rgba(22,163,74,.1)',   fill:true, tension:.4, pointRadius:3, spanGaps:true },
+        { label:'C. 노량진신동아 30평대 (억)',    data:sampleC,  borderColor:CC,  backgroundColor:'rgba(124,58,237,.1)',  fill:true, tension:.4, pointRadius:3, spanGaps:true },
+        { label:'C. 노량진신동아 40평대 (억)',    data:sampleC2, borderColor:CC2, backgroundColor:'rgba(219,39,119,.1)',  fill:true, tension:.4, pointRadius:3, spanGaps:true, borderDash:[5,3] },
       ],
     },
     options: {
