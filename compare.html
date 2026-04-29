@@ -152,9 +152,9 @@ const SEOUL_AIR_API_KEY  = "684c4a667374776f3436726c4a6a76";
 // worker.js 파일을 배포하면 됩니다. 없으면 null로 두세요.
 const CUSTOM_PROXY_URL = null; // 예: "https://my-proxy.yourname.workers.dev"
 
-const A = { id:'a', name:'삼익그린2차',          lat:37.5526, lng:127.1485, lawdCd:'11740', aptKw:'삼익그린2차' };
-const B = { id:'b', name:'사당우성3단지',         lat:37.4899, lng:126.9759, lawdCd:'11590', aptKw:'우성3'       };
-const C = { id:'c', name:'노량진신동아리버파크',   lat:37.5138, lng:126.9424, lawdCd:'11590', aptKw:'신동아리버파크' };
+const A = { id:'a', name:'삼익그린2차',          lat:37.5526, lng:127.1485, lawdCd:'11740', aptKw:'삼익그린2차',    umdNm:'명일동'   };
+const B = { id:'b', name:'사당우성3단지',         lat:37.4899, lng:126.9759, lawdCd:'11590', aptKw:'우성3',          umdNm:'사당동'   };
+const C = { id:'c', name:'노량진신동아리버파크',   lat:37.5138, lng:126.9424, lawdCd:'11590', aptKw:'신동아리버파크', umdNm:'노량진동' };
 
 const CATS = [
   { code:'SW8', label:'지하철역', icon:'🚇' },
@@ -817,22 +817,23 @@ async function fetchMolitMonth(lawdCd, yyyymm) {
   const txt = await res.text();
   return new DOMParser().parseFromString(txt, 'application/xml');
 }
-function parseMolitXml(xml, aptKw, areaMin=60, areaMax=130) {
+function parseMolitXml(xml, aptKw, areaMin=60, areaMax=130, umdNm='') {
   const items = xml.querySelectorAll('item');
   const prices = [];
   const allNames = new Set();
   items.forEach(item => {
-    const name  = (item.querySelector('아파트')?.textContent ?? '').trim();
-    const area  = parseFloat(item.querySelector('전용면적')?.textContent ?? '0');
-    const priceRaw = (item.querySelector('거래금액')?.textContent ?? '').replace(/[,\s]/g,'');
+    const name  = (item.querySelector('aptNm')?.textContent ?? '').trim();
+    const dong  = (item.querySelector('umdNm')?.textContent ?? '').trim();
+    const area  = parseFloat(item.querySelector('excluUseAr')?.textContent ?? '0');
+    const priceRaw = (item.querySelector('dealAmount')?.textContent ?? '').replace(/[,\s]/g,'');
     const price = parseInt(priceRaw, 10);
     if (name) allNames.add(name);
-    if (name.includes(aptKw) && area >= areaMin && area <= areaMax && !isNaN(price) && price > 0) {
+    if (name.includes(aptKw) && (!umdNm || dong === umdNm) && area >= areaMin && area <= areaMax && !isNaN(price) && price > 0) {
       prices.push(price);
     }
   });
   if (prices.length === 0 && allNames.size > 0) {
-    console.debug(`[MOLIT] "${aptKw}" 매칭 없음 (총 ${allNames.size}개 단지). 유사 단지:`,
+    console.debug(`[MOLIT] "${aptKw}"(${umdNm}) 매칭 없음 (총 ${allNames.size}개 단지). 유사 단지:`,
       [...allNames].filter(n => n.includes(aptKw.slice(0,2))).slice(0,10));
   }
   if (prices.length === 0) return null;
@@ -848,9 +849,9 @@ async function loadPriceData() {
       Promise.all(months.map(m => fetchMolitMonth(B.lawdCd, m).catch(() => null))),
       Promise.all(months.map(m => fetchMolitMonth(C.lawdCd, m).catch(() => null))),
     ]);
-    const priceA = xmlsA.map(x => x ? parseMolitXml(x, A.aptKw, 60, 75) : null);
-    const priceB = xmlsB.map(x => x ? parseMolitXml(x, B.aptKw, 110, 125) : null);
-    const priceC = xmlsC.map(x => x ? parseMolitXml(x, C.aptKw, 80, 90) : null);
+    const priceA = xmlsA.map(x => x ? parseMolitXml(x, A.aptKw, 60,  75,  A.umdNm) : null);
+    const priceB = xmlsB.map(x => x ? parseMolitXml(x, B.aptKw, 110, 125, B.umdNm) : null);
+    const priceC = xmlsC.map(x => x ? parseMolitXml(x, C.aptKw, 80, 90,  C.umdNm) : null);
     const labels = months.map(m => `${m.slice(0,4)}.${m.slice(4)}`);
     chartPrice.data.labels = labels;
     chartPrice.data.datasets[0].data = priceA;
