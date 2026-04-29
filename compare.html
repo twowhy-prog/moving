@@ -822,9 +822,9 @@ function parseMolitXml(xml, aptKw, areaMin=60, areaMax=130) {
   const prices = [];
   const allNames = new Set();
   items.forEach(item => {
-    const name  = (item.querySelector('아파트')?.textContent ?? '').trim();
-    const area  = parseFloat(item.querySelector('전용면적')?.textContent ?? '0');
-    const priceRaw = (item.querySelector('거래금액')?.textContent ?? '').replace(/[,\s]/g,'');
+    const name  = (item.querySelector('aptNm')?.textContent ?? '').trim();
+    const area  = parseFloat(item.querySelector('excluUseAr')?.textContent ?? '0');
+    const priceRaw = (item.querySelector('dealAmount')?.textContent ?? '').replace(/[,\s]/g,'');
     const price = parseInt(priceRaw, 10);
     if (name) allNames.add(name);
     if (name.includes(aptKw) && area >= areaMin && area <= areaMax && !isNaN(price) && price > 0) {
