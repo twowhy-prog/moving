@@ -656,6 +656,130 @@ const CATS = [
   </div>
 </div>
 
+<!-- ══ 11. Claude 최종 검토 ══ -->
+<div class="section" style="border:2px solid #6366f1;background:linear-gradient(135deg,#1e1b4b 0%,#312e81 100%);color:#e0e7ff">
+  <div class="section-title" style="color:#e0e7ff;border-bottom:1px solid rgba(255,255,255,.15);padding-bottom:10px;margin-bottom:16px">
+    <span class="icon">🧠</span> Claude 최종 검토 — 재정계산기 × 입지분석 통합
+    <span class="tag tag-hard" style="margin-left:auto;background:rgba(99,102,241,.4);color:#c7d2fe;border:1px solid #6366f1">하드코딩·기본값 기준</span>
+  </div>
+
+  <!-- 재정 시뮬레이션 요약 -->
+  <div style="margin-bottom:16px">
+    <div style="font-size:12px;font-weight:700;color:#a5b4fc;margin-bottom:8px;letter-spacing:.05em">📊 재정 시뮬레이션 (삼익그린2차 19억 매도 · 부부합산 960만원 기준)</div>
+    <table style="width:100%;border-collapse:collapse;font-size:12px">
+      <thead>
+        <tr style="background:rgba(99,102,241,.3)">
+          <th style="padding:7px 10px;text-align:left;font-weight:700;color:#c7d2fe">항목</th>
+          <th style="padding:7px 10px;text-align:right;color:#93c5fd">A→C 33평<br>16.5억</th>
+          <th style="padding:7px 10px;text-align:right;color:#f9a8d4">A→C 40평<br>20억</th>
+          <th style="padding:7px 10px;text-align:right;color:#86efac">A→B<br>17억</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid rgba(255,255,255,.08)">
+          <td style="padding:6px 10px;color:#cbd5e1">세후 수령 (공동명의)</td>
+          <td colspan="3" style="padding:6px 10px;text-align:right;color:#86efac;font-weight:700">18.43억 공통 · 부채상환 후 가용 14.81억</td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,.08)">
+          <td style="padding:6px 10px;color:#cbd5e1">최소 주담대</td>
+          <td style="padding:6px 10px;text-align:right;color:#93c5fd;font-weight:700">2.99억</td>
+          <td style="padding:6px 10px;text-align:right;color:#f87171;font-weight:700">6.61억 ⚠</td>
+          <td style="padding:6px 10px;text-align:right;color:#86efac;font-weight:700">3.50억</td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,.08)">
+          <td style="padding:6px 10px;color:#cbd5e1">LTV 한도 (4억)</td>
+          <td style="padding:6px 10px;text-align:right;color:#86efac">✅ 여유 1.01억</td>
+          <td style="padding:6px 10px;text-align:right;color:#f87171;font-weight:700">❌ 2.61억 초과</td>
+          <td style="padding:6px 10px;text-align:right;color:#86efac">✅ 여유 0.50억</td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,.08)">
+          <td style="padding:6px 10px;color:#cbd5e1">월 원리금</td>
+          <td style="padding:6px 10px;text-align:right;color:#93c5fd">151만원</td>
+          <td style="padding:6px 10px;text-align:right;color:#f87171">335만원</td>
+          <td style="padding:6px 10px;text-align:right;color:#86efac">178만원</td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,.08)">
+          <td style="padding:6px 10px;color:#cbd5e1">실제 DSR</td>
+          <td style="padding:6px 10px;text-align:right;color:#86efac;font-weight:700">32.5% ✅</td>
+          <td style="padding:6px 10px;text-align:right;color:#f87171;font-weight:700">51.6% ❌</td>
+          <td style="padding:6px 10px;text-align:right;color:#fbbf24;font-weight:700">35.2% ✅</td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,.08)">
+          <td style="padding:6px 10px;color:#cbd5e1">② 영유기간 월여유</td>
+          <td style="padding:6px 10px;text-align:right;color:#93c5fd;font-weight:700">+196만원</td>
+          <td style="padding:6px 10px;text-align:right;color:#f87171">+12만원 ⚠</td>
+          <td style="padding:6px 10px;text-align:right;color:#86efac">+170만원</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 10px;color:#cbd5e1">③ 영유 후 월여유</td>
+          <td style="padding:6px 10px;text-align:right;color:#93c5fd;font-weight:700">+409만원</td>
+          <td style="padding:6px 10px;text-align:right;color:#fbbf24">+225만원</td>
+          <td style="padding:6px 10px;text-align:right;color:#86efac">+383만원</td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="font-size:11px;color:#94a3b8;margin-top:6px">* 양도세 4,433만 (장특공제 40%, 공동명의) · 중개보수 매도990+매수990 · 취득세 3.3% · 영유비 7분기×789만원 주담대 선납 포함</div>
+  </div>
+
+  <!-- 단지별 종합 판정 -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
+    <div style="background:rgba(37,99,235,.2);border:1px solid #3b82f6;border-radius:8px;padding:12px">
+      <div style="font-weight:700;color:#93c5fd;margin-bottom:6px">🔵 A→C 33평 ★ 추천</div>
+      <div style="font-size:11px;color:#bfdbfe;line-height:1.8">
+        ✅ 주담대 최소 (2.99억)<br>
+        ✅ DSR 32.5% — 가장 여유<br>
+        ✅ 월여유 196만 (영유기간)<br>
+        ✅ 1·9호선 더블역세권<br>
+        ✅ 직주근접 최강 (15~20분)<br>
+        ✅ 한강뷰 · 노량진뉴타운<br>
+        ⚠ 학군 (대방중) 다소 약세<br>
+        ⚠ 33평 — 자녀 성장 후 협소감
+      </div>
+    </div>
+    <div style="background:rgba(219,39,119,.15);border:1px solid #db2777;border-radius:8px;padding:12px">
+      <div style="font-weight:700;color:#f9a8d4;margin-bottom:6px">🩷 A→C 40평 ✗ 재정 불가</div>
+      <div style="font-size:11px;color:#fbcfe8;line-height:1.8">
+        ❌ LTV 2.61억 초과 — 불가<br>
+        ❌ DSR 51.6% — 한도 초과<br>
+        ⚠ 추가 현금 2.61억 필요<br>
+        ⚠ 영유기간 월여유 12만 — 위험<br>
+        ✅ 쾌적한 면적 (109㎡)<br>
+        ✅ 방 4개, 4인 가족 적합<br>
+        💡 현재 재정구조로는 불가.<br>
+           추가 증여·여유자금 확보 후 재검토
+      </div>
+    </div>
+    <div style="background:rgba(22,163,74,.15);border:1px solid #16a34a;border-radius:8px;padding:12px">
+      <div style="font-weight:700;color:#86efac;margin-bottom:6px">🟢 A→B 차선책</div>
+      <div style="font-size:11px;color:#bbf7d0;line-height:1.8">
+        ✅ DSR 35.2% — 안정권<br>
+        ✅ 월여유 170만 (영유기간)<br>
+        ✅ 학군 우위 (사당중·이수학원가)<br>
+        ✅ 리모델링 후 신축급 프리미엄<br>
+        ✅ 118㎡ — 넉넉한 공간<br>
+        ⚠ 이주 2027~2028 — 전세 필요<br>
+        ⚠ 직주근접 C 대비 열세 (25~30분)<br>
+        ⚠ 주담대 3.5억 — C보다 5,175만↑
+      </div>
+    </div>
+  </div>
+
+  <!-- 최종 결론 -->
+  <div style="background:rgba(99,102,241,.25);border:1.5px solid #6366f1;border-radius:8px;padding:14px">
+    <div style="font-weight:700;color:#c7d2fe;margin-bottom:8px;font-size:13px">📌 최종 결론</div>
+    <div style="font-size:12px;color:#e0e7ff;line-height:2">
+      <strong style="color:#a5b4fc">1순위 — C 노량진신동아 33평 (16.5억)</strong><br>
+      재정 여유(DSR 32.5%, 월여유 196만)와 입지(더블역세권·직주근접)를 동시에 만족하는 유일한 조합.
+      영유비 7분기 선납으로 현금흐름 방어, 3억 주담대로 LTV·DSR 모두 안정권.<br><br>
+      <strong style="color:#86efac">2순위 — B 사당우성3단지 (17억)</strong><br>
+      학군·면적·리모델링 프리미엄이 강점. 다만 이주 리스크(2027~28)로 인한 전세 비용과 직주근접 열세를 감수해야 함.<br><br>
+      <strong style="color:#f87171">C 40평 — 현재 재정으로 불가</strong><br>
+      최소 주담대 6.61억이 LTV 한도(4억)를 2.61억 초과. 증여·예금 등 추가 자금 마련 없이는 실행 불가.
+      DSR도 51.6%로 대출 자체가 승인되지 않음.
+    </div>
+  </div>
+</div>
+
 </div><!-- /container -->
 
 <script>
