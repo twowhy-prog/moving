@@ -811,7 +811,7 @@ async function fetchWithProxy(targetUrl) {
 async function fetchMolitMonth(lawdCd, yyyymm) {
   const rawKey = decodeURIComponent(MOLIT_API_KEY);
   const direct = `https://apis.data.go.kr/1613000/RTMSDataSvcAptTrade/getRTMSDataSvcAptTrade` +
-    `?serviceKey=${encodeURIComponent(rawKey)}&LAWD_CD=${lawdCd}&DEAL_YMD=${yyyymm}&numOfRows=200&pageNo=1`;
+    `?serviceKey=${encodeURIComponent(rawKey)}&LAWD_CD=${lawdCd}&DEAL_YMD=${yyyymm}&numOfRows=1000&pageNo=1`;
   const res = await fetchWithProxy(direct);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const txt = await res.text();
@@ -820,15 +820,21 @@ async function fetchMolitMonth(lawdCd, yyyymm) {
 function parseMolitXml(xml, aptKw, areaMin=60, areaMax=130) {
   const items = xml.querySelectorAll('item');
   const prices = [];
+  const allNames = new Set();
   items.forEach(item => {
     const name  = (item.querySelector('아파트')?.textContent ?? '').trim();
     const area  = parseFloat(item.querySelector('전용면적')?.textContent ?? '0');
     const priceRaw = (item.querySelector('거래금액')?.textContent ?? '').replace(/[,\s]/g,'');
     const price = parseInt(priceRaw, 10);
+    if (name) allNames.add(name);
     if (name.includes(aptKw) && area >= areaMin && area <= areaMax && !isNaN(price) && price > 0) {
       prices.push(price);
     }
   });
+  if (prices.length === 0 && allNames.size > 0) {
+    console.debug(`[MOLIT] "${aptKw}" 매칭 없음 (총 ${allNames.size}개 단지). 유사 단지:`,
+      [...allNames].filter(n => n.includes(aptKw.slice(0,2))).slice(0,10));
+  }
   if (prices.length === 0) return null;
   prices.sort((a,b)=>a-b);
   const mid = prices[Math.floor(prices.length / 2)];
