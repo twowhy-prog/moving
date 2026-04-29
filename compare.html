@@ -257,6 +257,7 @@ const CATS = [
       <div class="row"><span class="k">노선수</span><span class="v">2개 (더블역세권, 9호선 급행 포함) ⭐</span></div>
       <div class="row"><span class="k">준공</span><span class="v">2003년 (약 23년 경과)</span></div>
       <div class="row"><span class="k">세대수</span><span class="v">약 1,120세대 (4개 동)</span></div>
+      <div class="row"><span class="k">주요 평형</span><span class="v">33평형 (공급109/전용84㎡) · 40평형 (공급139/전용109㎡)</span></div>
       <div class="row"><span class="k">재건축</span><span class="v">추진 준비 중 (노후도 기준 도달)</span></div>
       <div class="row"><span class="k">개발호재</span><span class="v">노량진 뉴타운 수혜 기대, 한강변 입지</span></div>
       <div class="row"><span class="k">지형</span><span class="v">평지 (한강변, 우수)</span></div>
@@ -345,11 +346,11 @@ const CATS = [
       <table class="ctbl">
         <thead><tr><th class="lbl">항목</th><th class="th-a">A. 삼익그린2차</th><th class="th-b">B. 사당우성3단지</th><th class="th-c">C. 노량진신동아</th><th>우위</th></tr></thead>
         <tbody>
-          <tr><td class="lbl">공급면적</td><td>90.04㎡ (27평)</td><td>136.64㎡ (41평)</td><td>109.87㎡ (33평)</td><td><span class="wtag wtag-b">B</span></td></tr>
-          <tr><td class="lbl">전용면적</td><td>66.87㎡</td><td class="win-b">118.25㎡</td><td>84.36㎡</td><td><span class="wtag wtag-b">B</span></td></tr>
-          <tr><td class="lbl">전용률</td><td>74.3%</td><td class="win-b">86.5% ⭐</td><td>76.8%</td><td><span class="wtag wtag-b">B</span></td></tr>
+          <tr><td class="lbl">공급면적</td><td>90.04㎡ (27평)</td><td>136.64㎡ (41평)</td><td>109.87㎡ (33평)<br><span style="font-size:10px;color:var(--c2,#db2777)">▲ 138.95㎡ (42평)</span></td><td><span class="wtag wtag-b">B</span></td></tr>
+          <tr><td class="lbl">전용면적</td><td>66.87㎡</td><td class="win-b">118.25㎡</td><td>84.36㎡<br><span style="font-size:10px;color:var(--c2,#db2777)">▲ 109.06㎡</span></td><td><span class="wtag wtag-b">B</span></td></tr>
+          <tr><td class="lbl">전용률</td><td>74.3%</td><td class="win-b">86.5% ⭐</td><td>76.8% / 78.5%</td><td><span class="wtag wtag-b">B</span></td></tr>
           <tr><td class="lbl">구조</td><td>복도식</td><td class="win-b">계단식 ⭐</td><td class="win-c">계단식 ⭐</td><td><span class="wtag wtag-tie">B·C</span></td></tr>
-          <tr><td class="lbl">방수</td><td>3개</td><td class="win-b">4개</td><td>3개</td><td><span class="wtag wtag-b">B</span></td></tr>
+          <tr><td class="lbl">방수</td><td>3개</td><td class="win-b">4개</td><td>3개 / <span style="color:#db2777">4개 ⭐</span></td><td><span class="wtag wtag-tie">B·C</span></td></tr>
           <tr><td class="lbl">욕실수</td><td>1개</td><td class="win-b">2개</td><td class="win-c">2개</td><td><span class="wtag wtag-tie">B·C</span></td></tr>
           <tr><td class="lbl">베란다</td><td class="win-a">확장 완료 ✅</td><td>미확장 (리모델링 예정)</td><td>전·후 발코니 있음</td><td><span class="wtag wtag-a">A</span></td></tr>
           <tr><td class="lbl">한강 조망</td><td>없음</td><td>없음</td><td class="win-c">일부 동 가능 ⭐</td><td><span class="wtag wtag-c">C</span></td></tr>
@@ -358,6 +359,14 @@ const CATS = [
     </div>
     <div>
       <div class="chart-wrap" style="height:220px"><canvas id="floorAreaChart"></canvas></div>
+    </div>
+  </div>
+  <div style="background:#fdf2f8;border:1px solid #db2777;border-radius:8px;padding:12px;margin-bottom:10px">
+    <div style="font-weight:700;color:#db2777;margin-bottom:6px">🟣 C. 노량진신동아 40평형 (공급 138.95㎡ · 전용 109.06㎡)</div>
+    <div style="font-size:12px;color:#831843;line-height:1.8">
+      방 4개 · 욕실 2개 · 계단식 · 전용률 78.5% · 전·후 발코니 · 한강조망 일부 동 가능<br>
+      ⭐ B(우성3단지 118㎡)와 유사한 면적대 — 4인 가족 실거주 쾌적성 ↑<br>
+      예상 시세 19~21억 (33평 대비 +3~4억), 실거래가 차트 핑크 점선 참고
     </div>
   </div>
   <div style="background:#fffbeb;border:1px solid #f59e0b;border-radius:8px;padding:12px">
@@ -1055,9 +1064,10 @@ function initFloorChart() {
     data: {
       labels: ['공급면적(㎡)', '전용면적(㎡)', '전용률(%)'],
       datasets: [
-        { label:'A. 삼익그린2차',         data:[90.04,  66.87, 74.3], backgroundColor:'rgba(37,99,235,.7)' },
-        { label:'B. 사당우성3단지',        data:[136.64, 118.25,86.5], backgroundColor:'rgba(22,163,74,.7)' },
-        { label:'C. 노량진신동아리버파크', data:[109.87, 84.36, 76.8], backgroundColor:'rgba(124,58,237,.7)' },
+        { label:'A. 삼익그린2차',              data:[90.04,  66.87, 74.3], backgroundColor:'rgba(37,99,235,.7)' },
+        { label:'B. 사당우성3단지',             data:[136.64, 118.25,86.5], backgroundColor:'rgba(22,163,74,.7)' },
+        { label:'C. 노량진신동아 (33평)',        data:[109.87, 84.36, 76.8], backgroundColor:'rgba(124,58,237,.7)' },
+        { label:'C. 노량진신동아 (40평)',        data:[138.95,109.06, 78.5], backgroundColor:'rgba(219,39,119,.7)' },
       ],
     },
     options: {
@@ -1099,11 +1109,11 @@ async function runAiAnalysis() {
 
 【C. 노량진신동아리버파크 (매수 검토)】
 - 위치: 서울 동작구 노량진동 255 (한강변)
-- 전용: 84.36㎡ (33평), 공급 109.87㎡
+- 평형 ①: 전용 84.36㎡ (33평형), 공급 109.87㎡ — 매수가 약 16.5억
+- 평형 ②: 전용 109.06㎡ (40평형), 공급 138.95㎡ — 매수가 약 19~21억
 - 교통: 1·9호선 노량진역 도보 5분 (더블역세권, 9호선 급행 포함)
 - 준공: 2003년 / 재건축 추진 준비 중
 - 개발호재: 노량진 뉴타운 수혜, 한강뷰, 여의도 금융가 10분
-- 매수가: 16.5억 (109/84 타입)
 - 직장(을지로3가) 15~20분 ⭐, 리비어어학원(신사동) 15~20분, 외가(원베일리) 20~25분
 
 【가족 상황】
