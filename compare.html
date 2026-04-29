@@ -346,11 +346,11 @@ const CATS = [
       <table class="ctbl">
         <thead><tr><th class="lbl">항목</th><th class="th-a">A. 삼익그린2차</th><th class="th-b">B. 사당우성3단지</th><th class="th-c">C. 노량진신동아</th><th>우위</th></tr></thead>
         <tbody>
-          <tr><td class="lbl">공급면적</td><td>90.04㎡ (27평)</td><td>136.64㎡ (41평)</td><td>109.87㎡ (33평)<br><span style="font-size:10px;color:var(--c2,#db2777)">▲ 138.95㎡ (42평)</span></td><td><span class="wtag wtag-b">B</span></td></tr>
+          <tr><td class="lbl">공급면적</td><td>90.04㎡ (27평)</td><td>135.86㎡ (41평)<br><span style="font-size:10px;color:#94a3b8">302동 기준</span></td><td>109.87㎡ (33평)<br><span style="font-size:10px;color:var(--c2,#db2777)">▲ 138.95㎡ (42평)</span></td><td><span class="wtag wtag-b">B</span></td></tr>
           <tr><td class="lbl">전용면적</td><td>66.87㎡</td><td class="win-b">118.25㎡</td><td>84.36㎡<br><span style="font-size:10px;color:var(--c2,#db2777)">▲ 109.06㎡</span></td><td><span class="wtag wtag-b">B</span></td></tr>
-          <tr><td class="lbl">전용률</td><td>74.3%</td><td class="win-b">86.5% ⭐</td><td>76.8% / 78.5%</td><td><span class="wtag wtag-b">B</span></td></tr>
+          <tr><td class="lbl">전용률</td><td>74.3%</td><td class="win-b">87.1% ⭐</td><td>76.8% / 78.5%</td><td><span class="wtag wtag-b">B</span></td></tr>
           <tr><td class="lbl">구조</td><td>복도식</td><td class="win-b">계단식 ⭐</td><td class="win-c">계단식 ⭐</td><td><span class="wtag wtag-tie">B·C</span></td></tr>
-          <tr><td class="lbl">방수</td><td>3개</td><td class="win-b">4개</td><td>3개 / <span style="color:#db2777">4개 ⭐</span></td><td><span class="wtag wtag-tie">B·C</span></td></tr>
+          <tr><td class="lbl">방수</td><td>3개</td><td class="win-b">4개 ⭐</td><td>3개 / <span style="color:#db2777">4개 ⭐</span></td><td><span class="wtag wtag-tie">B·C</span></td></tr>
           <tr><td class="lbl">욕실수</td><td>1개</td><td class="win-b">2개</td><td class="win-c">2개</td><td><span class="wtag wtag-tie">B·C</span></td></tr>
           <tr><td class="lbl">베란다</td><td class="win-a">확장 완료 ✅</td><td>미확장 (리모델링 예정)</td><td>전·후 발코니 있음</td><td><span class="wtag wtag-a">A</span></td></tr>
           <tr><td class="lbl">한강 조망</td><td>없음</td><td>없음</td><td class="win-c">일부 동 가능 ⭐</td><td><span class="wtag wtag-c">C</span></td></tr>
@@ -1189,7 +1189,7 @@ function initFloorChart() {
       labels: ['공급면적(㎡)', '전용면적(㎡)', '전용률(%)'],
       datasets: [
         { label:'A. 삼익그린2차',              data:[90.04,  66.87, 74.3], backgroundColor:'rgba(37,99,235,.7)' },
-        { label:'B. 사당우성3단지',             data:[136.64, 118.25,86.5], backgroundColor:'rgba(22,163,74,.7)' },
+        { label:'B. 사당우성3단지 (302동)',       data:[135.86, 118.25,87.1], backgroundColor:'rgba(22,163,74,.7)' },
         { label:'C. 노량진신동아 (33평)',        data:[109.87, 84.36, 76.8], backgroundColor:'rgba(124,58,237,.7)' },
         { label:'C. 노량진신동아 (40평)',        data:[138.95,109.06, 78.5], backgroundColor:'rgba(219,39,119,.7)' },
       ],
@@ -1224,7 +1224,7 @@ async function runAiAnalysis() {
 
 【B. 사당우성3단지 (매수 검토)】
 - 위치: 서울 동작구 사당동
-- 전용: 118.25㎡ (41평), 공급 136.64㎡
+- 전용: 118.25㎡ (41평), 공급 135.86㎡ (302동 · 계단식 · 침실4 · 욕실2)
 - 교통: 4·7호선 이수역 도보 7~10분 (막장환승 주의)
 - 리모델링: 포스코이앤씨 (이주 2027~2028, 준공 2031~2032)
 - 세대: 우성3차 단독 855세대 / 조합 3,485→4,006세대
