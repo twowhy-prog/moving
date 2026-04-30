@@ -106,6 +106,8 @@
   @media (max-width: 860px) { .cashflow-grid-3 { grid-template-columns: 1fr; } }
   .period-header { font-weight: 600; font-size: 13px; padding: 10px 12px; border-radius: 8px 8px 0 0; line-height: 1.6; }
 
+  #s7_inputs input:disabled, #s7_inputs button:disabled { opacity:0.45; cursor:not-allowed; }
+
   .fee-ref { display:flex; flex-wrap:wrap; gap:4px; margin-top:8px; font-size:11px; }
   .fee-ref-row { display:flex; align-items:center; gap:6px; background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:3px 8px; white-space:nowrap; cursor:pointer; }
   .fee-ref-row:hover { border-color:#3b82f6; }
@@ -611,7 +613,15 @@
       <span class="toggle-icon">▼</span>
     </div>
     <div class="section-body">
-      <div class="grid-3">
+      <!-- 자동 배분 컨트롤 -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding:10px 14px;background:var(--input-bg);border-radius:8px;border:1px solid var(--border)">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:600">
+          <input type="checkbox" id="autoAllocate" checked onchange="calc()" style="width:16px;height:16px;cursor:pointer">
+          36개월 가용자금 기준 자동 배분
+        </label>
+        <span style="font-size:12px;color:var(--sub)" id="r_allocBudgetInfo">—</span>
+      </div>
+      <div class="grid-3" id="s7_inputs">
         <div class="field">
           <label>연금저축 (본인, 만원/월)</label>
           <div class="field-adjust">
@@ -913,6 +923,22 @@ function calcPeriod() {
 
   // 취득=입주이므로 보유=거주
   return { holdYears, holdMonths, liveYears: holdYears, liveMonths: holdMonths };
+}
+
+// 36개월 가용자금 기준 자동 배분
+// 현재 기본 배분 비율(p1:p2:i1:i2:isa:parking = 50:50:25:25:20:50)을 유지하며 스케일
+function autoAllocateSavings(budget) {
+  if (budget <= 0) return { p1:0, p2:0, i1:0, i2:0, isa:0, parking:0 };
+  const IDEAL   = { p1:50, p2:50, i1:25, i2:25, isa:20, parking:50 };
+  const IDEAL_T = 220; // 합계
+  const scale   = Math.min(1, budget / IDEAL_T);
+  const p1      = Math.round(IDEAL.p1 * scale);
+  const p2      = Math.round(IDEAL.p2 * scale);
+  const i1      = Math.round(IDEAL.i1 * scale);
+  const i2      = Math.round(IDEAL.i2 * scale);
+  const isa     = Math.round(IDEAL.isa * scale);
+  const parking = Math.max(0, budget - p1 - p2 - i1 - i2 - isa);
+  return { p1, p2, i1, i2, isa, parking };
 }
 
 // 장기보유특별공제율 계산 (현행법 기준)
@@ -1224,7 +1250,35 @@ function calc() {
   // 현금흐름 차트
   updateCashflowChart(totalIncome, monthlyPayment, daycareMonthly, elemSchoolMonthly, livingCost, otherDebtMonthly, surplus_p1, surplus_p2, surplus_p3);
 
-  // --- 섹션 6: 절세 ---
+  // --- 섹션 7: 자동 배분 ---
+  const isAutoAlloc = $('autoAllocate').checked;
+  if (isAutoAlloc) {
+    // 36개월 중 각 기간 길이
+    const m1 = Math.min(p1_months, 36);
+    const m2 = Math.min(p2_months, Math.max(0, 36 - m1));
+    const m3 = 36 - m1 - m2;
+    // 최저 월 여유 (가장 빠듯한 달 기준 = 보수적 배분)
+    let minS = surplus_p3; // ③ 항상 포함
+    if (m1 > 0) minS = Math.min(minS, surplus_p1);
+    if (m2 > 0) minS = Math.min(minS, surplus_p2);
+    const budget = Math.max(0, Math.floor(minS));
+    // 가중평균 표시용
+    const wavg = Math.round((surplus_p1*m1 + surplus_p2*m2 + surplus_p3*m3) / 36);
+    $('r_allocBudgetInfo').textContent =
+      `최저 여유 ${fmt(budget)}만원/월 · 36개월 평균 ${fmt(wavg)}만원/월`;
+    const a = autoAllocateSavings(budget);
+    $('pension1').value = a.p1; $('pension2').value = a.p2;
+    $('irp1').value = a.i1;    $('irp2').value = a.i2;
+    $('isa').value  = a.isa;   $('parkingMonthly').value = a.parking;
+    // 자동 모드일 때 입력 비활성화
+    ['pension1','pension2','irp1','irp2','isa','parkingMonthly'].forEach(id => $(id).disabled = true);
+    document.querySelectorAll('#s7_inputs .adjust-btn').forEach(b => b.disabled = true);
+  } else {
+    $('r_allocBudgetInfo').textContent = '수동 입력 모드';
+    ['pension1','pension2','irp1','irp2','isa','parkingMonthly'].forEach(id => $(id).disabled = false);
+    document.querySelectorAll('#s7_inputs .adjust-btn').forEach(b => b.disabled = false);
+  }
+
   const p1Monthly = val('pension1') + val('irp1');
   const p2Monthly = val('pension2') + val('irp2');
   const p1Annual  = p1Monthly * 12;
