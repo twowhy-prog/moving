@@ -1,0 +1,256 @@
+{
+  "meta": {
+    "title": "부동산 매도·매수 및 재무설계 데이터",
+    "generated": "2026-04-29",
+    "version": "1.0"
+  },
+
+  "profile": {
+    "owner": { "birth": 1983, "age": 43, "retirement": 2043 },
+    "spouse": { "birth": 1985, "age": 41, "retirement": 2045 },
+    "child": { "birth": 2023, "age": 3 },
+    "income": {
+      "owner_monthly_net": 4400000,
+      "spouse_monthly_net": 4400000,
+      "combined_monthly_net": 8800000,
+      "combined_annual_gross_est": 126000000
+    }
+  },
+
+  "current_home": {
+    "purchase_price": 980000000,
+    "purchase_date": "2020-08-01",
+    "sale_price": 1900000000,
+    "sale_date_planned": "2026-08-02",
+    "ownership": "joint_married_50_50",
+    "mortgage_balance": 270000000,
+    "credit_loan": 100000000,
+    "transfer_tax": {
+      "per_person": 21201921,
+      "combined": 42403842,
+      "note": "장특공제 40% 적용(보유+거주 각 5년). 잔금일 2026-08-02 이후 시 48%로 절감 가능"
+    },
+    "proceeds_after_all": 1478100000,
+    "brokerage_fee_rate_ceiling": 0.007,
+    "brokerage_fee_negotiated": 9500000
+  },
+
+  "new_home": {
+    "options": [
+      {
+        "id": "A",
+        "size_pyeong": 34,
+        "price": 1650000000,
+        "location": "동작구 노량진 or 이수역",
+        "acquisition_tax": 54000000,
+        "brokerage_fee": 8250000,
+        "renovation_mid": 20000000,
+        "moving_cost": 2400000,
+        "furniture_appliance": 750000,
+        "temp_housing": 4000000,
+        "total_required": 1739400000,
+        "mortgage_needed": 261300000,
+        "mortgage_with_childcare": 348200000,
+        "monthly_principal_interest": 1663000,
+        "monthly_cash_during_childcare": 4137000,
+        "monthly_cash_after_childcare": 4137000
+      },
+      {
+        "id": "B",
+        "size_pyeong": 45,
+        "price": 1700000000,
+        "location": "동작구 노량진 or 이수역",
+        "acquisition_tax": 55700000,
+        "brokerage_fee": 8500000,
+        "renovation_mid": 27500000,
+        "moving_cost": 3600000,
+        "furniture_appliance": 3500000,
+        "temp_housing": 4000000,
+        "total_required": 1802800000,
+        "mortgage_needed": 324700000,
+        "mortgage_with_childcare": 411600000,
+        "note": "영유비 포함 시 4억 한도 초과 (411,600,000 > 400,000,000)",
+        "monthly_principal_interest": 1964000,
+        "monthly_cash_during_childcare": 3836000,
+        "monthly_cash_after_childcare": 3836000
+      }
+    ],
+    "loan_regulation": {
+      "region": "동작구",
+      "status": "조정대상지역·투기과열지구 (2025-10-16 지정)",
+      "ltv_ceiling_over_15bn": 400000000,
+      "dsr_limit_pct": 40,
+      "stress_dsr_rate_pct": 3,
+      "max_term_years": 30
+    },
+    "renovation_items": ["실크도배", "장판", "일부조명교체", "화장실공사", "부엌공사"],
+    "renovation_period_weeks": { "34pyeong": "3~4주", "45pyeong": "4~5주" }
+  },
+
+  "childcare_fee": {
+    "quarterly": 7900000,
+    "monthly_avg": 2633333,
+    "contract_quarters_total": 12,
+    "quarters_paid": 1,
+    "quarters_remaining": 11,
+    "total_remaining": 86900000,
+    "end_date_est": "2028-12"
+  },
+
+  "brokerage_rates_seoul": [
+    { "range": "2억~9억 미만", "rate": 0.004 },
+    { "range": "9억~12억 미만", "rate": 0.005 },
+    { "range": "12억~15억 미만", "rate": 0.006 },
+    { "range": "15억 이상", "rate": 0.007, "ceiling": null }
+  ],
+
+  "assets": {
+    "crypto": [
+      { "symbol": "XRP", "qty": 60000, "price_krw": 2050, "value": 123000000 },
+      { "symbol": "BTC", "qty": 0.8, "price_krw": 109000000, "value": 87200000 },
+      { "symbol": "기타잡코인", "qty": null, "value": 3000000 }
+    ],
+    "savings": { "housing_subscription": 6000000 },
+    "stocks": 2000000,
+    "crypto_total": 213200000,
+    "financial_total_est": 221200000,
+    "crypto_tax_note": "2027-01-01부터 연 250만원 초과 수익에 22% 과세. 2026-12-31 시가가 의제취득가액으로 인정"
+  },
+
+  "crypto_strategy": [
+    { "asset": "잡코인", "action": "2026년 내 전액 매도", "target": "즉시", "purpose": "이사·리모델링 보조" },
+    { "asset": "XRP 20,000개", "action": "1차 분할매도", "target_price_krw": 3000, "proceeds": 60000000, "purpose": "주담대 1차 상환" },
+    { "asset": "XRP 20,000개", "action": "2차 분할매도", "target_price_krw": 5000, "proceeds": 100000000, "purpose": "주담대 2차 상환" },
+    { "asset": "XRP 20,000개", "action": "3차 매도", "target_year": 2038, "purpose": "고등 교육비 + 주담대 상환" },
+    { "asset": "BTC 0.8개", "action": "장기보유 후 매도", "target_year": 2043, "purpose": "주담대 완납 + 노후자금" }
+  ],
+
+  "mortgage_payoff_scenarios": [
+    { "scenario": "코인 미활용 (30년 만기)", "payoff_year": 2056, "age": 73 },
+    { "scenario": "XRP 2회 상환 (1.6억)", "payoff_year": 2048, "age": 65 },
+    { "scenario": "XRP 전량 + BTC 일부 활용", "payoff_year": 2043, "age": 60, "note": "정년 전 완납 가능" },
+    { "scenario": "BTC 목표가 달성 시", "payoff_year_range": "2038~2040", "age_range": "55~57" }
+  ],
+
+  "tax_advantaged_investments": {
+    "annual_per_person": {
+      "pension_savings": 6000000,
+      "irp": 3000000,
+      "isa": 20000000,
+      "total": 29000000
+    },
+    "annual_combined": {
+      "pension_savings": 12000000,
+      "irp": 6000000,
+      "isa": 40000000,
+      "total": 58000000
+    },
+    "tax_refund_annual_est": 2970000,
+    "pension_eligible_from": { "owner": 2038, "spouse": 2040 }
+  },
+
+  "monthly_cashflow": {
+    "during_childcare": {
+      "period": "2026~2028",
+      "income": 8800000,
+      "childcare": 2633333,
+      "living_expense": 3000000,
+      "mortgage_A": 1663000,
+      "mortgage_B": 1964000,
+      "surplus_A": 1503667,
+      "surplus_B": 1202667,
+      "surplus_A_childcare_in_mortgage": 4137000,
+      "surplus_B_childcare_in_mortgage": 3836000
+    },
+    "after_childcare": {
+      "period": "2029~",
+      "income_est": 9500000,
+      "living_expense": 3000000,
+      "mortgage_A": 1663000,
+      "mortgage_B": 1964000,
+      "surplus_A": 4837000,
+      "surplus_B": 4536000
+    }
+  },
+
+  "education_cost": [
+    { "stage": "영유아", "years": "~2028", "monthly_edu": 2633333, "total_monthly": 5633333 },
+    { "stage": "초등학교", "years": "2029~2034", "monthly_edu_range": [700000, 1100000], "total_monthly_range": [3700000, 4100000] },
+    { "stage": "중학교", "years": "2035~2037", "monthly_edu_range": [1050000, 1850000], "total_monthly_range": [4050000, 4850000] },
+    { "stage": "고등학교", "years": "2038~2040", "monthly_edu_range": [1800000, 2900000], "total_monthly_range": [4800000, 5900000], "note": "최대 지출 구간" },
+    { "stage": "대학교", "years": "2041~2044", "annual_range": [16000000, 24400000] }
+  ],
+
+  "child_fund": {
+    "target": 96800000,
+    "monthly_plan": [
+      { "period": "현재~초등 전 (3년)", "monthly": 500000, "accumulated": 19400000 },
+      { "period": "초등학교 (6년)", "monthly": 700000, "accumulated": 58000000 },
+      { "period": "중학교 (3년)", "monthly": 500000, "accumulated": 19400000 }
+    ],
+    "assumed_return_pct": 5
+  },
+
+  "location_analysis": {
+    "norangjin": {
+      "name": "노량진 뉴타운",
+      "total_units": 9000,
+      "zones": 8,
+      "target_completion": 2031,
+      "subway": ["1호선", "9호선"],
+      "current_price_per_3_3sqm": 42000000,
+      "projected_price_per_3_3sqm": 50000000,
+      "price_appreciation_scenarios": [
+        { "year": 2028, "low": 1900000000, "high": 2000000000 },
+        { "year": 2031, "low": 2200000000, "high": 2500000000 },
+        { "year": 2038, "low": 2500000000, "high": 3000000000 }
+      ],
+      "risk": ["2028년 동시 입주 공급 과잉 가능성", "조합 분쟁", "공사비 상승"]
+    },
+    "isu": {
+      "name": "이수역 일대",
+      "subway": ["4호선", "7호선"],
+      "access_gangnam_minutes": 10,
+      "notes": "흑석뉴타운 완성 효과 인접 수혜, 강남 접근성 우수"
+    },
+    "relocation_strategy": [
+      { "scenario": "단기 차익", "sell_year": "2028~2029", "destination": "강남·용산", "reason": "뉴타운 입주 효과 극대화" },
+      { "scenario": "권장: 중기", "sell_year": "2031년 전후", "destination": "대치·반포·목동", "reason": "뉴타운 완성 + 자녀 초등 2~3학년, 학군 이동 최적 시기" },
+      { "scenario": "장기 보유", "sell_year": "2038년 이후", "destination": "학군지", "reason": "최대 시세차익, 자녀 중학교 학군 맞춤" }
+    ]
+  },
+
+  "retirement_income": {
+    "year": 2048,
+    "national_pension_combined_monthly": [1400000, 2200000],
+    "pension_savings_irp_monthly": 2316000,
+    "mortgage_remaining_monthly": 1708000,
+    "net_monthly_with_mortgage": [2000000, 2800000],
+    "net_monthly_after_payoff": [4000000, 5000000]
+  },
+
+  "timeline": [
+    { "year": 2026, "event": "기존주택 매도 계약·신규매수 잔금", "action": "잡코인 정리, 청약 해지, ISA 개설, 리모델링" },
+    { "year": 2028, "event": "영유비 납부 완료", "action": "월 잉여 증가, 투자 확대" },
+    { "year": 2029, "event": "자녀 초등학교 입학", "action": "교육비 증가, XRP 1차 매도 검토" },
+    { "year": 2031, "event": "노량진 뉴타운 완성", "action": "시세차익 실현 검토, 학군지 이동 준비" },
+    { "year": 2035, "event": "자녀 중학교", "action": "대치·목동·반포 이사 검토" },
+    { "year": 2038, "event": "고등학교·최대지출·본인 55세", "action": "XRP 잔여 매도, 연금저축 수령 시작" },
+    { "year": 2041, "event": "자녀 대학교", "action": "자녀 자금 지출, 주담대 집중 상환" },
+    { "year": 2043, "event": "본인 정년", "action": "BTC 매도, 주담대 잔액 최소화" },
+    { "year": 2045, "event": "배우자 정년", "action": "연금저축·IRP 수령 개시" },
+    { "year": 2048, "event": "국민연금 수령 시작", "action": "부부 합산 월 140~220만원" }
+  ],
+
+  "checklist": [
+    { "item": "잔금일", "action": "2026-08-02 이후 설정", "effect": "장특공제 48% 적용, 400~500만원 절감" },
+    { "item": "주담대 한도", "action": "동작구 15억 초과 최대 4억 확인", "effect": "B물건 영유비 포함 시 초과 주의" },
+    { "item": "코인 과세", "action": "2026년 내 잡코인 정리 필수", "effect": "비과세 구간 내 처분" },
+    { "item": "의제취득가액", "action": "2026-12-31 시가 기준 확보", "effect": "2027년 이후 매도 시 세금 최소화" },
+    { "item": "고등학교 구간", "action": "XRP 분할매도로 현금 확보", "effect": "2038~2040 최대 지출 대응" },
+    { "item": "주담대 만기", "action": "20~25년 만기 또는 코인 활용 조기상환 검토", "effect": "정년(60세) 전 완납 목표" },
+    { "item": "영유 중도해지", "action": "위약금 조건 확인", "effect": "이사 일정과 연동 필요" },
+    { "item": "명도유예 특약", "action": "매도 계약서에 특약 삽입", "effect": "리모델링 기간 3~4주 거주 유예" },
+    { "item": "세무사 확인", "action": "양도세 최종 검토", "effect": "필요경비 반영 시 세액 변동 가능" }
+  ]
+}
