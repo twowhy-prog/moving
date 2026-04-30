@@ -203,7 +203,7 @@
           <label>매도 중개보수 (만원) <button type="button" style="font-size:10px;padding:1px 6px;border-radius:4px;border:1px solid var(--border);background:var(--bg);cursor:pointer;color:var(--sub)" onclick="resetSaleFee()">자동</button></label>
           <div class="field-adjust">
             <button class="adjust-btn" onclick="adjustValue('saleFeeInput', -10)">▼</button>
-            <input type="number" id="saleFeeInput" value="990" oninput="calc()">
+            <input type="number" id="saleFeeInput" value="1000" oninput="calc()">
             <button class="adjust-btn" onclick="adjustValue('saleFeeInput', 10)">▲</button>
           </div>
         </div>
@@ -227,14 +227,14 @@
       <div class="info" style="margin-top:6px">
         ※ 보유·거주기간은 취득년월 → 매도예정년월 기준으로 산정 (취득=입주 가정)
       </div>
-      <div class="info" style="margin-top:8px"><strong>서울시 표준 중개보수율 (매매, 부가세 별도)</strong> — 클릭하면 해당 요율로 계산 적용</div>
+      <div class="info" style="margin-top:8px"><strong>서울시 표준 중개보수율 (매매, 부가세 별도)</strong> — 클릭하면 해당 요율로 계산 적용 | 법정 상한 <span id="r_saleFeeMax" style="font-weight:600">-</span> 만원</div>
       <div class="fee-ref" id="feeRefSale">
         <div class="fee-ref-row" data-rate="0.006" data-cap="Infinity" onclick="applyFeeRef(this,'feeRefSale','saleFeeInput','salePrice')">5천만 미만 <span class="fee-ref-rate">0.6%</span></div>
         <div class="fee-ref-row" data-rate="0.005" data-cap="80"       onclick="applyFeeRef(this,'feeRefSale','saleFeeInput','salePrice')">5천만~2억 <span class="fee-ref-rate">0.5%</span> <span style="color:var(--sub)">한도80만</span></div>
         <div class="fee-ref-row" data-rate="0.004" data-cap="Infinity" onclick="applyFeeRef(this,'feeRefSale','saleFeeInput','salePrice')">2억~9억 <span class="fee-ref-rate">0.4%</span></div>
         <div class="fee-ref-row" data-rate="0.005" data-cap="Infinity" onclick="applyFeeRef(this,'feeRefSale','saleFeeInput','salePrice')">9억~12억 <span class="fee-ref-rate">0.5%</span></div>
         <div class="fee-ref-row" data-rate="0.006" data-cap="Infinity" onclick="applyFeeRef(this,'feeRefSale','saleFeeInput','salePrice')">12억~15억 <span class="fee-ref-rate">0.6%</span></div>
-        <div class="fee-ref-row" data-rate="0.007" data-cap="900"      onclick="applyFeeRef(this,'feeRefSale','saleFeeInput','salePrice')">15억 이상 <span class="fee-ref-rate">0.7%</span> <span style="color:var(--sub)">한도900만</span></div>
+        <div class="fee-ref-row" data-rate="0.007" data-cap="Infinity" onclick="applyFeeRef(this,'feeRefSale','saleFeeInput','salePrice')">15억 이상 <span class="fee-ref-rate">0.7%</span> <span style="color:var(--sub)">한도없음</span></div>
       </div>
 
       <div class="result-box" id="saleResult">
@@ -291,19 +291,19 @@
           <label>매수 중개보수 (만원) <button type="button" style="font-size:10px;padding:1px 6px;border-radius:4px;border:1px solid var(--border);background:var(--bg);cursor:pointer;color:var(--sub)" onclick="resetBuyFee()">자동</button></label>
           <div class="field-adjust">
             <button class="adjust-btn" onclick="adjustValue('buyFeeInput', -10)">▼</button>
-            <input type="number" id="buyFeeInput" value="990" oninput="calc()">
+            <input type="number" id="buyFeeInput" value="900" oninput="calc()">
             <button class="adjust-btn" onclick="adjustValue('buyFeeInput', 10)">▲</button>
           </div>
         </div>
       </div>
-      <div class="info" style="margin-top:8px"><strong>서울시 표준 중개보수율 (매매, 부가세 별도)</strong> — 클릭하면 해당 요율로 계산 적용</div>
+      <div class="info" style="margin-top:8px"><strong>서울시 표준 중개보수율 (매매, 부가세 별도)</strong> — 클릭하면 해당 요율로 계산 적용 | 법정 상한 <span id="r_buyFeeMax" style="font-weight:600">-</span> 만원</div>
       <div class="fee-ref" id="feeRefBuy">
         <div class="fee-ref-row" data-rate="0.006" data-cap="Infinity" onclick="applyFeeRef(this,'feeRefBuy','buyFeeInput','buyPrice')">5천만 미만 <span class="fee-ref-rate">0.6%</span></div>
         <div class="fee-ref-row" data-rate="0.005" data-cap="80"       onclick="applyFeeRef(this,'feeRefBuy','buyFeeInput','buyPrice')">5천만~2억 <span class="fee-ref-rate">0.5%</span> <span style="color:var(--sub)">한도80만</span></div>
         <div class="fee-ref-row" data-rate="0.004" data-cap="Infinity" onclick="applyFeeRef(this,'feeRefBuy','buyFeeInput','buyPrice')">2억~9억 <span class="fee-ref-rate">0.4%</span></div>
         <div class="fee-ref-row" data-rate="0.005" data-cap="Infinity" onclick="applyFeeRef(this,'feeRefBuy','buyFeeInput','buyPrice')">9억~12억 <span class="fee-ref-rate">0.5%</span></div>
         <div class="fee-ref-row" data-rate="0.006" data-cap="Infinity" onclick="applyFeeRef(this,'feeRefBuy','buyFeeInput','buyPrice')">12억~15억 <span class="fee-ref-rate">0.6%</span></div>
-        <div class="fee-ref-row" data-rate="0.007" data-cap="900"      onclick="applyFeeRef(this,'feeRefBuy','buyFeeInput','buyPrice')">15억 이상 <span class="fee-ref-rate">0.7%</span> <span style="color:var(--sub)">한도900만</span></div>
+        <div class="fee-ref-row" data-rate="0.007" data-cap="Infinity" onclick="applyFeeRef(this,'feeRefBuy','buyFeeInput','buyPrice')">15억 이상 <span class="fee-ref-rate">0.7%</span> <span style="color:var(--sub)">한도없음</span></div>
       </div>
 
       <div class="result-box">
@@ -854,7 +854,8 @@ function adjustValue(fieldId, amount) {
   }
 }
 
-// 중개보수 계산 (2025년 서울 기준, 부가세 포함)
+// 중개보수 계산 (2021.10 서울시 조례 기준, 부가세 포함)
+// 15억 이상은 한도 없음 (0.7% 상한, 2021.10 개정)
 function calcBrokerageFee(price) {
   let fee = 0;
   if (price < 5000)        fee = price * 0.006;
@@ -862,7 +863,7 @@ function calcBrokerageFee(price) {
   else if (price < 90000)  fee = price * 0.004;
   else if (price < 120000) fee = price * 0.005;
   else if (price < 150000) fee = price * 0.006;
-  else                     fee = Math.min(price * 0.007, 900);
+  else                     fee = price * 0.007; // 15억 이상 한도 없음
   return Math.round(fee * 1.1); // 부가세 포함
 }
 
@@ -1006,6 +1007,7 @@ function calc() {
   $('r_transferTax').textContent    = fmt(transferTaxPP * persons) + ' 만원';
   $('r_localTax').textContent       = fmt(localTaxPP * persons) + ' 만원';
   $('r_saleFee').textContent        = fmt(saleFee) + ' 만원';
+  $('r_saleFeeMax').textContent     = fmt(calcBrokerageFee(salePrice));
   highlightFeeRef('feeRefSale', salePrice);
   $('r_moveCost').textContent       = fmt(moveCost) + ' 만원';
   $('r_saleGross').textContent      = fmt(saleGross) + ' 만원';
@@ -1027,6 +1029,7 @@ function calc() {
   $('r_ruralTax').textContent       = fmt(ruralTax) + ' 만원';
   $('r_taxTotal').textContent       = fmt(taxTotal) + ' 만원';
   $('r_buyFee').textContent         = fmt(buyFee) + ' 만원';
+  $('r_buyFeeMax').textContent      = fmt(calcBrokerageFee(buyPrice));
   highlightFeeRef('feeRefBuy', buyPrice);
   $('r_regFee').textContent         = fmt(regFee) + ' 만원';
   $('r_movein').textContent         = fmt(moveinCost) + ' 만원';
