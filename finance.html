@@ -151,12 +151,12 @@
       <div class="sub">만원 (최소)</div>
     </div>
     <div class="summary-card" style="border-left-color:#10b981">
-      <div class="s-num">매수 − 세후매도</div>
+      <div class="s-num">세후수령 − 주담대필요 − 매수액</div>
       <div class="value" id="s_gap">-</div>
       <div class="sub" id="s_gapNote">만원</div>
     </div>
     <div class="summary-card" style="border-left-color:#f59e0b">
-      <div class="s-num">대출금액</div>
+      <div class="s-num">대출필요금액</div>
       <div class="value" id="s_loanApplied">-</div>
       <div class="sub">만원 (신청)</div>
       <div class="s-title" style="margin-top:6px">가능한도 <span id="s_loanLimit" style="font-weight:600;color:var(--fg)">-</span> 만원</div>
@@ -1186,12 +1186,12 @@ function calc() {
   minLoanEl.textContent = fmt(minLoan) + ' 만원';
   minLoanEl.className   = minLoan > 0 ? 'value color-red' : 'value color-green';
 
-  const gap    = buyCostTotal - saleGross;
+  const gap    = saleGross - minLoan - buyPrice;
   const gapEl  = $('s_gap');
-  gapEl.textContent  = (gap > 0 ? '' : '+') + fmt(-gap) + ' 만원';
-  gapEl.className    = gap > 0 ? 'value color-red' : 'value color-green';
-  $('s_gapNote').textContent = gap > 0 ? `만원 부족 (대출 필요)` : `만원 여유`;
-  $('s_gapNote').style.color = gap > 0 ? 'var(--red)' : 'var(--green)';
+  gapEl.textContent  = (gap >= 0 ? '+' : '') + fmt(gap) + ' 만원';
+  gapEl.className    = gap >= 0 ? 'value color-green' : 'value color-red';
+  $('s_gapNote').textContent = gap >= 0 ? '잔여 현금' : '부족';
+  $('s_gapNote').style.color = gap >= 0 ? 'var(--green)' : 'var(--red)';
 
   $('s_loanApplied').textContent = fmt(newLoan) + ' 만원';
   $('s_loanLimit').textContent   = fmt(finalLoanLimit);
