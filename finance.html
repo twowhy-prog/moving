@@ -145,18 +145,18 @@
       <div class="sub">만원</div>
       <div class="s-title" style="margin-top:6px">총 필요금액 <span id="s_buyCost" style="font-weight:600;color:var(--fg)">-</span> 만원</div>
     </div>
+    <div class="summary-card" style="border-left-color:#10b981">
+      <div class="s-num">세후수령 − 총필요금액</div>
+      <div class="value" id="s_gap">-</div>
+      <div class="sub" id="s_gapNote">만원</div>
+    </div>
     <div class="summary-card" style="border-left-color:#ef4444">
       <div class="s-num">주담대 필요액</div>
       <div class="value" id="s_minLoan">-</div>
       <div class="sub">만원 (최소)</div>
     </div>
-    <div class="summary-card" style="border-left-color:#10b981">
-      <div class="s-num">세후수령 − 주담대필요 − 매수액</div>
-      <div class="value" id="s_gap">-</div>
-      <div class="sub" id="s_gapNote">만원</div>
-    </div>
     <div class="summary-card" style="border-left-color:#f59e0b">
-      <div class="s-num">대출필요금액</div>
+      <div class="s-num">대출 가능금액</div>
       <div class="value" id="s_loanApplied">-</div>
       <div class="sub">만원 (신청)</div>
       <div class="s-title" style="margin-top:6px">가능한도 <span id="s_loanLimit" style="font-weight:600;color:var(--fg)">-</span> 만원</div>
@@ -1186,7 +1186,7 @@ function calc() {
   minLoanEl.textContent = fmt(minLoan) + ' 만원';
   minLoanEl.className   = minLoan > 0 ? 'value color-red' : 'value color-green';
 
-  const gap    = saleGross - minLoan - buyPrice;
+  const gap    = saleGross - buyCostTotal;
   const gapEl  = $('s_gap');
   gapEl.textContent  = (gap >= 0 ? '+' : '') + fmt(gap) + ' 만원';
   gapEl.className    = gap >= 0 ? 'value color-green' : 'value color-red';
