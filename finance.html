@@ -106,6 +106,12 @@
   @media (max-width: 860px) { .cashflow-grid-3 { grid-template-columns: 1fr; } }
   .period-header { font-weight: 600; font-size: 13px; padding: 10px 12px; border-radius: 8px 8px 0 0; line-height: 1.6; }
 
+  .fee-ref { display:flex; flex-wrap:wrap; gap:4px; margin-top:8px; font-size:11px; }
+  .fee-ref-row { display:flex; align-items:center; gap:6px; background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:3px 8px; white-space:nowrap; }
+  .fee-ref-row.active { background:#dbeafe; border-color:#3b82f6; color:#1d4ed8; font-weight:600; }
+  [data-theme="dark"] .fee-ref-row.active { background:#1e3a5f; border-color:#3b82f6; color:#93c5fd; }
+  .fee-ref-rate { font-weight:700; }
+
   @media print {
     .header-actions { display: none; }
     .section-header { cursor: default; }
@@ -217,8 +223,17 @@
           <input type="number" id="saleMonth" value="8" min="1" max="12" oninput="calc()">
         </div>
       </div>
-      <div class="info" style="margin-top:-4px">
+      <div class="info" style="margin-top:6px">
         ※ 보유·거주기간은 취득년월 → 매도예정년월 기준으로 산정 (취득=입주 가정)
+      </div>
+      <div class="info" style="margin-top:8px"><strong>서울시 표준 중개보수율 (매매, 부가세 별도)</strong> — 강조된 구간이 현재 매도가 해당</div>
+      <div class="fee-ref" id="feeRefSale">
+        <div class="fee-ref-row" data-min="0"     data-max="5000">   5천만 미만 <span class="fee-ref-rate">0.6%</span></div>
+        <div class="fee-ref-row" data-min="5000"  data-max="20000">  5천만~2억 <span class="fee-ref-rate">0.5%</span> <span style="color:var(--sub)">한도80만</span></div>
+        <div class="fee-ref-row" data-min="20000" data-max="90000">  2억~9억 <span class="fee-ref-rate">0.4%</span></div>
+        <div class="fee-ref-row" data-min="90000" data-max="120000"> 9억~12억 <span class="fee-ref-rate">0.5%</span></div>
+        <div class="fee-ref-row" data-min="120000" data-max="150000">12억~15억 <span class="fee-ref-rate">0.6%</span></div>
+        <div class="fee-ref-row" data-min="150000" data-max="Infinity">15억 이상 <span class="fee-ref-rate">0.7%</span> <span style="color:var(--sub)">한도900만</span></div>
       </div>
 
       <div class="result-box" id="saleResult">
@@ -279,6 +294,15 @@
             <button class="adjust-btn" onclick="adjustValue('buyFeeInput', 10)">▲</button>
           </div>
         </div>
+      </div>
+      <div class="info" style="margin-top:8px"><strong>서울시 표준 중개보수율 (매매, 부가세 별도)</strong> — 강조된 구간이 현재 매수가 해당</div>
+      <div class="fee-ref" id="feeRefBuy">
+        <div class="fee-ref-row" data-min="0"     data-max="5000">   5천만 미만 <span class="fee-ref-rate">0.6%</span></div>
+        <div class="fee-ref-row" data-min="5000"  data-max="20000">  5천만~2억 <span class="fee-ref-rate">0.5%</span> <span style="color:var(--sub)">한도80만</span></div>
+        <div class="fee-ref-row" data-min="20000" data-max="90000">  2억~9억 <span class="fee-ref-rate">0.4%</span></div>
+        <div class="fee-ref-row" data-min="90000" data-max="120000"> 9억~12억 <span class="fee-ref-rate">0.5%</span></div>
+        <div class="fee-ref-row" data-min="120000" data-max="150000">12억~15억 <span class="fee-ref-rate">0.6%</span></div>
+        <div class="fee-ref-row" data-min="150000" data-max="Infinity">15억 이상 <span class="fee-ref-rate">0.7%</span> <span style="color:var(--sub)">한도900만</span></div>
       </div>
 
       <div class="result-box">
@@ -905,6 +929,14 @@ function calcLongDeductRate(holdYears, liveYears) {
   return { rate: 0, type: '미적용(보유3년미만)' };
 }
 
+function highlightFeeRef(containerId, price) {
+  document.querySelectorAll('#' + containerId + ' .fee-ref-row').forEach(row => {
+    const min = parseFloat(row.dataset.min);
+    const max = row.dataset.max === 'Infinity' ? Infinity : parseFloat(row.dataset.max);
+    row.classList.toggle('active', price >= min && price < max);
+  });
+}
+
 function resetSaleFee() {
   $('saleFeeInput').value = calcBrokerageFee(val('salePrice'));
   calc();
@@ -955,6 +987,7 @@ function calc() {
   $('r_transferTax').textContent    = fmt(transferTaxPP * persons) + ' 만원';
   $('r_localTax').textContent       = fmt(localTaxPP * persons) + ' 만원';
   $('r_saleFee').textContent        = fmt(saleFee) + ' 만원';
+  highlightFeeRef('feeRefSale', salePrice);
   $('r_moveCost').textContent       = fmt(moveCost) + ' 만원';
   $('r_saleGross').textContent      = fmt(saleGross) + ' 만원';
 
@@ -975,6 +1008,7 @@ function calc() {
   $('r_ruralTax').textContent       = fmt(ruralTax) + ' 만원';
   $('r_taxTotal').textContent       = fmt(taxTotal) + ' 만원';
   $('r_buyFee').textContent         = fmt(buyFee) + ' 만원';
+  highlightFeeRef('feeRefBuy', buyPrice);
   $('r_regFee').textContent         = fmt(regFee) + ' 만원';
   $('r_movein').textContent         = fmt(moveinCost) + ' 만원';
   $('r_buyCostBase').textContent    = fmt(buyCostBase) + ' 만원';
