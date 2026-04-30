@@ -107,7 +107,8 @@
   .period-header { font-weight: 600; font-size: 13px; padding: 10px 12px; border-radius: 8px 8px 0 0; line-height: 1.6; }
 
   .fee-ref { display:flex; flex-wrap:wrap; gap:4px; margin-top:8px; font-size:11px; }
-  .fee-ref-row { display:flex; align-items:center; gap:6px; background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:3px 8px; white-space:nowrap; }
+  .fee-ref-row { display:flex; align-items:center; gap:6px; background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:3px 8px; white-space:nowrap; cursor:pointer; }
+  .fee-ref-row:hover { border-color:#3b82f6; }
   .fee-ref-row.active { background:#dbeafe; border-color:#3b82f6; color:#1d4ed8; font-weight:600; }
   [data-theme="dark"] .fee-ref-row.active { background:#1e3a5f; border-color:#3b82f6; color:#93c5fd; }
   .fee-ref-rate { font-weight:700; }
@@ -226,14 +227,14 @@
       <div class="info" style="margin-top:6px">
         ※ 보유·거주기간은 취득년월 → 매도예정년월 기준으로 산정 (취득=입주 가정)
       </div>
-      <div class="info" style="margin-top:8px"><strong>서울시 표준 중개보수율 (매매, 부가세 별도)</strong> — 강조된 구간이 현재 매도가 해당</div>
+      <div class="info" style="margin-top:8px"><strong>서울시 표준 중개보수율 (매매, 부가세 별도)</strong> — 클릭하면 해당 요율로 계산 적용</div>
       <div class="fee-ref" id="feeRefSale">
-        <div class="fee-ref-row" data-min="0"     data-max="5000">   5천만 미만 <span class="fee-ref-rate">0.6%</span></div>
-        <div class="fee-ref-row" data-min="5000"  data-max="20000">  5천만~2억 <span class="fee-ref-rate">0.5%</span> <span style="color:var(--sub)">한도80만</span></div>
-        <div class="fee-ref-row" data-min="20000" data-max="90000">  2억~9억 <span class="fee-ref-rate">0.4%</span></div>
-        <div class="fee-ref-row" data-min="90000" data-max="120000"> 9억~12억 <span class="fee-ref-rate">0.5%</span></div>
-        <div class="fee-ref-row" data-min="120000" data-max="150000">12억~15억 <span class="fee-ref-rate">0.6%</span></div>
-        <div class="fee-ref-row" data-min="150000" data-max="Infinity">15억 이상 <span class="fee-ref-rate">0.7%</span> <span style="color:var(--sub)">한도900만</span></div>
+        <div class="fee-ref-row" data-rate="0.006" data-cap="Infinity" onclick="applyFeeRef(this,'feeRefSale','saleFeeInput','salePrice')">5천만 미만 <span class="fee-ref-rate">0.6%</span></div>
+        <div class="fee-ref-row" data-rate="0.005" data-cap="80"       onclick="applyFeeRef(this,'feeRefSale','saleFeeInput','salePrice')">5천만~2억 <span class="fee-ref-rate">0.5%</span> <span style="color:var(--sub)">한도80만</span></div>
+        <div class="fee-ref-row" data-rate="0.004" data-cap="Infinity" onclick="applyFeeRef(this,'feeRefSale','saleFeeInput','salePrice')">2억~9억 <span class="fee-ref-rate">0.4%</span></div>
+        <div class="fee-ref-row" data-rate="0.005" data-cap="Infinity" onclick="applyFeeRef(this,'feeRefSale','saleFeeInput','salePrice')">9억~12억 <span class="fee-ref-rate">0.5%</span></div>
+        <div class="fee-ref-row" data-rate="0.006" data-cap="Infinity" onclick="applyFeeRef(this,'feeRefSale','saleFeeInput','salePrice')">12억~15억 <span class="fee-ref-rate">0.6%</span></div>
+        <div class="fee-ref-row" data-rate="0.007" data-cap="900"      onclick="applyFeeRef(this,'feeRefSale','saleFeeInput','salePrice')">15억 이상 <span class="fee-ref-rate">0.7%</span> <span style="color:var(--sub)">한도900만</span></div>
       </div>
 
       <div class="result-box" id="saleResult">
@@ -295,14 +296,14 @@
           </div>
         </div>
       </div>
-      <div class="info" style="margin-top:8px"><strong>서울시 표준 중개보수율 (매매, 부가세 별도)</strong> — 강조된 구간이 현재 매수가 해당</div>
+      <div class="info" style="margin-top:8px"><strong>서울시 표준 중개보수율 (매매, 부가세 별도)</strong> — 클릭하면 해당 요율로 계산 적용</div>
       <div class="fee-ref" id="feeRefBuy">
-        <div class="fee-ref-row" data-min="0"     data-max="5000">   5천만 미만 <span class="fee-ref-rate">0.6%</span></div>
-        <div class="fee-ref-row" data-min="5000"  data-max="20000">  5천만~2억 <span class="fee-ref-rate">0.5%</span> <span style="color:var(--sub)">한도80만</span></div>
-        <div class="fee-ref-row" data-min="20000" data-max="90000">  2억~9억 <span class="fee-ref-rate">0.4%</span></div>
-        <div class="fee-ref-row" data-min="90000" data-max="120000"> 9억~12억 <span class="fee-ref-rate">0.5%</span></div>
-        <div class="fee-ref-row" data-min="120000" data-max="150000">12억~15억 <span class="fee-ref-rate">0.6%</span></div>
-        <div class="fee-ref-row" data-min="150000" data-max="Infinity">15억 이상 <span class="fee-ref-rate">0.7%</span> <span style="color:var(--sub)">한도900만</span></div>
+        <div class="fee-ref-row" data-rate="0.006" data-cap="Infinity" onclick="applyFeeRef(this,'feeRefBuy','buyFeeInput','buyPrice')">5천만 미만 <span class="fee-ref-rate">0.6%</span></div>
+        <div class="fee-ref-row" data-rate="0.005" data-cap="80"       onclick="applyFeeRef(this,'feeRefBuy','buyFeeInput','buyPrice')">5천만~2억 <span class="fee-ref-rate">0.5%</span> <span style="color:var(--sub)">한도80만</span></div>
+        <div class="fee-ref-row" data-rate="0.004" data-cap="Infinity" onclick="applyFeeRef(this,'feeRefBuy','buyFeeInput','buyPrice')">2억~9억 <span class="fee-ref-rate">0.4%</span></div>
+        <div class="fee-ref-row" data-rate="0.005" data-cap="Infinity" onclick="applyFeeRef(this,'feeRefBuy','buyFeeInput','buyPrice')">9억~12억 <span class="fee-ref-rate">0.5%</span></div>
+        <div class="fee-ref-row" data-rate="0.006" data-cap="Infinity" onclick="applyFeeRef(this,'feeRefBuy','buyFeeInput','buyPrice')">12억~15억 <span class="fee-ref-rate">0.6%</span></div>
+        <div class="fee-ref-row" data-rate="0.007" data-cap="900"      onclick="applyFeeRef(this,'feeRefBuy','buyFeeInput','buyPrice')">15억 이상 <span class="fee-ref-rate">0.7%</span> <span style="color:var(--sub)">한도900만</span></div>
       </div>
 
       <div class="result-box">
@@ -929,19 +930,37 @@ function calcLongDeductRate(holdYears, liveYears) {
   return { rate: 0, type: '미적용(보유3년미만)' };
 }
 
+function applyFeeRef(el, containerId, inputId, priceId) {
+  document.querySelectorAll('#' + containerId + ' .fee-ref-row').forEach(r => r.classList.remove('active'));
+  el.classList.add('active');
+  const rate = parseFloat(el.dataset.rate);
+  const cap  = el.dataset.cap === 'Infinity' ? Infinity : parseFloat(el.dataset.cap);
+  const price = val(priceId);
+  $(inputId).value = Math.round(Math.min(price * rate, cap) * 1.1);
+  calc();
+}
+
 function highlightFeeRef(containerId, price) {
-  document.querySelectorAll('#' + containerId + ' .fee-ref-row').forEach(row => {
-    const min = parseFloat(row.dataset.min);
-    const max = row.dataset.max === 'Infinity' ? Infinity : parseFloat(row.dataset.max);
-    row.classList.toggle('active', price >= min && price < max);
+  // 이미 사용자가 선택한 행이 있으면 자동 하이라이트 건너뜀
+  const hasSelected = [...document.querySelectorAll('#' + containerId + ' .fee-ref-row')]
+    .some(r => r.classList.contains('active'));
+  if (hasSelected) return;
+  // 가격에 맞는 구간 자동 하이라이트 (data-min/max 제거했으므로 calcBrokerageFee 기준 인덱스 사용)
+  const tiers = [5000, 20000, 90000, 120000, 150000];
+  const idx = tiers.findIndex(t => price < t);
+  const activeIdx = idx === -1 ? 5 : idx;
+  document.querySelectorAll('#' + containerId + ' .fee-ref-row').forEach((row, i) => {
+    row.classList.toggle('active', i === activeIdx);
   });
 }
 
 function resetSaleFee() {
+  document.querySelectorAll('#feeRefSale .fee-ref-row').forEach(r => r.classList.remove('active'));
   $('saleFeeInput').value = calcBrokerageFee(val('salePrice'));
   calc();
 }
 function resetBuyFee() {
+  document.querySelectorAll('#feeRefBuy .fee-ref-row').forEach(r => r.classList.remove('active'));
   $('buyFeeInput').value = calcBrokerageFee(val('buyPrice'));
   calc();
 }
