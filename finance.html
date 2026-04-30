@@ -131,60 +131,29 @@
 <div class="container">
 
   <!-- ===== 종합 요약 대시보드 ===== -->
-  <div class="summary-grid" id="summaryGrid">
+  <div class="summary-grid" id="summaryGrid" style="grid-template-columns:repeat(4,1fr)">
     <div class="summary-card" style="border-left-color:#3b82f6">
-      <div class="s-num">S1 · 매도분석</div>
-      <div class="s-title">세후 수령예정</div>
-      <div class="value color-green" id="s_saleNet">-</div>
-      <div class="sub">만원 (부채차감전)</div>
+      <div class="s-num">매도액</div>
+      <div class="value color-green" id="s_salePrice">-</div>
+      <div class="sub">만원</div>
+      <div class="s-title" style="margin-top:6px">세후 수령 <span id="s_saleNet" style="font-weight:600;color:var(--fg)">-</span> 만원</div>
     </div>
     <div class="summary-card" style="border-left-color:#8b5cf6">
-      <div class="s-num">S2 · 매수비용</div>
-      <div class="s-title">총 필요금액</div>
-      <div class="value" id="s_buyCost">-</div>
-      <div class="sub">만원 (영유비·주담대 포함)</div>
+      <div class="s-num">매수액</div>
+      <div class="value" id="s_buyPrice">-</div>
+      <div class="sub">만원</div>
+      <div class="s-title" style="margin-top:6px">총 필요금액 <span id="s_buyCost" style="font-weight:600;color:var(--fg)">-</span> 만원</div>
     </div>
     <div class="summary-card" style="border-left-color:#ef4444">
-      <div class="s-num">S3 · 주담대 필요액</div>
-      <div class="s-title">월 원리금</div>
-      <div class="value" id="s_monthly">-</div>
-      <div class="sub" id="s_loanGapNote">-</div>
+      <div class="s-num">매수 − 세후매도</div>
+      <div class="value" id="s_gap">-</div>
+      <div class="sub" id="s_gapNote">만원</div>
     </div>
     <div class="summary-card" style="border-left-color:#f59e0b">
-      <div class="s-num">S4 · 주담대 한도</div>
-      <div class="s-title">DSR 비율</div>
-      <div class="value" id="s_dsr">-</div>
-      <div class="sub">한도 40% · <span id="s_loanStatus">-</span></div>
-    </div>
-    <div class="summary-card" style="border-left-color:#10b981">
-      <div class="s-num">S5 · 영유비 운용</div>
-      <div class="s-title">파킹이익 − 이자비용</div>
-      <div class="value" id="s_daycareCost">-</div>
-      <div class="sub">만원 (+ 이익 / − 비용)</div>
-    </div>
-    <div class="summary-card" style="border-left-color:#06b6d4">
-      <div class="s-num">S6 · 월 현금흐름</div>
-      <div class="s-title">월 여유 ② 직납기간</div>
-      <div class="value" id="s_cfDuring">-</div>
-      <div class="sub">만원/월</div>
-    </div>
-    <div class="summary-card" style="border-left-color:#6366f1">
-      <div class="s-num">S7 · 절세/투자</div>
-      <div class="s-title">연 세액공제</div>
-      <div class="value" id="s_taxCreditSum">-</div>
-      <div class="sub">만원/년</div>
-    </div>
-    <div class="summary-card" style="border-left-color:#f97316">
-      <div class="s-num">S8 · 리모델링</div>
-      <div class="s-title">투자수익률</div>
-      <div class="value" id="s_remoRoi">-</div>
-      <div class="sub">예상</div>
-    </div>
-    <div class="summary-card" style="border-left-color:#0ea5e9">
-      <div class="s-num">S9 · 자녀 증여</div>
-      <div class="s-title">만기 예상 자산 (윤호)</div>
-      <div class="value color-green" id="s_giftFV">-</div>
-      <div class="sub">만원</div>
+      <div class="s-num">대출금액</div>
+      <div class="value" id="s_loanApplied">-</div>
+      <div class="sub">만원 (신청)</div>
+      <div class="s-title" style="margin-top:6px">가능한도 <span id="s_loanLimit" style="font-weight:600;color:var(--fg)">-</span> 만원</div>
     </div>
   </div>
 
@@ -1108,10 +1077,6 @@ function calc() {
   $('r_parkingIncome').textContent = '+' + fmt(totalParkingIncome) + ' 만원';
   $('r_loanInterestCost').textContent = fmt(totalLoanInterest) + ' 만원';
   $('r_daycareNetCost').textContent = fmt(daycareNetCost) + ' 만원';
-  // S5 대시보드
-  const s5El = $('s_daycareCost');
-  s5El.textContent = (parkingNetGain >= 0 ? '+' : '') + fmt(parkingNetGain) + ' 만원';
-  s5El.className = parkingNetGain >= 0 ? 'value color-green' : 'value color-red';
 
   // --- 섹션 6: 월 현금흐름 ---
   const livingCost        = val('livingCost');
@@ -1182,8 +1147,6 @@ function calc() {
   $('r_parkingYearly').textContent = fmt(parkingYearly) + ' 만원';
   $('r_totalSave').textContent = fmt(totalSave) + ' 만원';
   // S7 대시보드
-  $('s_taxCreditSum').textContent = fmt(taxCredit) + ' 만원';
-  $('s_taxCreditSum').className = 'value color-green';
 
   updateTaxChart(p1Annual, p2Annual, val('isa') * 12, parkingMonthlySave * 12);
 
@@ -1207,32 +1170,21 @@ function calc() {
   remoRoiEl.className = remoRoi >= 20 ? 'color-green' : remoRoi >= 10 ? 'color-yellow' : 'color-red';
 
   // ─── 종합 요약 대시보드 업데이트 ───
-  // S1
-  $('s_saleNet').textContent = fmt(saleGross) + ' 만원';
-  setColor($('s_saleNet'), saleGross, 500, 0);
-  // S2
-  $('s_buyCost').textContent = fmt(buyCostTotal) + ' 만원';
-  // S3
-  $('s_monthly').textContent = fmt(monthlyPayment) + ' 만원/월';
-  $('s_monthly').className = loanGap >= 0 ? 'value color-green' : 'value color-red';
-  $('s_loanGapNote').textContent = loanGap >= 0 ? `여유 +${fmt(loanGap)}만` : `부족 ${fmt(-loanGap)}만`;
-  $('s_loanGapNote').style.color = loanGap >= 0 ? 'var(--green)' : 'var(--red)';
-  // S4
-  const statusEl = $('s_loanStatus');
-  if (loanRatio < 0.9)     { statusEl.textContent = '한도 여유'; statusEl.style.color = 'var(--green)'; }
-  else if (loanRatio <= 1) { statusEl.textContent = '한도 근접'; statusEl.style.color = 'var(--yellow)'; }
-  else                     { statusEl.textContent = '한도 초과!'; statusEl.style.color = 'var(--red)'; }
-  const dsrSummary = $('s_dsr');
-  dsrSummary.textContent = fmtF(actualDsr) + '%';
-  dsrSummary.className = actualDsr <= 35 ? 'value color-green' : actualDsr <= 40 ? 'value color-yellow' : 'value color-red';
-  // S5 (S6 계산 이후 설정되므로 여기선 플레이스홀더, 아래에서 실제값 업데이트)
-  // S6
-  const s1Summary = $('s_cfDuring');
-  s1Summary.textContent = fmt(surplus_p2) + ' 만원';
-  setColor(s1Summary, surplus_p2, 1, 0.5);
-  // S8
-  $('s_remoRoi').textContent = fmtF(remoRoi) + '%';
-  $('s_remoRoi').className = remoRoi >= 20 ? 'value color-green' : remoRoi >= 10 ? 'value color-yellow' : 'value color-red';
+  $('s_salePrice').textContent = fmt(salePrice) + ' 만원';
+  $('s_saleNet').textContent   = fmt(saleGross);
+
+  $('s_buyPrice').textContent  = fmt(buyPrice) + ' 만원';
+  $('s_buyCost').textContent   = fmt(buyCostTotal);
+
+  const gap    = buyCostTotal - saleGross;
+  const gapEl  = $('s_gap');
+  gapEl.textContent  = (gap > 0 ? '' : '+') + fmt(-gap) + ' 만원';
+  gapEl.className    = gap > 0 ? 'value color-red' : 'value color-green';
+  $('s_gapNote').textContent = gap > 0 ? `만원 부족 (대출 필요)` : `만원 여유`;
+  $('s_gapNote').style.color = gap > 0 ? 'var(--red)' : 'var(--green)';
+
+  $('s_loanApplied').textContent = fmt(newLoan) + ' 만원';
+  $('s_loanLimit').textContent   = fmt(finalLoanLimit);
 
   // --- 섹션 9: 자녀 증여 계획 ---
   const yunhoAge   = val('yunhoAge');
@@ -1292,7 +1244,6 @@ function calc() {
   $('r_gift_end').textContent       = fmt(fvEnd) + ' 만원';
 
   // S9 대시보드
-  $('s_giftFV').textContent = fmt(fvEnd) + ' 만원';
 
   updateGiftChart(principal, totalReturn, giftYears, giftRate, giftLump, giftMo);
 }
