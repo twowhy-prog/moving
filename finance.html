@@ -566,7 +566,7 @@
           </div>
         </div>
         <!-- ② 영유기간2 -->
-        <div>
+        <div id="cf2_card">
           <div class="period-header" style="background:#fef3c7;color:#92400e;border:1.5px solid #fbbf24">
             ② 영유기간2<br><small style="font-weight:400">영유비 직납 · <span id="r_cf2_months">-</span>개월</small>
           </div>
@@ -1200,12 +1200,19 @@ function calc() {
   const s1El = $('r_cf1_surplus'); s1El.textContent = fmt(surplus_p1) + ' 만원'; setColor(s1El, surplus_p1, 1, 0.5);
 
   $('r_cf2_months').textContent  = p2_months;
-  $('r_cf2_income').textContent  = fmt(totalIncome) + ' 만원';
-  $('r_cf2_loan').textContent    = fmt(monthlyPayment) + ' 만원';
-  $('r_cf2_daycare').textContent = fmt(daycareMonthly) + ' 만원';
-  $('r_cf2_living').textContent  = fmt(livingCost) + ' 만원';
-  $('r_cf2_other').textContent   = fmt(otherDebtMonthly) + ' 만원';
-  const s2El = $('r_cf2_surplus'); s2El.textContent = fmt(surplus_p2) + ' 만원'; setColor(s2El, surplus_p2, 1, 0.5);
+  if (p2_months > 0) {
+    $('r_cf2_income').textContent  = fmt(totalIncome) + ' 만원';
+    $('r_cf2_loan').textContent    = fmt(monthlyPayment) + ' 만원';
+    $('r_cf2_daycare').textContent = fmt(daycareMonthly) + ' 만원';
+    $('r_cf2_living').textContent  = fmt(livingCost) + ' 만원';
+    $('r_cf2_other').textContent   = fmt(otherDebtMonthly) + ' 만원';
+    const s2El = $('r_cf2_surplus'); s2El.textContent = fmt(surplus_p2) + ' 만원'; setColor(s2El, surplus_p2, 1, 0.5);
+    document.getElementById('cf2_card').style.opacity = '1';
+  } else {
+    ['r_cf2_income','r_cf2_loan','r_cf2_daycare','r_cf2_living','r_cf2_other','r_cf2_surplus']
+      .forEach(id => { const el = $(id); el.textContent = '-'; el.className = ''; });
+    document.getElementById('cf2_card').style.opacity = '0.4';
+  }
 
   $('r_cf3_income').textContent  = fmt(totalIncome) + ' 만원';
   $('r_cf3_loan').textContent    = fmt(monthlyPayment) + ' 만원';
