@@ -222,19 +222,30 @@
           </div>
         </div>
         <div class="field">
-          <label>취득년도</label>
+          <label>취득년도 <small style="color:var(--sub)">(보유기간)</small></label>
           <input type="number" id="acquireYear" value="2020" min="2000" max="2030" oninput="calc()">
         </div>
         <div class="field">
           <label>취득월</label>
           <input type="number" id="acquireMonth" value="8" min="1" max="12" oninput="calc()">
         </div>
+        <div class="field">
+          <label>입주년도 <small style="color:var(--sub)">(거주기간)</small></label>
+          <input type="number" id="liveYear" value="2020" min="2000" max="2030" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>입주월</label>
+          <input type="number" id="liveMonth" value="8" min="1" max="12" oninput="calc()">
+        </div>
+      </div>
+      <div class="info" style="margin-top:-4px">
+        ※ 취득년월: 등기일 기준 (보유기간 산정) | 입주년월: 실제 입주일 기준 (거주기간 산정) — 동일하면 두 값을 같게 입력
       </div>
 
       <div class="result-box" id="saleResult">
         <div class="result-row"><span>보유기간</span><span id="r_holdPeriod">-</span></div>
         <div class="result-row"><span>거주기간</span><span id="r_livePeriod">-</span></div>
-        <div class="result-row"><span>장기보유특별공제율</span><span id="r_longDeduct">-</span></div>
+        <div class="result-row"><span>장기보유특별공제율 <small id="r_deductType" style="color:var(--sub)"></small></span><span id="r_longDeduct">-</span></div>
         <div class="result-row"><span>양도차익</span><span id="r_gainTotal">-</span></div>
         <div class="result-row indent"><span>장특공제 후 차익 (인당)</span><span id="r_gainAfterDeduct">-</span></div>
         <div class="result-row indent"><span>과세표준 (인당)</span><span id="r_taxBase">-</span></div>
@@ -261,7 +272,7 @@
           <label>매수가 (만원)</label>
           <div class="field-adjust">
             <button class="adjust-btn" onclick="adjustValue('buyPrice', -100)">▼</button>
-            <input type="number" id="buyPrice" value="163000" oninput="calc()">
+            <input type="number" id="buyPrice" value="164000" oninput="calc()">
             <button class="adjust-btn" onclick="adjustValue('buyPrice', 100)">▲</button>
           </div>
         </div>
@@ -269,7 +280,7 @@
           <label>입주비용 (만원)</label>
           <div class="field-adjust">
             <button class="adjust-btn" onclick="adjustValue('moveinCost', -10)">▼</button>
-            <input type="number" id="moveinCost" value="500" oninput="calc()">
+            <input type="number" id="moveinCost" value="3000" oninput="calc()">
             <button class="adjust-btn" onclick="adjustValue('moveinCost', 10)">▲</button>
           </div>
         </div>
@@ -510,11 +521,10 @@
           </div>
         </div>
         <div class="field">
-          <label>월 영유비 (만원/월) <small>— ② 직납 기간</small></label>
-          <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('daycareMonthly', -10)">▼</button>
-            <input type="number" id="daycareMonthly" value="263" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('daycareMonthly', 10)">▲</button>
+          <label>월 영유비 <small>— ② 직납 기간 (S3 분기영유비÷3 자동)</small></label>
+          <div class="result-box" style="padding:8px 12px;margin:0">
+            <span id="r_daycareMonthlyAuto" style="font-weight:600">-</span>
+            <span style="color:var(--sub);font-size:12px"> 만원/월</span>
           </div>
         </div>
         <div class="field">
@@ -874,17 +884,43 @@ function calcLoanFromMonthly(monthlyPayment, annualRate, years) {
   return monthlyPayment * (1 - Math.pow(1 + r, -n)) / r;
 }
 
-// 보유/거주 기간 계산
+// 보유/거주 기간 계산 (취득년월과 입주년월을 분리)
 function calcPeriod() {
   const now = new Date();
+
   const acquireY = val('acquireYear');
   const acquireM = val('acquireMonth');
-  const startDate = new Date(acquireY, acquireM - 1, 1);
-  const diffMs = now - startDate;
-  const diffMonths = Math.floor(diffMs / (1000 * 60 * 60 * 24 * 30.44));
-  const years = Math.floor(diffMonths / 12);
-  const months = diffMonths % 12;
-  return { years, months, totalMonths: diffMonths };
+  const holdStart = new Date(acquireY, acquireM - 1, 1);
+  const holdDiffMs = now - holdStart;
+  const holdMonthsTotal = Math.floor(holdDiffMs / (1000 * 60 * 60 * 24 * 30.44));
+  const holdYears  = Math.floor(holdMonthsTotal / 12);
+  const holdMonths = holdMonthsTotal % 12;
+
+  const liveY = val('liveYear');
+  const liveM = val('liveMonth');
+  const liveStart = new Date(liveY, liveM - 1, 1);
+  const liveDiffMs = now - liveStart;
+  const liveMonthsTotal = Math.max(0, Math.floor(liveDiffMs / (1000 * 60 * 60 * 24 * 30.44)));
+  const liveYears  = Math.floor(liveMonthsTotal / 12);
+  const liveMonths = liveMonthsTotal % 12;
+
+  return { holdYears, holdMonths, liveYears, liveMonths };
+}
+
+// 장기보유특별공제율 계산 (현행법 기준)
+// 1주택 특례: 보유 3년 이상 + 거주 2년 이상 → 보유연4% + 거주연4%, 최대80%
+// 일반: 보유 3년 이상 → 연2%, 최대30%
+function calcLongDeductRate(holdYears, liveYears) {
+  if (holdYears >= 3 && liveYears >= 2) {
+    const holdRate = Math.min(holdYears, 10) * 0.04;
+    const liveRate = Math.min(liveYears, 10) * 0.04;
+    return { rate: Math.min(holdRate + liveRate, 0.80), type: '1주택특례' };
+  }
+  if (holdYears >= 3) {
+    const rate = Math.min(holdYears, 15) * 0.02;
+    return { rate: Math.min(rate, 0.30), type: '일반' };
+  }
+  return { rate: 0, type: '미적용(보유3년미만)' };
 }
 
 // ===== 메인 계산 =====
@@ -894,15 +930,19 @@ function calc() {
   const acqPrice  = val('acquirePrice');
   const moveCost  = val('moveCost');
 
-  const period    = calcPeriod();
-  const holdYears = period.years;
-  const holdMonths= period.months;
+  const period     = calcPeriod();
+  const holdYears  = period.holdYears;
+  const holdMonths = period.holdMonths;
+  const liveYears  = period.liveYears;
+  const liveMonths = period.liveMonths;
 
-  // 장기보유특별공제율 (보유×4% + 거주×4%, 최대 80%)
-  const longDeductRate = Math.min((holdYears * 4 + holdYears * 4) / 100, 0.8);
+  // 장기보유특별공제율 (현행법)
+  const { rate: longDeductRate, type: deductType } = calcLongDeductRate(holdYears, liveYears);
+
   const gain = salePrice - acqPrice;
   // 공동명의 고정 (각 50%)
   const persons = 2;
+  // 1주택 비과세: 12억 초과분만 과세
   const taxableRatio = salePrice > 120000 ? (salePrice - 120000) / salePrice : 0;
   const gainPerPerson    = gain / persons;
   const gainAfterDeduct  = gainPerPerson * (1 - longDeductRate);
@@ -916,8 +956,9 @@ function calc() {
   const saleGross = salePrice - transferTaxTotal - saleFee - moveCost;
 
   $('r_holdPeriod').textContent     = `${holdYears}년 ${holdMonths}개월`;
-  $('r_livePeriod').textContent     = `${holdYears}년 ${holdMonths}개월 (취득일 동일)`;
+  $('r_livePeriod').textContent     = `${liveYears}년 ${liveMonths}개월`;
   $('r_longDeduct').textContent     = `${(longDeductRate*100).toFixed(0)}%`;
+  $('r_deductType').textContent     = `(${deductType})`;
   $('r_gainTotal').textContent      = fmt(gain) + ' 만원';
   $('r_gainAfterDeduct').textContent= fmt(gainAfterDeduct) + ' 만원';
   $('r_taxBase').textContent        = fmt(taxBasePerPerson) + ' 만원';
@@ -1084,7 +1125,9 @@ function calc() {
 
   // --- 섹션 6: 월 현금흐름 ---
   const livingCost        = val('livingCost');
-  const daycareMonthly    = val('daycareMonthly');
+  // 영유비(직납): S3 분기영유비 ÷ 3 으로 자동 연동
+  const daycareMonthly    = daycarePerQ / 3;
+  $('r_daycareMonthlyAuto').textContent = fmt(daycareMonthly);
   const elemSchoolMonthly = val('elemSchoolMonthly');
 
   // 기타부채 월상환: 체크박스 ON = 매도수익으로 상환 완료 → 월납입 없음, OFF = 계속 상환 중
