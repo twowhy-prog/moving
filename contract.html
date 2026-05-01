@@ -433,19 +433,37 @@
         </div>
 
         <!-- ⑤ 잔금 -->
-        <div class="txn-stage-label">⑤ 잔금 — 이사일·주담대 실행 동일 <span class="badge badge-yellow" style="margin-left:auto">예정</span></div>
+        <div class="txn-stage-label">⑤ 잔금 <span class="badge badge-yellow" style="margin-left:auto">예정</span></div>
         <div class="txn-cell sell">
           <div class="txn-row">
             <span class="lbl">잔금 수취</span>
             <span class="amt amt-in" id="t_sell_balance">-</span>
           </div>
-          <div style="height:6px"></div>
+          <div class="txn-subtotal">
+            <span>수령 누계 (가계약~잔금)</span>
+            <span class="amt-in" id="t_sell_total_cum">-</span>
+          </div>
+        </div>
+        <div class="txn-cell">
           <div class="txn-row">
-            <span class="lbl">— 기존 부채 상환</span>
+            <span class="lbl">잔금 지급</span>
+            <span class="amt amt-out" id="t_buy_balance">-</span>
+          </div>
+          <div class="txn-subtotal">
+            <span>지급 누계 (가계약~잔금)</span>
+            <span class="amt-out" id="t_buy_total_cum">-</span>
+          </div>
+        </div>
+
+        <!-- ⑥ 잔금 후 처리 -->
+        <div class="txn-stage-label">⑥ 잔금 후 처리 — 당일 자금 정산 <span class="badge badge-blue" style="margin-left:auto">예정</span></div>
+        <div class="txn-cell sell">
+          <div class="txn-row">
+            <span class="lbl">기존 부채 상환</span>
             <span class="amt amt-neg" id="t_sell_debt">-</span>
           </div>
           <div class="txn-row">
-            <span class="lbl">— 양도세·이사비</span>
+            <span class="lbl">양도세·이사비 납부</span>
             <span class="amt amt-neg" id="t_sell_cost">-</span>
           </div>
           <div class="txn-subtotal">
@@ -455,20 +473,15 @@
         </div>
         <div class="txn-cell">
           <div class="txn-row">
-            <span class="lbl">잔금 지급</span>
-            <span class="amt amt-out" id="t_buy_balance">-</span>
-          </div>
-          <div style="height:6px"></div>
-          <div class="txn-row">
-            <span class="lbl">+ 주담대 실행</span>
+            <span class="lbl">주담대 실행 (+)</span>
             <span class="amt amt-in" id="t_buy_loan">-</span>
           </div>
           <div class="txn-row">
-            <span class="lbl">— 취득세·등기·중개</span>
+            <span class="lbl">취득세·등기·중개 납부</span>
             <span class="amt amt-neg" id="t_buy_cost">-</span>
           </div>
           <div class="txn-subtotal">
-            <span>자기자본 지출 합계</span>
+            <span>자기자본 순지출</span>
             <span id="t_buy_net">-</span>
           </div>
         </div>
@@ -713,16 +726,22 @@ function calc() {
   $('sc_interim_card').style.opacity      = hasInterim ? '1' : '0.4';
 
   // ⑤ 잔금
-  $('t_sell_balance').textContent = '+' + fmt(sellBalance) + ' 만원';
-  $('t_sell_debt').textContent    = '−' + fmt(debt)        + ' 만원';
-  $('t_sell_cost').textContent    = '−' + fmt(saleCost)    + ' 만원';
+  const sellTotalCum = sellContract + sellInterim + sellBalance;
+  const buyTotalCum  = ctDeposit1 + buyContract + buyInterim + buyBalance;
+  $('t_sell_balance').textContent    = '+' + fmt(sellBalance) + ' 만원';
+  $('t_sell_total_cum').textContent  = '+' + fmt(sellTotalCum) + ' 만원';
+  $('t_buy_balance').textContent     = '−' + fmt(buyBalance) + ' 만원';
+  $('t_buy_total_cum').textContent   = '−' + fmt(buyTotalCum) + ' 만원';
+
+  // ⑥ 잔금 후 처리
+  $('t_sell_debt').textContent    = '−' + fmt(debt)     + ' 만원';
+  $('t_sell_cost').textContent    = '−' + fmt(saleCost) + ' 만원';
   const sellNetEl = $('t_sell_net');
   sellNetEl.textContent = fmt(sellNet) + ' 만원';
   sellNetEl.className   = sellNet >= 0 ? 'amt-in' : 'amt-neg';
 
-  $('t_buy_balance').textContent = '−' + fmt(buyBalance) + ' 만원';
-  $('t_buy_loan').textContent    = '+' + fmt(newLoan)    + ' 만원';
-  $('t_buy_cost').textContent    = '−' + fmt(buyCost)    + ' 만원';
+  $('t_buy_loan').textContent = '+' + fmt(newLoan) + ' 만원';
+  $('t_buy_cost').textContent = '−' + fmt(buyCost) + ' 만원';
   const buyNetEl = $('t_buy_net');
   buyNetEl.textContent = fmt(buyEquityTotal) + ' 만원';
   buyNetEl.className   = 'amt-out';
