@@ -171,6 +171,7 @@ const CATS = [
 <div style="background:#0f172a;display:flex;padding:0 20px">
   <a href="compare.html" style="display:inline-block;padding:10px 20px;color:#fff;font-size:13px;font-weight:700;border-bottom:3px solid #2563eb;text-decoration:none">📊 입지 비교</a>
   <a href="finance.html" style="display:inline-block;padding:10px 20px;color:#94a3b8;font-size:13px;font-weight:600;border-bottom:3px solid transparent;text-decoration:none" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'">💰 재정 계산기</a>
+  <a href="contract.html" style="display:inline-block;padding:10px 20px;color:#94a3b8;font-size:13px;font-weight:600;border-bottom:3px solid transparent;text-decoration:none" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'">📋 계약 일정</a>
 </div>
 
 <!-- 헤더 -->
@@ -383,6 +384,180 @@ const CATS = [
   </div>
   <div id="price-info" style="font-size:12px;color:var(--muted);margin-bottom:10px">데이터를 불러오는 중입니다…</div>
   <div class="chart-wrap-tall"><canvas id="priceChart"></canvas></div>
+</div>
+
+<!-- ══ 5-B. 신동아리버파크 단지 심층 분석 ══ -->
+<div class="section" style="border-color:#0891b2">
+  <div class="section-title" style="border-bottom-color:#0891b2">
+    <span class="icon">🔍</span> 신동아리버파크 단지 심층 분석
+    <span class="tag tag-loading" id="tag-sindonga-detail" style="margin-left:auto">로딩중…</span>
+  </div>
+
+  <!-- 단지 기본 정보 카드 -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px">
+    <div style="background:var(--bg2,#f1f5f9);border-radius:8px;padding:12px;text-align:center">
+      <div style="font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.05em;margin-bottom:4px">총 세대수</div>
+      <div style="font-size:22px;font-weight:700;color:#0891b2">1,696</div>
+      <div style="font-size:11px;color:var(--muted)">세대 · 7개동</div>
+    </div>
+    <div style="background:var(--bg2,#f1f5f9);border-radius:8px;padding:12px;text-align:center">
+      <div style="font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.05em;margin-bottom:4px">준공연도</div>
+      <div style="font-size:22px;font-weight:700;color:#0891b2">2001</div>
+      <div style="font-size:11px;color:var(--muted)">약 25년 차 구축</div>
+    </div>
+    <div style="background:var(--bg2,#f1f5f9);border-radius:8px;padding:12px;text-align:center">
+      <div style="font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.05em;margin-bottom:4px">최고층</div>
+      <div style="font-size:22px;font-weight:700;color:#0891b2">28층</div>
+      <div style="font-size:11px;color:var(--muted)">한강조망권 중고층</div>
+    </div>
+    <div style="background:var(--bg2,#f1f5f9);border-radius:8px;padding:12px;text-align:center">
+      <div style="font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.05em;margin-bottom:4px">용적률 / 건폐율</div>
+      <div style="font-size:22px;font-weight:700;color:#0891b2">324%</div>
+      <div style="font-size:11px;color:var(--muted)">건폐율 19%</div>
+    </div>
+  </div>
+
+  <!-- 평형별 세대 구성 -->
+  <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;letter-spacing:.05em">🏢 평형별 세대 구성</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px">
+    <div style="border:1px solid var(--border);border-radius:8px;padding:12px">
+      <div style="font-weight:700;margin-bottom:4px">25평형 <span style="font-size:11px;color:var(--muted)">(59.76㎡)</span></div>
+      <div style="font-size:20px;font-weight:700;color:var(--text)">386<span style="font-size:12px;font-weight:400">세대</span></div>
+      <div style="background:#e2e8f0;border-radius:4px;height:6px;margin-top:8px">
+        <div style="background:#94a3b8;border-radius:4px;height:6px;width:22%"></div>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px">전체의 22.8%</div>
+    </div>
+    <div style="border:2px solid #7c3aed;border-radius:8px;padding:12px">
+      <div style="font-weight:700;margin-bottom:4px">33평형 <span style="font-size:11px;color:var(--muted)">(84.88㎡)</span> <span style="font-size:10px;background:#7c3aed;color:#fff;border-radius:4px;padding:1px 5px">매물 B</span></div>
+      <div style="font-size:20px;font-weight:700;color:#7c3aed">786<span style="font-size:12px;font-weight:400">세대</span></div>
+      <div style="background:#e2e8f0;border-radius:4px;height:6px;margin-top:8px">
+        <div style="background:#7c3aed;border-radius:4px;height:6px;width:46%"></div>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px">전체의 46.3% — 최다 평형</div>
+    </div>
+    <div style="border:2px solid #0891b2;border-radius:8px;padding:12px">
+      <div style="font-weight:700;margin-bottom:4px">43평형 <span style="font-size:11px;color:var(--muted)">(114.75㎡)</span> <span style="font-size:10px;background:#0891b2;color:#fff;border-radius:4px;padding:1px 5px">매물 A</span></div>
+      <div style="font-size:20px;font-weight:700;color:#0891b2">524<span style="font-size:12px;font-weight:400">세대</span></div>
+      <div style="background:#e2e8f0;border-radius:4px;height:6px;margin-top:8px">
+        <div style="background:#0891b2;border-radius:4px;height:6px;width:30%"></div>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px">전체의 30.9%</div>
+    </div>
+  </div>
+
+  <!-- 실거래가 상세 테이블 -->
+  <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;letter-spacing:.05em">
+    💰 평형별 실거래가 현황
+    <span style="font-size:10px;font-weight:400;color:var(--muted)">(하드코딩: 확인된 거래 기준 / API 데이터는 로딩 시 자동 업데이트)</span>
+  </div>
+  <div style="overflow-x:auto;margin-bottom:8px">
+    <table style="width:100%;border-collapse:collapse;font-size:12px">
+      <thead>
+        <tr style="background:var(--bg2,#f1f5f9)">
+          <th style="padding:8px 10px;text-align:left;color:var(--muted)">평형</th>
+          <th style="padding:8px 10px;text-align:left;color:var(--muted)">거래일</th>
+          <th style="padding:8px 10px;text-align:right;color:var(--muted)">거래가</th>
+          <th style="padding:8px 10px;text-align:center;color:var(--muted)">층수</th>
+          <th style="padding:8px 10px;text-align:right;color:var(--muted)">평당가</th>
+          <th style="padding:8px 10px;text-align:left;color:var(--muted)">비고</th>
+        </tr>
+      </thead>
+      <tbody id="sindonga-tx-body">
+        <!-- 하드코딩 기준 데이터 -->
+        <tr style="border-bottom:1px solid var(--border);background:rgba(8,145,178,.05)">
+          <td style="padding:6px 10px;font-weight:700;color:#0891b2">43평 (114.75㎡)</td>
+          <td style="padding:6px 10px">2025.10</td>
+          <td style="padding:6px 10px;text-align:right;font-weight:700">14억 8,000만</td>
+          <td style="padding:6px 10px;text-align:center">25층</td>
+          <td style="padding:6px 10px;text-align:right">3,379만/평</td>
+          <td style="padding:6px 10px;font-size:11px;color:var(--muted)">확인 거래</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);background:rgba(8,145,178,.03)">
+          <td style="padding:6px 10px;font-weight:700;color:#0891b2">43평 (114.75㎡)</td>
+          <td style="padding:6px 10px">2024.09</td>
+          <td style="padding:6px 10px;text-align:right;font-weight:700">12억 9,500만</td>
+          <td style="padding:6px 10px;text-align:center">—</td>
+          <td style="padding:6px 10px;text-align:right">2,960만/평</td>
+          <td style="padding:6px 10px;font-size:11px;color:var(--muted)">확인 거래</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);background:rgba(124,58,237,.05)">
+          <td style="padding:6px 10px;font-weight:700;color:#7c3aed">33평 (84.88㎡)</td>
+          <td style="padding:6px 10px">2025.10</td>
+          <td style="padding:6px 10px;text-align:right;font-weight:700">~14억 1,000만</td>
+          <td style="padding:6px 10px;text-align:center">—</td>
+          <td style="padding:6px 10px;text-align:right">~4,273만/평</td>
+          <td style="padding:6px 10px;font-size:11px;color:var(--muted)">KB시세 기준 추정</td>
+        </tr>
+        <!-- API로 채워질 행 -->
+        <tr id="sindonga-api-row" style="border-bottom:1px solid var(--border);display:none">
+          <td colspan="6" style="padding:6px 10px;font-size:11px;color:var(--muted);text-align:center" id="sindonga-api-status">API 데이터 로딩 중…</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="font-size:11px;color:var(--muted);margin-bottom:16px">* 실거래 확인 거래 기준. 국토부 API 연결 시 자동으로 최근 12개월 데이터가 위 표에 추가됩니다.</div>
+
+  <!-- 현재 호가 vs 실거래가 갭 분석 -->
+  <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;letter-spacing:.05em">📊 호가 vs 실거래가 갭 분석 (2026.05 기준)</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px">
+    <div style="border:2px solid #0891b2;border-radius:8px;padding:14px">
+      <div style="font-weight:700;color:#0891b2;margin-bottom:8px;font-size:12px">매물 A — 705동 43평 (114.75㎡)</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px">
+        <div style="color:var(--muted)">현재 호가</div><div style="text-align:right;font-weight:700">17.2억</div>
+        <div style="color:var(--muted)">최근 실거래 (2025.10)</div><div style="text-align:right">14.8억</div>
+        <div style="color:var(--muted)">호가 프리미엄</div><div style="text-align:right;color:#ef4444;font-weight:700">+2.4억 (+16.2%)</div>
+        <div style="color:var(--muted)">현재 호가 평당가</div><div style="text-align:right;font-weight:700">3,945만</div>
+        <div style="color:var(--muted)">실거래 평당가</div><div style="text-align:right">3,379만</div>
+      </div>
+    </div>
+    <div style="border:2px solid #7c3aed;border-radius:8px;padding:14px">
+      <div style="font-weight:700;color:#7c3aed;margin-bottom:8px;font-size:12px">매물 B — 708동 33평 (84.88㎡)</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px">
+        <div style="color:var(--muted)">현재 호가</div><div style="text-align:right;font-weight:700">16.7억</div>
+        <div style="color:var(--muted)">최근 시세 (2025.10)</div><div style="text-align:right">~14.1억</div>
+        <div style="color:var(--muted)">호가 프리미엄</div><div style="text-align:right;color:#ef4444;font-weight:700">+2.6억 (+18.4%)</div>
+        <div style="color:var(--muted)">현재 호가 평당가</div><div style="text-align:right;font-weight:700">5,030만</div>
+        <div style="color:var(--muted)">시세 평당가</div><div style="text-align:right">~4,273만</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 평형별 실거래가 차트 -->
+  <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;letter-spacing:.05em">📈 평형별 실거래가 추이 (국토부 API · 최근 12개월)</div>
+  <div id="sindonga-chart-info" style="font-size:12px;color:var(--muted);margin-bottom:8px">데이터 로딩 중…</div>
+  <div style="position:relative;height:260px"><canvas id="sindongaDetailChart"></canvas></div>
+
+  <!-- 동별 특성 메모 -->
+  <div style="font-size:11px;font-weight:700;color:var(--muted);margin:16px 0 8px;letter-spacing:.05em">🏗️ 검토 동별 특성</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div style="background:rgba(8,145,178,.07);border:1px solid #0891b2;border-radius:8px;padding:12px;font-size:12px">
+      <div style="font-weight:700;color:#0891b2;margin-bottom:6px">705동 — 43평형 (매물 A)</div>
+      <div style="line-height:2;color:var(--text)">
+        해당층: <strong>22층</strong> / 총 28층<br>
+        전용면적: <strong>114.75㎡</strong> (43.7평)<br>
+        공급면적: 144.06㎡ · 전용률 80%<br>
+        방/욕실: 4방 2욕실<br>
+        향: 남서향 · 한강뷰 기대<br>
+        비고: 중고층, 최상층 대비 리스크 없음
+      </div>
+    </div>
+    <div style="background:rgba(124,58,237,.07);border:1px solid #7c3aed;border-radius:8px;padding:12px;font-size:12px">
+      <div style="font-weight:700;color:#7c3aed;margin-bottom:6px">708동 — 33평형 (매물 B)</div>
+      <div style="line-height:2;color:var(--text)">
+        해당층: <strong>27층</strong> / 총 27층 (최상층)<br>
+        전용면적: <strong>84.88㎡</strong> (25.7평)<br>
+        공급면적: 109.76㎡ · 전용률 77%<br>
+        방/욕실: 3방 2욕실<br>
+        향: 남서향 · 최상층 조망 최우수<br>
+        비고: <span style="color:#ef4444">최상층 누수·단열 이력 점검 필수</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:14px;padding:10px 14px;background:rgba(8,145,178,.08);border-radius:8px;font-size:12px;color:var(--text)">
+    💡 <strong>단지 인사이트:</strong> 33평(786세대)이 최다 평형으로 시장 유동성 가장 높음. 43평(524세대)은 희소성 있어 장기 보유 시 가격 방어력 우수. 두 매물 모두 2025.10 실거래 대비 약 16~18% 호가 프리미엄 — 협상 여지 존재.
+  </div>
 </div>
 
 <!-- ══ 6. 학군 ══ -->
@@ -656,6 +831,259 @@ const CATS = [
   </div>
 </div>
 
+<!-- ══ 11-A. 신동아리버파크 매물 내부 비교 (705동 vs 708동) ══ -->
+<div class="section" style="border:2px solid #0891b2">
+  <div class="section-title" style="border-bottom:2px solid #0891b2">
+    <span class="icon">🏠</span> 신동아리버파크 — 매물 A vs B 상세 비교
+    <span class="tag tag-hard" style="margin-left:auto">2026.05 기준</span>
+  </div>
+
+  <!-- 기본 정보 비교 -->
+  <div style="font-size:11px;font-weight:700;color:var(--sub);margin-bottom:8px;letter-spacing:.05em">📋 매물 기본 정보</div>
+  <div style="overflow-x:auto;margin-bottom:18px">
+    <table style="width:100%;border-collapse:collapse;font-size:12px">
+      <thead>
+        <tr style="background:var(--bg2,#f1f5f9)">
+          <th style="padding:8px 10px;text-align:left;font-weight:600;color:var(--sub)">항목</th>
+          <th style="padding:8px 10px;text-align:center;color:#0891b2;font-weight:700">매물 A — 705동 44평</th>
+          <th style="padding:8px 10px;text-align:center;color:#7c3aed;font-weight:700">매물 B — 708동 33평</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px;color:var(--sub)">공급 / 전용면적</td><td style="padding:6px 10px;text-align:center">144.06㎡ / 114.75㎡</td><td style="padding:6px 10px;text-align:center">109.76㎡ / 84.88㎡</td></tr>
+        <tr style="border-bottom:1px solid var(--border);background:var(--bg2,#f8fafc)"><td style="padding:6px 10px;color:var(--sub)">전용률</td><td style="padding:6px 10px;text-align:center"><strong>80%</strong></td><td style="padding:6px 10px;text-align:center">77%</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px;color:var(--sub)">해당층 / 총층</td><td style="padding:6px 10px;text-align:center">22 / 28층</td><td style="padding:6px 10px;text-align:center;color:#7c3aed;font-weight:700">27 / 27층 (최상층)</td></tr>
+        <tr style="border-bottom:1px solid var(--border);background:var(--bg2,#f8fafc)"><td style="padding:6px 10px;color:var(--sub)">방수 / 욕실</td><td style="padding:6px 10px;text-align:center"><strong>4방 / 2욕실</strong></td><td style="padding:6px 10px;text-align:center">3방 / 2욕실</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px;color:var(--sub)">향</td><td style="padding:6px 10px;text-align:center">남서향</td><td style="padding:6px 10px;text-align:center">남서향</td></tr>
+        <tr style="border-bottom:1px solid var(--border);background:var(--bg2,#f8fafc)"><td style="padding:6px 10px;color:var(--sub)">매매가</td><td style="padding:6px 10px;text-align:center;font-weight:700">17.2억</td><td style="padding:6px 10px;text-align:center;font-weight:700">16.7억</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px;color:var(--sub)">평당 단가</td><td style="padding:6px 10px;text-align:center;color:#0891b2;font-weight:700">3,945만 ✅</td><td style="padding:6px 10px;text-align:center;color:#ef4444">5,030만</td></tr>
+        <tr><td style="padding:6px 10px;color:var(--sub)">관리비</td><td style="padding:6px 10px;text-align:center;color:var(--sub)">미확인</td><td style="padding:6px 10px;text-align:center">29만/월</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 리모델링 견적 -->
+  <div style="font-size:11px;font-weight:700;color:var(--sub);margin-bottom:8px;letter-spacing:.05em">🔨 리모델링 견적 (2026년, 발코니 미확장 기준)</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px">
+    <div style="background:rgba(8,145,178,.07);border:1px solid #0891b2;border-radius:8px;padding:12px">
+      <div style="font-weight:700;color:#0891b2;margin-bottom:8px;font-size:12px">매물 A (44평)</div>
+      <div style="font-size:11px;color:var(--text);line-height:2">
+        장판: 240~320 / 420~560만<br>
+        실크벽지: 320~400 / 450~560만<br>
+        부엌: 480~650 / 750~950만<br>
+        욕실 2개: 860~960 / 1,300~1,440만<br>
+        현관/중문: 155~175 / 175~225만<br>
+        철거: 120~160 / 160~210만
+      </div>
+      <div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(8,145,178,.3);font-size:12px">
+        기본형 <strong>2,175~2,665만</strong><br>
+        중급형 <strong>3,255~3,945만</strong>
+      </div>
+    </div>
+    <div style="background:rgba(124,58,237,.07);border:1px solid #7c3aed;border-radius:8px;padding:12px">
+      <div style="font-weight:700;color:#7c3aed;margin-bottom:8px;font-size:12px">매물 B (33평)</div>
+      <div style="font-size:11px;color:var(--text);line-height:2">
+        장판: 170~240 / 300~400만<br>
+        실크벽지: 240~300 / 330~420만<br>
+        부엌: 400~550 / 600~800만<br>
+        욕실 1개: 430~480 / 650~720만<br>
+        현관/중문: 120~170 / 120~170만<br>
+        철거: 80~120 / 100~150만
+      </div>
+      <div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(124,58,237,.3);font-size:12px">
+        기본형 <strong>1,440~1,860만</strong><br>
+        중급형 <strong>2,100~2,660만</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- 재정 + 자금조달 -->
+  <div style="font-size:11px;font-weight:700;color:var(--sub);margin-bottom:8px;letter-spacing:.05em">💰 재정 현황 — 매도 비용 상세</div>
+
+  <!-- 매도 비용 상세 -->
+  <div style="overflow-x:auto;margin-bottom:6px">
+    <table style="width:100%;border-collapse:collapse;font-size:12px">
+      <thead>
+        <tr style="background:var(--bg2,#f1f5f9)">
+          <th style="padding:7px 10px;text-align:left;color:var(--sub)">매도 항목</th>
+          <th style="padding:7px 10px;text-align:right;color:var(--sub)">금액</th>
+          <th style="padding:7px 10px;text-align:left;color:var(--sub)">산출 근거</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:6px 10px;font-weight:700">현 거주지 매도가 (삼익그린2차)</td>
+          <td style="padding:6px 10px;text-align:right;font-weight:700">+19.00억</td>
+          <td style="padding:6px 10px;font-size:11px;color:var(--sub)">2026.05 시세 기준</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);background:var(--bg2,#f8fafc)">
+          <td style="padding:6px 10px;color:#ef4444">(-) 주담대 잔액 상환</td>
+          <td style="padding:6px 10px;text-align:right;color:#ef4444">△2.70억</td>
+          <td style="padding:6px 10px;font-size:11px;color:var(--sub)">2.61% 변동금리 잔액</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:6px 10px;color:#ef4444">(-) 기타 부채 상환</td>
+          <td style="padding:6px 10px;text-align:right;color:#ef4444">△1.00억</td>
+          <td style="padding:6px 10px;font-size:11px;color:var(--sub)">마통·기타·차량할부 합산</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);background:var(--bg2,#f8fafc)">
+          <td style="padding:6px 10px;color:#ef4444">(-) 양도소득세</td>
+          <td style="padding:6px 10px;text-align:right;color:#ef4444">△0.44억</td>
+          <td style="padding:6px 10px;font-size:11px;color:var(--sub)">1주택 12억 초과 과세 · 장특공제 40%(6년) · 공동명의 인당 2,217만</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:6px 10px;color:#ef4444">(-) 중개보수 (매도)</td>
+          <td style="padding:6px 10px;text-align:right;color:#ef4444">△0.10억</td>
+          <td style="padding:6px 10px;font-size:11px;color:var(--sub)">19억 × 0.5% 협의 기준 (법정 상한 0.7%)</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);background:var(--bg2,#f8fafc)">
+          <td style="padding:6px 10px;color:#ef4444">(-) 이사비</td>
+          <td style="padding:6px 10px;text-align:right;color:#ef4444">△0.03억</td>
+          <td style="padding:6px 10px;font-size:11px;color:var(--sub)">포장이사 기준</td>
+        </tr>
+        <tr style="font-weight:700;font-size:13px;background:rgba(16,185,129,.08)">
+          <td style="padding:8px 10px">✅ 실제 가용 현금 (세금·복비 차감 후)</td>
+          <td style="padding:8px 10px;text-align:right;color:#10b981">14.73억</td>
+          <td style="padding:8px 10px;font-size:11px;color:var(--sub)">※ 종전 분석의 15.3억은 세금/복비 미차감 단순값</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="font-size:11px;color:var(--sub);margin-bottom:18px">* 양도세: 취득가 9.8억 기준. 실제 세액은 세무사 확인 필요.</div>
+
+  <!-- 매수 비용 상세 -->
+  <div style="font-size:11px;font-weight:700;color:var(--sub);margin-bottom:8px;letter-spacing:.05em">🏠 자금 조달 계획 — 매수 비용 전항목 포함</div>
+  <div style="overflow-x:auto;margin-bottom:6px">
+    <table style="width:100%;border-collapse:collapse;font-size:12px">
+      <thead>
+        <tr style="background:var(--bg2,#f1f5f9)">
+          <th style="padding:7px 10px;text-align:left;color:var(--sub)">매수 항목</th>
+          <th style="padding:7px 10px;text-align:right;color:#0891b2;font-weight:700">매물 A (44평)</th>
+          <th style="padding:7px 10px;text-align:right;color:#7c3aed;font-weight:700">매물 B (33평)</th>
+          <th style="padding:7px 10px;text-align:left;color:var(--sub)">산출 근거</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:6px 10px;font-weight:700">매매가</td>
+          <td style="padding:6px 10px;text-align:right;font-weight:700">17.20억</td>
+          <td style="padding:6px 10px;text-align:right;font-weight:700">16.70억</td>
+          <td style="padding:6px 10px;font-size:11px;color:var(--sub)">현재 호가</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);background:var(--bg2,#f8fafc)">
+          <td style="padding:6px 10px;color:#ef4444">취득세</td>
+          <td style="padding:6px 10px;text-align:right;color:#ef4444">0.516억</td>
+          <td style="padding:6px 10px;text-align:right;color:#ef4444">0.501억</td>
+          <td style="padding:6px 10px;font-size:11px;color:var(--sub)">3% (취득세 1주택 85㎡초과 3.3% 적용, 지방교육세 포함)</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:6px 10px;color:#ef4444">중개보수 (매수)</td>
+          <td style="padding:6px 10px;text-align:right;color:#ef4444">0.09억</td>
+          <td style="padding:6px 10px;text-align:right;color:#ef4444">0.09억</td>
+          <td style="padding:6px 10px;font-size:11px;color:var(--sub)">900만 (법정 상한 0.7%, 협의)</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);background:var(--bg2,#f8fafc)">
+          <td style="padding:6px 10px;color:#ef4444">등기비용</td>
+          <td style="padding:6px 10px;text-align:right;color:#ef4444">0.015억</td>
+          <td style="padding:6px 10px;text-align:right;color:#ef4444">0.015억</td>
+          <td style="padding:6px 10px;font-size:11px;color:var(--sub)">법무사 보수 + 등록면허세 등</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:6px 10px;color:#ef4444">입주비용 (이사비 300만+설치비 100만)</td>
+          <td style="padding:6px 10px;text-align:right;color:#ef4444">0.04억</td>
+          <td style="padding:6px 10px;text-align:right;color:#ef4444">0.04억</td>
+          <td style="padding:6px 10px;font-size:11px;color:var(--sub)">이사비 + 초기 생활설비 (에어컨·조명 등)</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);background:var(--bg2,#f8fafc)">
+          <td style="padding:6px 10px;color:#ef4444">리모델링 (기본형 중간값)</td>
+          <td style="padding:6px 10px;text-align:right;color:#ef4444">0.22억</td>
+          <td style="padding:6px 10px;text-align:right;color:#ef4444">0.15억</td>
+          <td style="padding:6px 10px;font-size:11px;color:var(--sub)">장판·벽지·부엌·욕실·현관 기본형</td>
+        </tr>
+        <tr style="border-bottom:2px solid var(--border);font-weight:600">
+          <td style="padding:6px 10px">총 필요자금</td>
+          <td style="padding:6px 10px;text-align:right">18.08억</td>
+          <td style="padding:6px 10px;text-align:right">17.50억</td>
+          <td style="padding:6px 10px;font-size:11px;color:var(--sub)">매매가 + 모든 부대비용</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);background:var(--bg2,#f8fafc)">
+          <td style="padding:6px 10px;color:var(--sub)">가용 현금</td>
+          <td colspan="2" style="padding:6px 10px;text-align:right;color:#10b981;font-weight:700">14.73억 공통</td>
+          <td style="padding:6px 10px;font-size:11px;color:var(--sub)">세금·복비 차감 후 실수령</td>
+        </tr>
+        <tr style="font-weight:700;font-size:13px">
+          <td style="padding:8px 10px">🏦 필요 신규 대출</td>
+          <td style="padding:8px 10px;text-align:right;color:#0891b2">3.35억</td>
+          <td style="padding:8px 10px;text-align:right;color:#7c3aed">2.77억</td>
+          <td style="padding:8px 10px;font-size:11px;color:var(--sub)">총필요자금 − 가용현금</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="font-size:11px;color:var(--sub);margin-bottom:18px">* 입주비 400만(이사비 300+설치비 100) 기준. 종전 단순 계산 대비 A: +0.714억 / B: +0.719억 — 양도세·복비·등기비 포함.</div>
+
+  <!-- 월 현금흐름 -->
+  <div style="font-size:11px;font-weight:700;color:var(--sub);margin-bottom:8px;letter-spacing:.05em">📅 월 현금흐름 (주담대 4.5% 고정 / 30년 원리금균등)</div>
+  <div style="background:rgba(0,0,0,.03);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;display:flex;gap:24px;flex-wrap:wrap">
+    <span>월 수입 <strong>900만</strong></span>
+    <span>생활비 △300만</span>
+    <span>영아·유치원비 △260만</span>
+    <span style="border-left:2px solid var(--border);padding-left:16px">상환 전 여유 <strong>340만</strong></span>
+  </div>
+  <div style="overflow-x:auto;margin-bottom:8px">
+    <table style="width:100%;border-collapse:collapse;font-size:12px">
+      <thead>
+        <tr style="background:var(--bg2,#f1f5f9)">
+          <th style="padding:8px 10px;text-align:left;color:var(--sub)">항목</th>
+          <th style="padding:8px 10px;text-align:right;color:#0891b2;font-weight:700">매물 A (44평)</th>
+          <th style="padding:8px 10px;text-align:right;color:#7c3aed;font-weight:700">매물 B (33평)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px;color:var(--sub)">대출원금</td><td style="padding:6px 10px;text-align:right">3.35억</td><td style="padding:6px 10px;text-align:right">2.77억</td></tr>
+        <tr style="border-bottom:1px solid var(--border);background:var(--bg2,#f8fafc)"><td style="padding:6px 10px;color:var(--sub)">월 원리금</td><td style="padding:6px 10px;text-align:right">170만</td><td style="padding:6px 10px;text-align:right">140만</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px;color:var(--sub)">DSR</td><td style="padding:6px 10px;text-align:right;color:#10b981;font-weight:700">18.9% ✅</td><td style="padding:6px 10px;text-align:right;color:#10b981;font-weight:700">15.6% ✅</td></tr>
+        <tr style="font-weight:700;font-size:13px"><td style="padding:6px 10px">월 잔여 현금</td><td style="padding:6px 10px;text-align:right;color:#0891b2">170만</td><td style="padding:6px 10px;text-align:right;color:#7c3aed">200만 (+30만)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="font-size:11px;color:var(--sub)">* 월 차이 30만 → 연 360만. 양쪽 모두 DSR 40% 한도 여유 충분. 생활비 300만 기준.</div>
+
+  <!-- 최종 판정 -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px">
+    <div style="background:rgba(8,145,178,.1);border:2px solid #0891b2;border-radius:8px;padding:14px">
+      <div style="font-weight:700;color:#0891b2;margin-bottom:8px">🏆 매물 A — 705동 44평 ★ 추천</div>
+      <div style="font-size:11px;line-height:1.9">
+        ✅ 평당 단가 3,945만 — <strong>1,085만 절감</strong><br>
+        ✅ 전용 114.75㎡ — 11평 추가<br>
+        ✅ 4방 2욕실 — 방 1개 추가<br>
+        ✅ 22층 — 조망 우수<br>
+        ✅ DSR 18.9% — 40% 한도 대비 여유<br>
+        ✅ 월 잔여 170만 — 생활 안정<br>
+        ⚠ 리모델링 비용 A &gt; B (약 700만↑)
+      </div>
+    </div>
+    <div style="background:rgba(124,58,237,.08);border:1px solid #7c3aed;border-radius:8px;padding:14px">
+      <div style="font-weight:700;color:#7c3aed;margin-bottom:8px">매물 B — 708동 33평</div>
+      <div style="font-size:11px;line-height:1.9">
+        ✅ 가격 0.5억 저렴 (16.7억)<br>
+        ✅ 최상층 27층 — 조망 최우수<br>
+        ✅ DSR 15.6% — 대출 부담 상대적 경감<br>
+        ✅ 월 잔여 200만 — 월 30만 여유<br>
+        ⚠ 최상층 누수·단열 이력 점검 필수<br>
+        ⚠ 평당 단가 5,030만 — 비효율<br>
+        ⚠ 3방 — 자녀 성장 후 협소 가능
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:12px;padding:12px 14px;background:rgba(8,145,178,.12);border-radius:8px;font-size:12px;line-height:1.9">
+    <strong>📌 결론:</strong> 전항목 비용 반영 시 대출 A 3.35억 / B 2.77억. DSR 각 18.9% / 15.6%로 양쪽 모두 40% 한도 여유. 월 잔여 차이 30만은 여전히 미미.
+    평당 단가 <strong>1,085만 절감 + 전용 11평 추가 + 방 1개</strong> 확보 → <strong>매물 A (705동 44평)이 재정적·자산적으로 모두 유리.</strong><br>
+    <span style="color:#ef4444">⚠ 초기 자금 소요 A 18.08억 / B 17.50억 — 가용현금 14.73억 대비 각 3.35억 / 2.77억 대출 필요. 대출 한도(LTV) 사전 확인 권장.</span>
+  </div>
+</div>
+
 <!-- ══ 11. Claude 최종 검토 ══ -->
 <div class="section" style="border:2px solid #6366f1;background:linear-gradient(135deg,#1e1b4b 0%,#312e81 100%);color:#e0e7ff">
   <div class="section-title" style="color:#e0e7ff;border-bottom:1px solid rgba(255,255,255,.15);padding-bottom:10px;margin-bottom:16px">
@@ -665,117 +1093,91 @@ const CATS = [
 
   <!-- 재정 시뮬레이션 요약 -->
   <div style="margin-bottom:16px">
-    <div style="font-size:12px;font-weight:700;color:#a5b4fc;margin-bottom:8px;letter-spacing:.05em">📊 재정 시뮬레이션 (삼익그린2차 19억 매도 · 부부합산 960만원 · 주담대 4.5% 30년)</div>
+    <div style="font-size:12px;font-weight:700;color:#a5b4fc;margin-bottom:8px;letter-spacing:.05em">📊 재정 시뮬레이션 — 신동아리버파크 최종 두 매물 (삼익그린2차 19억 매도 · 전항목 비용 반영 · 주담대 4.5% 30년)</div>
     <table style="width:100%;border-collapse:collapse;font-size:12px">
       <thead>
         <tr style="background:rgba(99,102,241,.3)">
           <th style="padding:7px 10px;text-align:left;font-weight:700;color:#c7d2fe">항목</th>
-          <th style="padding:7px 10px;text-align:right;color:#93c5fd">C 30평<br>16.3억</th>
-          <th style="padding:7px 10px;text-align:right;color:#f9a8d4">C 40평<br>16.75억</th>
-          <th style="padding:7px 10px;text-align:right;color:#86efac">B 302동<br>17.1억</th>
+          <th style="padding:7px 10px;text-align:right;color:#67e8f9;font-weight:700">🏆 매물 A — 705동 44평<br>17.2억</th>
+          <th style="padding:7px 10px;text-align:right;color:#c4b5fd">매물 B — 708동 33평<br>16.7억</th>
         </tr>
       </thead>
       <tbody>
         <tr style="border-bottom:1px solid rgba(255,255,255,.08)">
-          <td style="padding:6px 10px;color:#cbd5e1">세후 수령 (공동명의)</td>
-          <td colspan="3" style="padding:6px 10px;text-align:right;color:#86efac;font-weight:700">18.43억 공통 · 부채상환 후 가용 14.81억</td>
+          <td style="padding:6px 10px;color:#cbd5e1">실제 가용 현금 (양도세·복비·이사비 차감)</td>
+          <td colspan="2" style="padding:6px 10px;text-align:right;color:#86efac;font-weight:700">14.73억 공통 (19억 − 부채 3.7억 − 양도세 0.44억 − 복비 0.1억 − 이사비 0.03억) · 생활비 300만 기준</td>
         </tr>
         <tr style="border-bottom:1px solid rgba(255,255,255,.08)">
-          <td style="padding:6px 10px;color:#cbd5e1">최소 주담대</td>
-          <td style="padding:6px 10px;text-align:right;color:#93c5fd;font-weight:700">2.78억</td>
-          <td style="padding:6px 10px;text-align:right;color:#f9a8d4;font-weight:700">3.24억</td>
-          <td style="padding:6px 10px;text-align:right;color:#86efac;font-weight:700">3.61억</td>
-        </tr>
-        <tr style="border-bottom:1px solid rgba(255,255,255,.08)">
-          <td style="padding:6px 10px;color:#cbd5e1">LTV 한도 (4억)</td>
-          <td style="padding:6px 10px;text-align:right;color:#86efac">✅ 여유 1.22억</td>
-          <td style="padding:6px 10px;text-align:right;color:#86efac">✅ 여유 0.76억</td>
-          <td style="padding:6px 10px;text-align:right;color:#86efac">✅ 여유 0.39억</td>
+          <td style="padding:6px 10px;color:#cbd5e1">필요 신규 대출 (매매가 + 취득세 + 복비 + 등기 + 입주 + 리모델링)</td>
+          <td style="padding:6px 10px;text-align:right;color:#67e8f9;font-weight:700">3.35억</td>
+          <td style="padding:6px 10px;text-align:right;color:#c4b5fd;font-weight:700">2.77억</td>
         </tr>
         <tr style="border-bottom:1px solid rgba(255,255,255,.08)">
           <td style="padding:6px 10px;color:#cbd5e1">월 원리금</td>
-          <td style="padding:6px 10px;text-align:right;color:#93c5fd">141만원</td>
-          <td style="padding:6px 10px;text-align:right;color:#f9a8d4">164만원</td>
-          <td style="padding:6px 10px;text-align:right;color:#fbbf24">183만원</td>
+          <td style="padding:6px 10px;text-align:right;color:#67e8f9">170만원</td>
+          <td style="padding:6px 10px;text-align:right;color:#c4b5fd">140만원</td>
         </tr>
         <tr style="border-bottom:1px solid rgba(255,255,255,.08)">
-          <td style="padding:6px 10px;color:#cbd5e1">실제 DSR</td>
-          <td style="padding:6px 10px;text-align:right;color:#86efac;font-weight:700">31.4% ✅</td>
-          <td style="padding:6px 10px;text-align:right;color:#86efac;font-weight:700">33.9% ✅</td>
-          <td style="padding:6px 10px;text-align:right;color:#fbbf24;font-weight:700">35.8% ✅</td>
+          <td style="padding:6px 10px;color:#cbd5e1">DSR</td>
+          <td style="padding:6px 10px;text-align:right;color:#86efac;font-weight:700">18.9% ✅</td>
+          <td style="padding:6px 10px;text-align:right;color:#86efac;font-weight:700">15.6% ✅</td>
         </tr>
         <tr style="border-bottom:1px solid rgba(255,255,255,.08)">
-          <td style="padding:6px 10px;color:#cbd5e1">② 영유기간 월여유</td>
-          <td style="padding:6px 10px;text-align:right;color:#93c5fd;font-weight:700">+206만원</td>
-          <td style="padding:6px 10px;text-align:right;color:#f9a8d4;font-weight:700">+183만원</td>
-          <td style="padding:6px 10px;text-align:right;color:#86efac">+164만원</td>
+          <td style="padding:6px 10px;color:#cbd5e1">월 잔여 현금 (수입 − 원리금 − 생활비 300만 − 영아비)</td>
+          <td style="padding:6px 10px;text-align:right;color:#67e8f9;font-weight:700">170만원</td>
+          <td style="padding:6px 10px;text-align:right;color:#c4b5fd;font-weight:700">200만원 (+30만)</td>
         </tr>
         <tr>
-          <td style="padding:6px 10px;color:#cbd5e1">③ 영유 후 월여유</td>
-          <td style="padding:6px 10px;text-align:right;color:#93c5fd;font-weight:700">+419만원</td>
-          <td style="padding:6px 10px;text-align:right;color:#f9a8d4;font-weight:700">+396만원</td>
-          <td style="padding:6px 10px;text-align:right;color:#86efac">+377만원</td>
+          <td style="padding:6px 10px;color:#cbd5e1">평당 단가</td>
+          <td style="padding:6px 10px;text-align:right;color:#86efac;font-weight:700">3,945만 ✅ (1,085만↓)</td>
+          <td style="padding:6px 10px;text-align:right;color:#fbbf24">5,030만</td>
         </tr>
       </tbody>
     </table>
-    <div style="font-size:11px;color:#94a3b8;margin-top:6px">* 양도세 4,433만 (장특공제 40%, 공동명의) · 중개보수 매도+매수 각 990만 · 취득세 3.3% · 영유비 7분기×789만 주담대 선납 · 중간 시세 기준</div>
+    <div style="font-size:11px;color:#94a3b8;margin-top:6px">* 생활비 300만 + 영아·유치원비 260만 = 고정 560만 / 월 수입 900만 기준 · 입주비 400만(이사300+설치100) · 양도세 장특공제40% 공동명의 적용</div>
   </div>
 
   <!-- 단지별 종합 판정 -->
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
-    <div style="background:rgba(219,39,119,.2);border:1.5px solid #db2777;border-radius:8px;padding:12px">
-      <div style="font-weight:700;color:#f9a8d4;margin-bottom:6px">🩷 C 40평 ★ 1순위</div>
-      <div style="font-size:11px;color:#fbcfe8;line-height:1.8">
-        ✅ DSR 33.9% — 여유 있음<br>
-        ✅ 주담대 3.24억 · 월납입 164만<br>
-        ✅ 영유기간 월여유 +183만<br>
-        ✅ 전용 109㎡ · 방 4개 쾌적<br>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+    <div style="background:rgba(8,145,178,.25);border:2px solid #0891b2;border-radius:8px;padding:12px">
+      <div style="font-weight:700;color:#67e8f9;margin-bottom:6px">🏆 매물 A — 705동 44평 ★ 1순위</div>
+      <div style="font-size:11px;color:#cffafe;line-height:1.9">
+        ✅ 평당 단가 3,945만 — <strong>1,085만 절감</strong><br>
+        ✅ 대출 3.35억 · 월납입 170만<br>
+        ✅ DSR 18.9% — 40% 한도 여유<br>
+        ✅ 월 잔여 170만<br>
+        ✅ 전용 114.75㎡ · 4방 2욕실<br>
+        ✅ 22층 조망 우수<br>
         ✅ 1·9호선 더블역세권<br>
-        ✅ 직주근접 최강 (15~20분)<br>
-        ✅ 한강뷰 · 노량진뉴타운<br>
-        ⚠ 학군 (대방중) 약세<br>
-        ⚠ 30평대와 가격차 0.45억 미미
+        ⚠ 리모델링 기본형 약 2,420만 (B보다 ~770만↑)
       </div>
     </div>
-    <div style="background:rgba(37,99,235,.2);border:1px solid #3b82f6;border-radius:8px;padding:12px">
-      <div style="font-weight:700;color:#93c5fd;margin-bottom:6px">🔵 C 30평 2순위</div>
-      <div style="font-size:11px;color:#bfdbfe;line-height:1.8">
-        ✅ DSR 31.4% — 가장 여유<br>
-        ✅ 주담대 최소 (2.78억)<br>
-        ✅ 영유기간 월여유 +206만<br>
-        ✅ 교통·직주근접 동일<br>
-        ✅ 40평 대비 0.45억 저렴<br>
-        ⚠ 전용 84㎡ — 자녀 성장 후 협소<br>
-        ⚠ 방 3개
-      </div>
-    </div>
-    <div style="background:rgba(22,163,74,.15);border:1px solid #16a34a;border-radius:8px;padding:12px">
-      <div style="font-weight:700;color:#86efac;margin-bottom:6px">🟢 B 302동 3순위</div>
-      <div style="font-size:11px;color:#bbf7d0;line-height:1.8">
-        ✅ DSR 35.8% — 통과<br>
-        ✅ 학군 우위 (사당중·이수학원가)<br>
-        ✅ 리모델링 후 신축급 프리미엄<br>
-        ✅ 대형 면적 (118㎡)<br>
-        ⚠ 월납입 183만 — 셋 중 최고<br>
-        ⚠ 이주 2027~28 → 전세비 추가<br>
-        ⚠ 직주근접 C 대비 열세<br>
-        ⚠ LTV 여유 0.39억 — 가장 빠듯
+    <div style="background:rgba(124,58,237,.2);border:1px solid #7c3aed;border-radius:8px;padding:12px">
+      <div style="font-weight:700;color:#c4b5fd;margin-bottom:6px">매물 B — 708동 33평 2순위</div>
+      <div style="font-size:11px;color:#ddd6fe;line-height:1.9">
+        ✅ 가격 0.5억 저렴 (16.7억)<br>
+        ✅ 대출 2.77억 · 월납입 140만<br>
+        ✅ DSR 15.6% — 대출 부담 경감<br>
+        ✅ 월 잔여 200만 (+30만)<br>
+        ✅ 최상층 27층 조망 최우수<br>
+        ⚠ 평당 단가 5,030만 — 비효율<br>
+        ⚠ 3방 — 자녀 성장 후 협소<br>
+        ⚠ 최상층 누수·단열 이력 점검 필수
       </div>
     </div>
   </div>
 
   <!-- 최종 결론 -->
   <div style="background:rgba(99,102,241,.25);border:1.5px solid #6366f1;border-radius:8px;padding:14px">
-    <div style="font-weight:700;color:#c7d2fe;margin-bottom:8px;font-size:13px">📌 최종 결론</div>
+    <div style="font-weight:700;color:#c7d2fe;margin-bottom:8px;font-size:13px">📌 최종 결론 (2026.05 업데이트)</div>
     <div style="font-size:12px;color:#e0e7ff;line-height:2">
-      <strong style="color:#f9a8d4">1순위 — C 노량진신동아 40평 (16.5~17억)</strong><br>
-      30평과 가격차가 0.45억(중간값 기준)에 불과한데 전용면적 +25㎡(84→109㎡), 방 1개 추가.
-      DSR 33.9%로 충분히 여유, 월여유 183만으로 생활 가능. 교통·직주근접·한강뷰까지 더하면 세 옵션 중 입지+면적+재정 균형이 가장 우수.<br><br>
-      <strong style="color:#93c5fd">2순위 — C 노량진신동아 30평 (16.0~16.6억)</strong><br>
-      재정 부담 최소(월납입 141만, 월여유 206만). 1인 가구·신혼 초기엔 충분하나 자녀 성장 후 공간 부족 가능성. 40평과 가격 차이가 작으므로 장기 거주 시 40평이 더 합리적.<br><br>
-      <strong style="color:#86efac">3순위 — B 사당우성3단지 302동 (17.1억)</strong><br>
-      학군과 리모델링 신축 프리미엄이 강점이나, 이주(2027~28) 기간 전세비 추가 부담 + 직주근접 열세 + 셋 중 월납입 최고(183만) + LTV 여유 최소(0.39억)가 복합적 약점.
-      학군을 최우선으로 본다면 선택지.
+      <strong style="color:#67e8f9">1순위 — 신동아리버파크 705동 44평 (17.2억)</strong><br>
+      708동 33평보다 0.5억 비싸지만, 평당 단가 1,085만 절감 + 전용 11평 추가 + 방 1개 추가.
+      DSR 18.9%로 40% 한도 여유 충분하고 월 잔여 현금 170만.
+      교통(1·9호선 더블역세권)·직주근접·한강환경 강점 유지. <strong>재정적·자산적으로 모두 유리한 선택.</strong><br><br>
+      <strong style="color:#c4b5fd">2순위 — 신동아리버파크 708동 33평 (16.7억)</strong><br>
+      대출 2.77억(월납입 140만), DSR 15.6%로 여유. 월 잔여 200만으로 A 대비 30만 추가 우위.
+      최상층 조망은 최우수이나 누수·단열 이력 반드시 점검. 장기 거주 시 3방으로 공간 부족 가능성.
     </div>
   </div>
 </div>
@@ -1009,6 +1411,110 @@ async function loadPriceData() {
       `⚠ 실거래가 API 차단됨 — apis.data.go.kr 가 공개 프록시 IP를 모두 차단하고 있습니다.<br>` +
       `해결: compare.html 상단 <code>CUSTOM_PROXY_URL</code>에 개인 Cloudflare Worker 주소를 입력하세요. ` +
       `(<a href="https://developers.cloudflare.com/workers/" target="_blank">Worker 설정 방법</a>)`;
+  }
+}
+
+/* ── 3-B. 신동아리버파크 평형별 실거래가 심층 분석 ── */
+let sindongaDetailChart = null;
+async function loadSindongaDetail() {
+  const statusEl = document.getElementById('sindonga-chart-info');
+  const tagEl    = document.getElementById('tag-sindonga-detail');
+  try {
+    const months  = recentMonths(12);
+    const xmls    = await Promise.all(months.map(m => fetchMolitMonth(C.lawdCd, m).catch(() => null)));
+
+    // 3개 평형 범위: 25평(59㎡대), 33평(84㎡대), 43평(114㎡대)
+    const p25 = xmls.map(x => x ? parseMolitXml(x, C.aptKw, 55, 67,  C.umdNm) : null);
+    const p33 = xmls.map(x => x ? parseMolitXml(x, C.aptKw, 80, 92,  C.umdNm) : null);
+    const p43 = xmls.map(x => x ? parseMolitXml(x, C.aptKw, 108, 122, C.umdNm) : null);
+    const labels = months.map(m => `${m.slice(0,4)}.${m.slice(4)}`);
+
+    // 차트 갱신
+    if (sindongaDetailChart) sindongaDetailChart.destroy();
+    const ctx = document.getElementById('sindongaDetailChart').getContext('2d');
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const lc = isDark ? '#94a3b8' : '#64748b';
+    sindongaDetailChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          { label: '25평 (59㎡)', data: p25, borderColor: '#94a3b8', backgroundColor: 'rgba(148,163,184,.1)', tension: 0.3, pointRadius: 4, spanGaps: true },
+          { label: '33평 (84㎡) — 매물B', data: p33, borderColor: '#7c3aed', backgroundColor: 'rgba(124,58,237,.1)', tension: 0.3, pointRadius: 5, borderWidth: 2.5, spanGaps: true },
+          { label: '43평 (114㎡) — 매물A', data: p43, borderColor: '#0891b2', backgroundColor: 'rgba(8,145,178,.1)', tension: 0.3, pointRadius: 5, borderWidth: 2.5, spanGaps: true },
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        scales: {
+          x: { ticks: { color: lc, maxRotation: 45 } },
+          y: { ticks: { color: lc, callback: v => v + '억' }, title: { display: true, text: '거래가 (억원)', color: lc } }
+        },
+        plugins: { legend: { labels: { color: lc } }, tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y?.toFixed(2)}억원` } } }
+      }
+    });
+
+    // API 데이터를 테이블에도 추가
+    const apiTxRows = [];
+    months.forEach((m, i) => {
+      const xml = xmls[i];
+      if (!xml) return;
+      const items = xml.querySelectorAll('item');
+      items.forEach(item => {
+        const name = (item.querySelector('aptNm')?.textContent ?? '').trim();
+        const dong = (item.querySelector('umdNm')?.textContent ?? '').trim();
+        if (!name.includes(C.aptKw) || dong !== C.umdNm) return;
+        const area  = parseFloat(item.querySelector('excluUseAr')?.textContent ?? '0');
+        const priceRaw = (item.querySelector('dealAmount')?.textContent ?? '').replace(/[,\s]/g,'');
+        const price = parseInt(priceRaw, 10);
+        const floor = (item.querySelector('floor')?.textContent ?? '').trim();
+        const day   = (item.querySelector('dealDay')?.textContent ?? '').trim();
+        if (!price || price <= 0) return;
+        const pyeong = area > 0 ? Math.round(price / (area / 3.3057) / 10000) : 0;
+        apiTxRows.push({ month: m, day, area, price, floor, pyeong });
+      });
+    });
+
+    if (apiTxRows.length > 0) {
+      apiTxRows.sort((a, b) => b.month.localeCompare(a.month) || b.price - a.price);
+      const tbody = document.getElementById('sindonga-tx-body');
+      const apiRow = document.getElementById('sindonga-api-row');
+      if (apiRow) apiRow.remove();
+      // 최근 6건만 추가 표시
+      apiTxRows.slice(0, 6).forEach(r => {
+        const py = r.area > 55 && r.area < 67 ? '25평' : r.area < 92 ? '33평' : r.area < 122 ? '43평' : `${Math.round(r.area/3.3)}평`;
+        const color = r.area < 67 ? '#94a3b8' : r.area < 92 ? '#7c3aed' : '#0891b2';
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = '1px solid var(--border)';
+        tr.innerHTML = `
+          <td style="padding:6px 10px;font-weight:700;color:${color}">${py} (${r.area.toFixed(1)}㎡)</td>
+          <td style="padding:6px 10px">${r.month.slice(0,4)}.${r.month.slice(4)}${r.day?`.${r.day}`:''}</td>
+          <td style="padding:6px 10px;text-align:right;font-weight:700">${Math.round(r.price/10000)}억 ${r.price%10000?r.price%10000+'만':''}</td>
+          <td style="padding:6px 10px;text-align:center">${r.floor?r.floor+'층':'—'}</td>
+          <td style="padding:6px 10px;text-align:right">${r.pyeong?r.pyeong+'만/평':'—'}</td>
+          <td style="padding:6px 10px;font-size:11px;color:var(--muted)">API 실거래</td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    const cnt = [p25, p33, p43].flatMap(a => a.filter(v => v !== null)).length;
+    if (cnt > 0) {
+      const lat = p43.filter(v=>v!==null).at(-1);
+      const lbt = p33.filter(v=>v!==null).at(-1);
+      statusEl.textContent = `API 실거래 확인 — 43평: ${p43.filter(v=>v!==null).length}개월 / 33평: ${p33.filter(v=>v!==null).length}개월 / 25평: ${p25.filter(v=>v!==null).length}개월${lat?` · 43평 최근 ${lat}억`:''  }${lbt?` · 33평 최근 ${lbt}억`:''}`;
+      if (tagEl) { tagEl.className = 'tag tag-live'; tagEl.textContent = '실데이터'; }
+    } else {
+      statusEl.textContent = '국토부 API 연결 실패 — 프록시 차단. 하드코딩 데이터 표시 중.';
+      if (tagEl) { tagEl.className = 'tag tag-sample'; tagEl.textContent = '하드코딩'; }
+      // 차트에 샘플 데이터 표시
+      sindongaDetailChart.data.datasets[2].data = [null,null,null,null,null,null,null,null,null,12.95,null,14.8];
+      sindongaDetailChart.data.datasets[1].data = [null,null,null,null,null,null,null,null,null,null, null,14.1];
+      sindongaDetailChart.update();
+    }
+  } catch(e) {
+    console.warn('[SindongaDetail]', e);
+    if (statusEl) statusEl.textContent = '국토부 API 연결 실패. 하드코딩 데이터 기준으로 표시 중.';
+    if (tagEl) { tagEl.className = 'tag tag-sample'; tagEl.textContent = '하드코딩'; }
   }
 }
 
@@ -1280,10 +1786,26 @@ async function runAiAnalysis() {
 async function main() {
   initCharts();
   initFloorChart();
+  // sindongaDetailChart 초기 빈 차트
+  const sdCtx = document.getElementById('sindongaDetailChart');
+  if (sdCtx) {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const lc = isDark ? '#94a3b8' : '#64748b';
+    sindongaDetailChart = new Chart(sdCtx.getContext('2d'), {
+      type: 'line',
+      data: { labels: recentMonths(12).map(m=>`${m.slice(0,4)}.${m.slice(4)}`), datasets: [
+        { label: '25평 (59㎡)', data: [], borderColor: '#94a3b8', spanGaps: true },
+        { label: '33평 (84㎡) — 매물B', data: [], borderColor: '#7c3aed', borderWidth: 2.5, spanGaps: true },
+        { label: '43평 (114㎡) — 매물A', data: [], borderColor: '#0891b2', borderWidth: 2.5, spanGaps: true },
+      ]},
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: lc } } }, scales: { x: { ticks: { color: lc } }, y: { ticks: { color: lc, callback: v => v+'억' } } } }
+    });
+  }
   await Promise.allSettled([
     Promise.resolve(loadMap()),
     loadFacilityData(),
     loadPriceData(),
+    loadSindongaDetail(),
     loadSchoolData(),
     loadAirData(),
   ]);
