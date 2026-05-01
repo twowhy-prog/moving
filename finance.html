@@ -447,19 +447,11 @@
     <div class="section-body">
       <div class="grid-3">
         <div class="field">
-          <label>본인 세후 월수입 (만원)</label>
+          <label>부부 세후 월수입 합계 (만원)</label>
           <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('income1', -10)">▼</button>
-            <input type="number" id="income1" value="480" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('income1', 10)">▲</button>
-          </div>
-        </div>
-        <div class="field">
-          <label>배우자 세후 월수입 (만원)</label>
-          <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('income2', -10)">▼</button>
-            <input type="number" id="income2" value="480" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('income2', 10)">▲</button>
+            <button class="adjust-btn" onclick="adjustValue('totalIncome', -10)">▼</button>
+            <input type="number" id="totalIncome" value="900" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('totalIncome', 10)">▲</button>
           </div>
         </div>
       </div>
@@ -872,7 +864,7 @@ const INPUT_IDS = [
   'debtEtc','debtEtcRate','debtCar','debtCarMonths',
   'daycareQuarters','daycarePerQ',
   'newLoan','newLoanRate','newLoanYears',
-  'income1','income2','parkingRate',
+  'totalIncome','parkingRate',
   'totalPlannedQ','paidQ',
   'livingCost','elemSchoolMonthly',
   'pension1','pension2','irp1','irp2','isa','parkingMonthly',
@@ -1163,9 +1155,8 @@ function calc() {
   mpEl.className = loanGap >= 0 ? 'color-green' : 'color-red';
 
   // ─── 섹션 4: 주담대 한도 검증 ───
-  const income1 = val('income1');
-  const income2 = val('income2');
-  const annualIncome    = (income1 + income2) * 12;
+  const totalIncomeInput = val('totalIncome');
+  const annualIncome    = totalIncomeInput * 12;
   const dsrMonthlyLimit = annualIncome * 0.4 / 12;
 
   let ltvLimit = 0;
@@ -1266,7 +1257,7 @@ function calc() {
   const cfEtcMonthly   = $('debt_etc').checked   ? 0 : etcMonthly;
   const cfCarMonthly   = $('debt_car').checked   ? 0 : carMonthly;
   const otherDebtMonthly = cfMatonMonthly + cfEtcMonthly + cfCarMonthly;
-  const totalIncome = income1 + income2;
+  const totalIncome = totalIncomeInput;
 
   // S5 파킹이자 월평균 (① 영유기간1에만 적용)
   const p1_months = includedQ * 3;
