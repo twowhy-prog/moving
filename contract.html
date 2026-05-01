@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>계약 일정</title>
+<style>
+  :root {
+    --bg: #f8fafc; --card: #fff; --border: #e2e8f0;
+    --text: #1e293b; --sub: #64748b; --input-bg: #f1f5f9;
+    --red: #ef4444; --yellow: #f59e0b; --green: #10b981;
+    --blue: #3b82f6; --purple: #8b5cf6;
+  }
+  [data-theme="dark"] {
+    --bg: #0f172a; --card: #1e293b; --border: #334155;
+    --text: #f1f5f9; --sub: #94a3b8; --input-bg: #0f172a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; font-size: 14px; }
+  header { background: var(--card); border-bottom: 1px solid var(--border); padding: 12px 20px; display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 100; }
+  header h1 { font-size: 16px; font-weight: 700; }
+  .header-actions { margin-left: auto; display: flex; gap: 8px; }
+  .btn { padding: 6px 14px; border-radius: 6px; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; font-size: 12px; }
+  .btn:hover { background: var(--border); }
+
+  .container { max-width: 900px; margin: 0 auto; padding: 16px; }
+
+  .section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
+  .section-header { padding: 14px 18px; display: flex; align-items: center; cursor: pointer; user-select: none; }
+  .section-header h2 { font-size: 14px; font-weight: 600; flex: 1; }
+  .section-num { background: var(--blue); color: #fff; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; margin-right: 10px; flex-shrink: 0; }
+  .toggle-icon { font-size: 12px; color: var(--sub); transition: transform 0.2s; }
+  .section-body { padding: 0 18px 18px; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  @media (max-width: 640px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+  .field { margin-bottom: 10px; }
+  .field label { display: block; font-size: 12px; color: var(--sub); margin-bottom: 4px; }
+  .field input[type="number"] {
+    width: 100%; padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px;
+    background: var(--input-bg); color: var(--text); font-size: 14px;
+  }
+  .field input:focus { outline: 2px solid var(--blue); border-color: var(--blue); }
+  .field-adjust { display: flex; align-items: center; gap: 4px; }
+  .field-adjust input { flex: 1; }
+  .adjust-btn { width: 28px; height: 28px; padding: 0; border: 1px solid var(--border); border-radius: 4px; background: var(--input-bg); color: var(--text); cursor: pointer; font-size: 12px; font-weight: 600; }
+  .adjust-btn:hover { background: var(--border); }
+
+  .summary-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; border-left: 3px solid var(--border); }
+  .summary-card .s-num { font-size: 10px; font-weight: 700; color: var(--blue); letter-spacing: 0.5px; margin-bottom: 2px; }
+  .summary-card .value { font-size: 20px; font-weight: 700; line-height: 1.2; }
+  .summary-card .sub { font-size: 11px; color: var(--sub); margin-top: 3px; }
+  .ct-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
+  @media (max-width: 860px) { .ct-summary { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 480px) { .ct-summary { grid-template-columns: 1fr; } }
+
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+  .badge-red { background: #fef2f2; color: var(--red); }
+  .badge-yellow { background: #fffbeb; color: var(--yellow); }
+  .badge-green { background: #f0fdf4; color: var(--green); }
+  [data-theme="dark"] .badge-red { background: #450a0a; }
+  [data-theme="dark"] .badge-yellow { background: #451a03; }
+  [data-theme="dark"] .badge-green { background: #052e16; }
+
+  .table-wrap { overflow-x: auto; margin-top: 12px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { background: var(--input-bg); padding: 8px 10px; text-align: right; font-weight: 600; color: var(--sub); }
+  th:first-child, th:nth-child(2), th:last-child { text-align: left; }
+  td { padding: 7px 10px; text-align: right; border-bottom: 1px solid var(--border); }
+  td:first-child, td:nth-child(2) { text-align: left; }
+
+  .info { font-size: 11px; color: var(--sub); margin-top: 6px; }
+  .sep { height: 1px; background: var(--border); margin: 14px 0; }
+
+  /* 진행 단계 */
+  .contract-steps { display: flex; align-items: center; margin-bottom: 20px; overflow-x: auto; padding: 4px 0; }
+  .cs-step { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+  .cs-dot { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border); background: var(--card); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
+  .cs-dot.done  { background: var(--green);  border-color: var(--green);  color: #fff; }
+  .cs-dot.active{ background: var(--yellow); border-color: var(--yellow); color: #fff; }
+  .cs-dot.skip  { background: var(--border); border-color: var(--border); color: var(--sub); }
+  .cs-label { font-size: 11px; color: var(--sub); margin-top: 5px; white-space: nowrap; }
+  .cs-label.done   { color: var(--green);  font-weight: 600; }
+  .cs-label.active { color: var(--yellow); font-weight: 600; }
+  .cs-line { flex: 1; height: 2px; background: var(--border); min-width: 24px; margin-bottom: 20px; }
+  .cs-line.done { background: var(--green); }
+
+  /* 참조 인풋 박스 */
+  .ref-box { background: var(--input-bg); border-radius: 8px; padding: 12px 14px; margin-bottom: 16px; }
+  .ref-box-title { font-size: 11px; font-weight: 600; color: var(--sub); margin-bottom: 10px; }
+
+  @media print {
+    .header-actions { display: none; }
+    .section-header { cursor: default; }
+    .section-body { display: block !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 탭 네비게이션 -->
+<div style="background:#0f172a;display:flex;padding:0 20px">
+  <a href="finance.html" style="display:inline-block;padding:10px 20px;color:#94a3b8;font-size:13px;font-weight:600;border-bottom:3px solid transparent;text-decoration:none" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'">💰 재정 계산기</a>
+  <a href="compare.html" style="display:inline-block;padding:10px 20px;color:#94a3b8;font-size:13px;font-weight:600;border-bottom:3px solid transparent;text-decoration:none" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'">📊 입지 비교</a>
+  <a href="contract.html" style="display:inline-block;padding:10px 20px;color:#fff;font-size:13px;font-weight:700;border-bottom:3px solid #3b82f6;text-decoration:none">📋 계약 일정</a>
+</div>
+
+<header>
+  <h1>📋 계약 일정</h1>
+  <div class="header-actions">
+    <button class="btn" onclick="toggleTheme()">🌙 다크모드</button>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- ===== 참조값 입력 ===== -->
+  <div class="ref-box">
+    <div class="ref-box-title">📎 재정 계산기 참조값 (finance.html S2·S3 기준으로 직접 입력)</div>
+    <div class="grid-2">
+      <div class="field">
+        <label>매수가 (만원) — S2 매수 분석</label>
+        <div class="field-adjust">
+          <button class="adjust-btn" onclick="adjustValue('refBuyPrice', -1000)">▼</button>
+          <input type="number" id="refBuyPrice" value="170000" oninput="calc()">
+          <button class="adjust-btn" onclick="adjustValue('refBuyPrice', 1000)">▲</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>주담대 실행액 (만원) — S3 주담대</label>
+        <div class="field-adjust">
+          <button class="adjust-btn" onclick="adjustValue('refNewLoan', -1000)">▼</button>
+          <input type="number" id="refNewLoan" value="100000" oninput="calc()">
+          <button class="adjust-btn" onclick="adjustValue('refNewLoan', 1000)">▲</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 계약 일정 ===== -->
+  <div class="section" id="sec1">
+    <div class="section-header" onclick="toggleSection('sec1')">
+      <div class="section-num">1</div>
+      <h2>계약 진행 현황</h2>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="section-body">
+
+      <!-- 진행 단계 표시 -->
+      <div class="contract-steps">
+        <div class="cs-step">
+          <div class="cs-dot done">✓</div>
+          <div class="cs-label done">가계약</div>
+        </div>
+        <div class="cs-line done"></div>
+        <div class="cs-step">
+          <div class="cs-dot active">⏳</div>
+          <div class="cs-label active">토지거래허가</div>
+        </div>
+        <div class="cs-line"></div>
+        <div class="cs-step">
+          <div class="cs-dot">3</div>
+          <div class="cs-label">실계약</div>
+        </div>
+        <div class="cs-line"></div>
+        <div class="cs-step">
+          <div class="cs-dot skip" id="ct_interim_dot">—</div>
+          <div class="cs-label" id="ct_interim_label">중도금</div>
+        </div>
+        <div class="cs-line"></div>
+        <div class="cs-step">
+          <div class="cs-dot">5</div>
+          <div class="cs-label">잔금</div>
+        </div>
+      </div>
+
+      <!-- 요약 카드 -->
+      <div class="ct-summary">
+        <div class="summary-card" style="border-left-color:#3b82f6">
+          <div class="s-num">계약금 합계</div>
+          <div class="value" id="r_ct_earnest">-</div>
+          <div class="sub">만원 (가계약금 포함)</div>
+        </div>
+        <div class="summary-card" style="border-left-color:#8b5cf6">
+          <div class="s-num">중도금</div>
+          <div class="value" id="r_ct_interim">-</div>
+          <div class="sub">만원</div>
+        </div>
+        <div class="summary-card" style="border-left-color:#10b981">
+          <div class="s-num">잔금</div>
+          <div class="value" id="r_ct_balance">-</div>
+          <div class="sub">만원 (매수가 − 계약금 − 중도금)</div>
+        </div>
+        <div class="summary-card" style="border-left-color:#ef4444">
+          <div class="s-num">잔금일 필요 현금</div>
+          <div class="value" id="r_ct_cashNeeded">-</div>
+          <div class="sub">만원 (잔금 − 주담대)</div>
+        </div>
+      </div>
+
+      <!-- 금액 입력 -->
+      <div class="grid-3" style="margin-bottom:16px">
+        <div class="field">
+          <label>가계약금 (만원)</label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('ctDeposit1', -500)">▼</button>
+            <input type="number" id="ctDeposit1" value="1000" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('ctDeposit1', 500)">▲</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>실계약 추가 계약금 (만원)</label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('ctDeposit2', -500)">▼</button>
+            <input type="number" id="ctDeposit2" value="0" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('ctDeposit2', 500)">▲</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>중도금 (만원, 없으면 0)</label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('ctInterim', -1000)">▼</button>
+            <input type="number" id="ctInterim" value="0" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('ctInterim', 1000)">▲</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 일정 테이블 -->
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>단계</th>
+              <th>날짜 / 기간</th>
+              <th>금액 (만원)</th>
+              <th>비고</th>
+              <th>상태</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>① 가계약</strong></td>
+              <td style="white-space:nowrap">2025.05.XX</td>
+              <td id="r_ct_row_d1">-</td>
+              <td style="color:var(--sub);font-size:11px">토지거래허가 전 의향금, 법적 계약 아님</td>
+              <td><span class="badge badge-green">완료</span></td>
+            </tr>
+            <tr>
+              <td><strong>② 토지거래허가</strong></td>
+              <td style="white-space:nowrap">2025.05 ~ 06</td>
+              <td style="color:var(--sub)">—</td>
+              <td style="color:var(--sub);font-size:11px">구청 접수 후 허가 (30일 이내), 허가 전 실계약 시 무효</td>
+              <td><span class="badge badge-yellow">진행중</span></td>
+            </tr>
+            <tr>
+              <td><strong>③ 실계약</strong></td>
+              <td style="white-space:nowrap">2025.06.XX</td>
+              <td id="r_ct_row_d2">-</td>
+              <td style="color:var(--sub);font-size:11px">계약금 합계 정산 (가계약금 차감)</td>
+              <td><span class="badge badge-yellow">예정</span></td>
+            </tr>
+            <tr id="ct_interim_row">
+              <td><strong>④ 중도금</strong></td>
+              <td style="white-space:nowrap;color:var(--sub)">미정</td>
+              <td id="r_ct_row_interim">-</td>
+              <td style="color:var(--sub);font-size:11px">중도금 대출 활용 가능</td>
+              <td><span class="badge badge-yellow">예정</span></td>
+            </tr>
+            <tr>
+              <td><strong>⑤ 잔금</strong></td>
+              <td style="white-space:nowrap;color:var(--sub)">미정</td>
+              <td id="r_ct_row_balance">-</td>
+              <td style="color:var(--sub);font-size:11px">이사일 · 주담대 실행일 동일 예정</td>
+              <td><span class="badge badge-yellow">예정</span></td>
+            </tr>
+            <tr style="font-weight:700;background:var(--input-bg)">
+              <td>합계</td>
+              <td></td>
+              <td id="r_ct_row_total">-</td>
+              <td colspan="2" style="color:var(--sub);font-size:11px;text-align:left">= 매수가 확인</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="info" style="margin-top:10px">
+        * 토지거래허가구역(사당우성3단지)은 반드시 <strong>허가 후</strong> 실계약 체결. 허가 전 실계약은 무효 처리됨.
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 계약금 비율 체크 ===== -->
+  <div class="section" id="sec2">
+    <div class="section-header" onclick="toggleSection('sec2')">
+      <div class="section-num">2</div>
+      <h2>계약금 비율 체크</h2>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="grid-2">
+        <div style="background:var(--input-bg);border-radius:8px;padding:14px">
+          <div style="font-weight:600;margin-bottom:10px;font-size:13px">계약금 구성</div>
+          <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border)">
+            <span style="color:var(--sub)">매수가</span>
+            <span id="r2_buyPrice">-</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border)">
+            <span style="color:var(--sub)">계약금 합계</span>
+            <span id="r2_earnest">-</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border)">
+            <span style="color:var(--sub)">계약금 비율</span>
+            <span id="r2_ratio" style="font-weight:700">-</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:5px 0">
+            <span style="color:var(--sub)">10% 기준 계약금</span>
+            <span id="r2_target10">-</span>
+          </div>
+        </div>
+        <div style="background:var(--input-bg);border-radius:8px;padding:14px">
+          <div style="font-weight:600;margin-bottom:10px;font-size:13px">잔금일 자금 계획</div>
+          <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border)">
+            <span style="color:var(--sub)">잔금</span>
+            <span id="r2_balance">-</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border)">
+            <span style="color:var(--sub)">주담대 실행</span>
+            <span id="r2_loan">-</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:5px 0;font-weight:700">
+            <span>필요 현금</span>
+            <span id="r2_cashNeeded" style="color:var(--red)">-</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+const $ = id => document.getElementById(id);
+const fmt = v => isNaN(v) ? '-' : Math.round(v).toLocaleString('ko-KR');
+const fmtF = (v, d=1) => isNaN(v) ? '-' : v.toFixed(d);
+const val = id => parseFloat($(id)?.value) || 0;
+
+function adjustValue(id, amount) {
+  const el = $(id);
+  if (el) { el.value = Math.max(0, (parseFloat(el.value) || 0) + amount); calc(); }
+}
+
+function toggleSection(id) {
+  const sec = $(id);
+  const body = sec.querySelector('.section-body');
+  const icon = sec.querySelector('.toggle-icon');
+  const isOpen = body.style.display !== 'none';
+  body.style.display = isOpen ? 'none' : 'block';
+  icon.style.transform = isOpen ? 'rotate(-90deg)' : '';
+}
+
+function toggleTheme() {
+  const html = document.documentElement;
+  html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+}
+
+function calc() {
+  const buyPrice  = val('refBuyPrice');
+  const newLoan   = val('refNewLoan');
+  const ctD1      = val('ctDeposit1');
+  const ctD2      = val('ctDeposit2');
+  const ctInter   = val('ctInterim');
+  const ctEarnest = ctD1 + ctD2;
+  const ctBalance = Math.max(0, buyPrice - ctEarnest - ctInter);
+  const ctCashNeeded = Math.max(0, ctBalance - newLoan);
+  const ctTotal   = ctEarnest + ctInter + ctBalance;
+
+  // S1 계약 현황
+  $('r_ct_earnest').textContent     = fmt(ctEarnest);
+  $('r_ct_interim').textContent     = fmt(ctInter);
+  $('r_ct_balance').textContent     = fmt(ctBalance);
+  $('r_ct_cashNeeded').textContent  = fmt(ctCashNeeded);
+  $('r_ct_row_d1').textContent      = fmt(ctD1) + ' 만원';
+  $('r_ct_row_d2').textContent      = fmt(ctD2) + ' 만원';
+  $('r_ct_row_interim').textContent = fmt(ctInter) + ' 만원';
+  $('r_ct_row_balance').textContent = fmt(ctBalance) + ' 만원';
+  $('r_ct_row_total').textContent   = fmt(ctTotal) + ' 만원';
+
+  // 중도금 0이면 행·스텝 dimm
+  const hasInterim = ctInter > 0;
+  const interimRow = $('ct_interim_row');
+  if (interimRow) interimRow.style.opacity = hasInterim ? '1' : '0.35';
+  const interimDot = $('ct_interim_dot');
+  if (interimDot) {
+    interimDot.className = hasInterim ? 'cs-dot' : 'cs-dot skip';
+    interimDot.textContent = hasInterim ? '4' : '—';
+  }
+
+  // S2 비율 체크
+  const ratio = buyPrice > 0 ? (ctEarnest / buyPrice * 100) : 0;
+  $('r2_buyPrice').textContent  = fmt(buyPrice) + ' 만원';
+  $('r2_earnest').textContent   = fmt(ctEarnest) + ' 만원';
+  $('r2_ratio').textContent     = fmtF(ratio) + '%';
+  $('r2_ratio').style.color     = Math.abs(ratio - 10) < 0.5 ? 'var(--green)' : ratio < 10 ? 'var(--yellow)' : 'var(--red)';
+  $('r2_target10').textContent  = fmt(buyPrice * 0.1) + ' 만원';
+  $('r2_balance').textContent   = fmt(ctBalance) + ' 만원';
+  $('r2_loan').textContent      = fmt(newLoan) + ' 만원';
+  $('r2_cashNeeded').textContent= fmt(ctCashNeeded) + ' 만원';
+}
+
+calc();
+</script>
+</body>
+</html>
