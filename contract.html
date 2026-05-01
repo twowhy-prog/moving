@@ -202,23 +202,81 @@
         </div>
       </div>
     </div>
-    <div class="grid-4" style="margin-top:4px">
+    <!-- 매도 비용 -->
+    <div style="font-size:11px;font-weight:700;color:var(--green);margin:10px 0 6px;letter-spacing:.3px">📥 매도 비용 (잔금 후 차감)</div>
+    <div class="grid-4">
       <div class="field">
-        <label>매도 양도세+이사비 합계 (만원)</label>
+        <label>양도세+지방소득세 (만원)</label>
         <div class="field-adjust">
-          <button class="adjust-btn" onclick="adjustValue('refSaleCost', -100)">▼</button>
-          <input type="number" id="refSaleCost" value="3000" oninput="calc()">
-          <button class="adjust-btn" onclick="adjustValue('refSaleCost', 100)">▲</button>
+          <button class="adjust-btn" onclick="adjustValue('refTransferTax', -100)">▼</button>
+          <input type="number" id="refTransferTax" value="0" oninput="calc()">
+          <button class="adjust-btn" onclick="adjustValue('refTransferTax', 100)">▲</button>
         </div>
       </div>
       <div class="field">
-        <label>매수 취득세+등기+중개 합계 (만원)</label>
+        <label>매도 중개보수 (만원)</label>
         <div class="field-adjust">
-          <button class="adjust-btn" onclick="adjustValue('refBuyCost', -100)">▼</button>
-          <input type="number" id="refBuyCost" value="7000" oninput="calc()">
-          <button class="adjust-btn" onclick="adjustValue('refBuyCost', 100)">▲</button>
+          <button class="adjust-btn" onclick="adjustValue('refSaleFee', -100)">▼</button>
+          <input type="number" id="refSaleFee" value="1000" oninput="calc()">
+          <button class="adjust-btn" onclick="adjustValue('refSaleFee', 100)">▲</button>
         </div>
       </div>
+      <div class="field">
+        <label>이사비 (만원)</label>
+        <div class="field-adjust">
+          <button class="adjust-btn" onclick="adjustValue('refMoveCost', -50)">▼</button>
+          <input type="number" id="refMoveCost" value="300" oninput="calc()">
+          <button class="adjust-btn" onclick="adjustValue('refMoveCost', 50)">▲</button>
+        </div>
+      </div>
+      <div class="field">
+        <label style="font-weight:600;color:var(--text)">매도 비용 합계</label>
+        <div style="padding:7px 10px;background:var(--input-bg);border-radius:6px;border:1px solid var(--border);font-size:14px;font-weight:600;color:var(--red)" id="r_saleCostTotal">-</div>
+      </div>
+    </div>
+    <!-- 매수 비용 -->
+    <div style="font-size:11px;font-weight:700;color:var(--blue);margin:10px 0 6px;letter-spacing:.3px">📤 매수 비용 (잔금 후 납부)</div>
+    <div class="grid-4">
+      <div class="field">
+        <label>취득세 합계 <small style="color:var(--sub)">(3.32% 자동)</small> <button type="button" style="font-size:10px;padding:1px 5px;border-radius:4px;border:1px solid var(--border);background:var(--bg);cursor:pointer;color:var(--sub)" onclick="autoAcqTax()">자동</button></label>
+        <div class="field-adjust">
+          <button class="adjust-btn" onclick="adjustValue('refAcqTax', -100)">▼</button>
+          <input type="number" id="refAcqTax" value="5644" oninput="calc()">
+          <button class="adjust-btn" onclick="adjustValue('refAcqTax', 100)">▲</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>매수 중개보수 (만원)</label>
+        <div class="field-adjust">
+          <button class="adjust-btn" onclick="adjustValue('refBuyFee', -100)">▼</button>
+          <input type="number" id="refBuyFee" value="900" oninput="calc()">
+          <button class="adjust-btn" onclick="adjustValue('refBuyFee', 100)">▲</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>등기비 (만원)</label>
+        <div class="field-adjust">
+          <button class="adjust-btn" onclick="adjustValue('refRegFee', -50)">▼</button>
+          <input type="number" id="refRegFee" value="150" oninput="calc()">
+          <button class="adjust-btn" onclick="adjustValue('refRegFee', 50)">▲</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>입주비용 (만원) <small style="color:var(--sub)">인테리어·청소 등</small></label>
+        <div class="field-adjust">
+          <button class="adjust-btn" onclick="adjustValue('refMoveinCost', -100)">▼</button>
+          <input type="number" id="refMoveinCost" value="3000" oninput="calc()">
+          <button class="adjust-btn" onclick="adjustValue('refMoveinCost', 100)">▲</button>
+        </div>
+      </div>
+      <div class="field" style="grid-column:1/-1">
+        <label style="font-weight:600;color:var(--text)">매수 비용 합계</label>
+        <div style="padding:7px 10px;background:var(--input-bg);border-radius:6px;border:1px solid var(--border);font-size:14px;font-weight:600;color:var(--red)" id="r_buyCostTotal">-</div>
+      </div>
+    </div>
+    <!-- 비율 -->
+    <div style="font-size:11px;font-weight:700;color:var(--sub);margin:10px 0 6px;letter-spacing:.3px">📊 계약 비율</div>
+    <div class="grid-4">
       <div class="field">
         <label>매도 계약금 비율 (%)</label>
         <div class="field-adjust">
@@ -476,8 +534,16 @@
             <span class="amt amt-neg" id="t_sell_debt">-</span>
           </div>
           <div class="txn-row">
-            <span class="lbl">양도세·이사비 납부</span>
-            <span class="amt amt-neg" id="t_sell_cost">-</span>
+            <span class="lbl">양도세+지방소득세</span>
+            <span class="amt amt-neg" id="t_sell_transfertax">-</span>
+          </div>
+          <div class="txn-row">
+            <span class="lbl">매도 중개보수</span>
+            <span class="amt amt-neg" id="t_sell_fee">-</span>
+          </div>
+          <div class="txn-row">
+            <span class="lbl">이사비</span>
+            <span class="amt amt-neg" id="t_sell_move">-</span>
           </div>
           <div class="txn-subtotal">
             <span>매도 최종 실수령</span>
@@ -490,8 +556,20 @@
             <span class="amt amt-in" id="t_buy_loan">-</span>
           </div>
           <div class="txn-row">
-            <span class="lbl">취득세·등기·중개 납부</span>
-            <span class="amt amt-neg" id="t_buy_cost">-</span>
+            <span class="lbl">취득세 합계</span>
+            <span class="amt amt-neg" id="t_buy_acqtax">-</span>
+          </div>
+          <div class="txn-row">
+            <span class="lbl">매수 중개보수</span>
+            <span class="amt amt-neg" id="t_buy_fee">-</span>
+          </div>
+          <div class="txn-row">
+            <span class="lbl">등기비</span>
+            <span class="amt amt-neg" id="t_buy_reg">-</span>
+          </div>
+          <div class="txn-row">
+            <span class="lbl">입주비용</span>
+            <span class="amt amt-neg" id="t_buy_movein">-</span>
           </div>
           <div class="txn-subtotal">
             <span>자기자본 순지출</span>
@@ -549,7 +627,9 @@
           <div class="net-row" id="nr_sell_interim_row"><span style="color:var(--sub)">중도금 수취</span><span id="nr_sell_interim" style="color:var(--green)">-</span></div>
           <div class="net-row"><span style="color:var(--sub)">잔금 수취</span><span id="nr_sell_balance" style="color:var(--green)">-</span></div>
           <div class="net-row"><span style="color:var(--sub)">— 기존 부채 상환</span><span id="nr_sell_debt" style="color:var(--red)">-</span></div>
-          <div class="net-row"><span style="color:var(--sub)">— 양도세·이사비</span><span id="nr_sell_cost" style="color:var(--red)">-</span></div>
+          <div class="net-row"><span style="color:var(--sub)">— 양도세+지방소득세</span><span id="nr_sell_transfertax" style="color:var(--red)">-</span></div>
+          <div class="net-row"><span style="color:var(--sub)">— 매도 중개보수</span><span id="nr_sell_fee" style="color:var(--red)">-</span></div>
+          <div class="net-row"><span style="color:var(--sub)">— 이사비</span><span id="nr_sell_move" style="color:var(--red)">-</span></div>
           <div class="net-total"><span>최종 실수령</span><span id="nr_sell_net" style="color:var(--green)">-</span></div>
         </div>
         <div class="net-card">
@@ -559,7 +639,10 @@
           <div class="net-row" id="nr_buy_interim_row"><span style="color:var(--sub)">중도금</span><span id="nr_buy_interim" style="color:var(--blue)">-</span></div>
           <div class="net-row"><span style="color:var(--sub)">잔금</span><span id="nr_buy_balance" style="color:var(--blue)">-</span></div>
           <div class="net-row"><span style="color:var(--sub)">+ 주담대 실행</span><span id="nr_buy_loan" style="color:var(--green)">-</span></div>
-          <div class="net-row"><span style="color:var(--sub)">— 취득세·등기·중개</span><span id="nr_buy_cost" style="color:var(--red)">-</span></div>
+          <div class="net-row"><span style="color:var(--sub)">— 취득세 합계</span><span id="nr_buy_acqtax" style="color:var(--red)">-</span></div>
+          <div class="net-row"><span style="color:var(--sub)">— 매수 중개보수</span><span id="nr_buy_fee" style="color:var(--red)">-</span></div>
+          <div class="net-row"><span style="color:var(--sub)">— 등기비</span><span id="nr_buy_reg" style="color:var(--red)">-</span></div>
+          <div class="net-row"><span style="color:var(--sub)">— 입주비용</span><span id="nr_buy_movein" style="color:var(--red)">-</span></div>
           <div class="net-total"><span>자기자본 총 지출</span><span id="nr_buy_net" style="color:var(--red)">-</span></div>
         </div>
       </div>
@@ -621,13 +704,36 @@ function setEl(id, text, cls) {
   if (cls) el.className = cls;
 }
 
+function autoAcqTax() {
+  const bp = val('refBuyPrice');
+  const acq = bp * 0.03, edu = acq * 0.1, rural = bp * 0.002;
+  $('refAcqTax').value = Math.round(acq + edu + rural);
+  calc();
+}
+
 function calc() {
   const salePrice        = val('refSalePrice');
   const buyPrice         = val('refBuyPrice');
   const debt             = val('refDebt');
   const newLoan          = val('refNewLoan');
-  const saleCost         = val('refSaleCost');
-  const buyCost          = val('refBuyCost');
+
+  // 매도 비용 분리
+  const refTransferTax   = val('refTransferTax');
+  const refSaleFee       = val('refSaleFee');
+  const refMoveCost      = val('refMoveCost');
+  const saleCost         = refTransferTax + refSaleFee + refMoveCost;
+
+  // 매수 비용 분리
+  const refAcqTax        = val('refAcqTax');
+  const refBuyFee        = val('refBuyFee');
+  const refRegFee        = val('refRegFee');
+  const refMoveinCost    = val('refMoveinCost');
+  const buyCost          = refAcqTax + refBuyFee + refRegFee + refMoveinCost;
+
+  // 합계 표시
+  $('r_saleCostTotal').textContent = fmt(saleCost) + ' 만원';
+  $('r_buyCostTotal').textContent  = fmt(buyCost)  + ' 만원';
+
   const saleContractPct  = val('refSaleContractPct') / 100;
   const buyContractPct   = val('refBuyContractPct')  / 100;
   const ctSaleDeposit1   = val('ctSaleDeposit1');
@@ -763,14 +869,19 @@ function calc() {
   $('t_buy_total_cum').textContent   = '−' + fmt(buyTotalCum) + ' 만원';
 
   // ⑥ 잔금 후 처리
-  $('t_sell_debt').textContent    = '−' + fmt(debt)     + ' 만원';
-  $('t_sell_cost').textContent    = '−' + fmt(saleCost) + ' 만원';
+  $('t_sell_debt').textContent        = '−' + fmt(debt)            + ' 만원';
+  $('t_sell_transfertax').textContent = '−' + fmt(refTransferTax)  + ' 만원';
+  $('t_sell_fee').textContent         = '−' + fmt(refSaleFee)      + ' 만원';
+  $('t_sell_move').textContent        = '−' + fmt(refMoveCost)     + ' 만원';
   const sellNetEl = $('t_sell_net');
   sellNetEl.textContent = fmt(sellNet) + ' 만원';
   sellNetEl.className   = sellNet >= 0 ? 'amt-in' : 'amt-neg';
 
-  $('t_buy_loan').textContent = '+' + fmt(newLoan) + ' 만원';
-  $('t_buy_cost').textContent = '−' + fmt(buyCost) + ' 만원';
+  $('t_buy_loan').textContent    = '+' + fmt(newLoan)       + ' 만원';
+  $('t_buy_acqtax').textContent  = '−' + fmt(refAcqTax)    + ' 만원';
+  $('t_buy_fee').textContent     = '−' + fmt(refBuyFee)    + ' 만원';
+  $('t_buy_reg').textContent     = '−' + fmt(refRegFee)    + ' 만원';
+  $('t_buy_movein').textContent  = '−' + fmt(refMoveinCost)+ ' 만원';
   const buyNetEl = $('t_buy_net');
   buyNetEl.textContent = fmt(buyEquityTotal) + ' 만원';
   buyNetEl.className   = 'amt-out';
@@ -786,13 +897,12 @@ function calc() {
   scCon.style.color = contractNet >= 0 ? 'var(--green)' : 'var(--red)';
   $('sc_contract_note').textContent = contractNet >= 0 ? '만원 (매도 > 매수)' : '만원 (지출 > 수취)';
 
-  const interimNet = ctSaleInterim - ctInterim - ctTenantDeposit;
+  // 중도금 순현금 = 매도 수취 − 매수 지급 (세입자 전세보증금은 주담대 先실행이므로 자기자본 흐름 아님)
+  const interimNet = ctSaleInterim - ctInterim;
   const scInt = $('sc_interim');
   scInt.textContent = hasInterim ? ((interimNet >= 0 ? '+' : '−') + fmt(Math.abs(interimNet))) : '—';
   scInt.style.color = interimNet >= 0 ? 'var(--green)' : 'var(--red)';
-  $('sc_interim_note').textContent = hasInterim
-    ? (ctTenantDeposit > 0 ? `만원 (전세보증금 ${fmt(ctTenantDeposit)}만 포함)` : '만원')
-    : '(없음)';
+  $('sc_interim_note').textContent = hasInterim ? '만원 (매도 수취 − 매수 지급)' : '(없음)';
 
   const balanceDayNet = sellBalance - buyBalance + newLoan - debt - saleCost - buyCost;
   const scBal = $('sc_balance');
@@ -806,8 +916,10 @@ function calc() {
   $('nr_sell_interim').textContent  = (ctSaleInterim > 0 ? '+' + fmt(ctSaleInterim) : '—') + ' 만원';
   $('nr_sell_interim_row').style.opacity = ctSaleInterim > 0 ? '1' : '0.4';
   $('nr_sell_balance').textContent  = '+' + fmt(sellBalance)  + ' 만원';
-  $('nr_sell_debt').textContent     = '−' + fmt(debt)         + ' 만원';
-  $('nr_sell_cost').textContent     = '−' + fmt(saleCost)     + ' 만원';
+  $('nr_sell_debt').textContent        = '−' + fmt(debt)           + ' 만원';
+  $('nr_sell_transfertax').textContent = '−' + fmt(refTransferTax) + ' 만원';
+  $('nr_sell_fee').textContent         = '−' + fmt(refSaleFee)     + ' 만원';
+  $('nr_sell_move').textContent        = '−' + fmt(refMoveCost)    + ' 만원';
   const nrSell = $('nr_sell_net');
   nrSell.textContent = fmt(sellNet) + ' 만원';
   nrSell.style.color = sellNet >= 0 ? 'var(--green)' : 'var(--red)';
@@ -818,8 +930,11 @@ function calc() {
   $('nr_buy_interim').textContent  = (ctInterim > 0 ? '−' + fmt(ctInterim) : '—') + ' 만원';
   $('nr_buy_interim_row').style.opacity = ctInterim > 0 ? '1' : '0.4';
   $('nr_buy_balance').textContent  = '−' + fmt(buyBalance)       + ' 만원';
-  $('nr_buy_loan').textContent     = '+' + fmt(newLoan)          + ' 만원';
-  $('nr_buy_cost').textContent     = '−' + fmt(buyCost)          + ' 만원';
+  $('nr_buy_loan').textContent    = '+' + fmt(newLoan)        + ' 만원';
+  $('nr_buy_acqtax').textContent  = '−' + fmt(refAcqTax)     + ' 만원';
+  $('nr_buy_fee').textContent     = '−' + fmt(refBuyFee)     + ' 만원';
+  $('nr_buy_reg').textContent     = '−' + fmt(refRegFee)     + ' 만원';
+  $('nr_buy_movein').textContent  = '−' + fmt(refMoveinCost) + ' 만원';
   const tenantNote = tenantIsOwnFunds
     ? ` + 전세보증금 자기자금 ${fmt(ctTenantDeposit)}만 포함`
     : ` (전세보증금 ${fmt(ctTenantDeposit)}만은 주담대 先실행)`;
