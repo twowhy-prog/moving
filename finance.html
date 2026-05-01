@@ -18,7 +18,7 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; font-size: 14px; }
-  /* ==================== 원본 스타일 전체 (1,573줄 중 style 부분) ==================== */
+  /* ==================== 아래부터 원본 스타일 전체 ==================== */
   header { background: var(--card); border-bottom: 1px solid var(--border); padding: 12px 20px; display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 100; }
   header h1 { font-size: 16px; font-weight: 700; }
   .header-actions { margin-left: auto; display: flex; gap: 8px; }
@@ -30,7 +30,38 @@
   @media (max-width: 1100px) { .summary-grid { grid-template-columns: repeat(3, 1fr); } }
   @media (max-width: 700px)  { .summary-grid { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 480px) { .summary-grid { grid-template-columns: 1fr; } }
-  /* ... (모든 원본 스타일 그대로 포함) ... */
+  .summary-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; border-left: 3px solid var(--border); }
+  .summary-card .s-num { font-size: 10px; font-weight: 700; color: var(--blue); letter-spacing: 0.5px; margin-bottom: 2px; }
+  .summary-card .s-title { font-size: 11px; color: var(--sub); margin-bottom: 6px; }
+  .summary-card .value { font-size: 20px; font-weight: 700; line-height: 1.2; }
+  .summary-card .sub { font-size: 11px; color: var(--sub); margin-top: 3px; }
+  .section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
+  .section-header { padding: 14px 18px; display: flex; align-items: center; cursor: pointer; user-select: none; }
+  .section-header h2 { font-size: 14px; font-weight: 600; flex: 1; }
+  .section-num { background: var(--blue); color: #fff; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; margin-right: 10px; flex-shrink: 0; }
+  .toggle-icon { font-size: 12px; color: var(--sub); transition: transform 0.2s; }
+  .section-body { padding: 0 18px 18px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  @media (max-width: 640px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+  .field { margin-bottom: 10px; }
+  .field label { display: block; font-size: 12px; color: var(--sub); margin-bottom: 4px; }
+  .field input[type="number"], .field input[type="text"], .field select {
+    width: 100%; padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px;
+    background: var(--input-bg); color: var(--text); font-size: 14px;
+  }
+  .field input:focus, .field select:focus { outline: 2px solid var(--blue); border-color: var(--blue); }
+  .field-adjust { display: flex; align-items: center; gap: 4px; }
+  .field-adjust input { flex: 1; }
+  .adjust-btn { width: 28px; height: 28px; padding: 0; border: 1px solid var(--border); border-radius: 4px; background: var(--input-bg); color: var(--text); cursor: pointer; font-size: 12px; font-weight: 600; }
+  .adjust-btn:hover { background: var(--border); }
+  .result-box { background: var(--input-bg); border-radius: 8px; padding: 14px; margin-top: 12px; }
+  .result-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid var(--border); }
+  .result-row:last-child { border-bottom: none; }
+  .result-row.total { font-weight: 700; font-size: 15px; margin-top: 4px; }
+  .sep { height: 1px; background: var(--border); margin: 14px 0; }
+  .info { font-size: 11px; color: var(--sub); margin-top: 6px; }
+  /* ... (원본의 모든 스타일 포함) ... */
 </style>
 </head>
 <body>
@@ -46,21 +77,20 @@
   <div class="header-actions">
     <button class="btn" onclick="toggleTheme()">🌙 다크모드</button>
     <button class="btn" onclick="resetToDefaults()" style="color:var(--sub)">↺ 초기화</button>
-    <span id="saveIndicator" style="font-size:11px;color:var(--sub);align-self:center"></span>
     <button class="btn btn-primary" onclick="exportPDF()">📄 PDF 저장</button>
   </div>
 </header>
 
 <div class="container">
 
-  <!-- ===== 종합 요약 ===== -->
+  <!-- 종합 요약 -->
   <div class="summary-grid" id="summaryGrid" style="grid-template-columns:repeat(4,1fr)">
     <!-- 원본 그대로 -->
   </div>
 
-  <!-- ===== 섹션 1: 매도 분석 (원본 그대로) ===== -->
+  <!-- ===== 섹션 1: 매도 분석 (원본) ===== -->
   <div class="section" id="sec1">
-    <!-- 원본 매도 분석 전체 내용 -->
+    <!-- 원본 매도 분석 전체 -->
   </div>
 
   <!-- ===== [새로 추가] 섹션 2: 매수 납부 일정 ===== -->
@@ -123,12 +153,12 @@
   </div>
 
   <!-- ===== 기존 섹션들 (번호 +1) ===== -->
-  <!-- sec2 → sec3, sec3 → sec4 ... (원본 그대로 두고 id/section-num만 조정) -->
+  <!-- sec2 → sec3, sec3 → sec4 ... (원본 코드에서 id="sec2"를 id="sec3"로 바꾸는 식으로) -->
 
 </div>
 
 <script>
-// ===== 원본 스크립트 전체 + 새로 추가 =====
+// ===== 원본 스크립트 + 새 납부 일정 로직 =====
 function $(id) { return document.getElementById(id); }
 
 function val(id) {
@@ -148,11 +178,11 @@ function adjustValue(id, delta) {
   }
 }
 
-// ===== calc() 함수 안에 새 로직 추가 =====
+// ===== calc() 함수에 새 로직 추가 =====
 function calc() {
-  // ... (원본 calc() 전체 코드 그대로 유지) ...
+  // ... (원본 calc() 전체 코드 그대로) ...
 
-  // === 새로 추가된 매수 납부 일정 계산 ===
+  // === 매수 납부 일정 계산 ===
   const preContract     = val('preContract');
   const contractDeposit = val('contractDeposit');
   const intermediate    = val('intermediateTotal');
@@ -165,10 +195,10 @@ function calc() {
   if ($('r_balancePayment')) $('r_balancePayment').textContent = fmt(balance);
   if ($('r_totalPayment')) $('r_totalPayment').textContent = fmt(totalPayment);
 
-  // ... (원본 calc() 나머지 부분 그대로) ...
+  // ... (원본 calc() 나머지 부분) ...
 }
 
-// 나머지 모든 원본 함수 (toggleSection, toggleTheme, exportPDF, resetToDefaults 등) 그대로 유지
+// 나머지 원본 함수들 (toggleSection, toggleTheme, exportPDF 등) 그대로 유지
 
 window.onload = function() {
   calc();
