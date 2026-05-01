@@ -386,6 +386,180 @@ const CATS = [
   <div class="chart-wrap-tall"><canvas id="priceChart"></canvas></div>
 </div>
 
+<!-- ══ 5-B. 신동아리버파크 단지 심층 분석 ══ -->
+<div class="section" style="border-color:#0891b2">
+  <div class="section-title" style="border-bottom-color:#0891b2">
+    <span class="icon">🔍</span> 신동아리버파크 단지 심층 분석
+    <span class="tag tag-loading" id="tag-sindonga-detail" style="margin-left:auto">로딩중…</span>
+  </div>
+
+  <!-- 단지 기본 정보 카드 -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px">
+    <div style="background:var(--bg2,#f1f5f9);border-radius:8px;padding:12px;text-align:center">
+      <div style="font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.05em;margin-bottom:4px">총 세대수</div>
+      <div style="font-size:22px;font-weight:700;color:#0891b2">1,696</div>
+      <div style="font-size:11px;color:var(--muted)">세대 · 7개동</div>
+    </div>
+    <div style="background:var(--bg2,#f1f5f9);border-radius:8px;padding:12px;text-align:center">
+      <div style="font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.05em;margin-bottom:4px">준공연도</div>
+      <div style="font-size:22px;font-weight:700;color:#0891b2">2001</div>
+      <div style="font-size:11px;color:var(--muted)">약 25년 차 구축</div>
+    </div>
+    <div style="background:var(--bg2,#f1f5f9);border-radius:8px;padding:12px;text-align:center">
+      <div style="font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.05em;margin-bottom:4px">최고층</div>
+      <div style="font-size:22px;font-weight:700;color:#0891b2">28층</div>
+      <div style="font-size:11px;color:var(--muted)">한강조망권 중고층</div>
+    </div>
+    <div style="background:var(--bg2,#f1f5f9);border-radius:8px;padding:12px;text-align:center">
+      <div style="font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.05em;margin-bottom:4px">용적률 / 건폐율</div>
+      <div style="font-size:22px;font-weight:700;color:#0891b2">324%</div>
+      <div style="font-size:11px;color:var(--muted)">건폐율 19%</div>
+    </div>
+  </div>
+
+  <!-- 평형별 세대 구성 -->
+  <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;letter-spacing:.05em">🏢 평형별 세대 구성</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px">
+    <div style="border:1px solid var(--border);border-radius:8px;padding:12px">
+      <div style="font-weight:700;margin-bottom:4px">25평형 <span style="font-size:11px;color:var(--muted)">(59.76㎡)</span></div>
+      <div style="font-size:20px;font-weight:700;color:var(--text)">386<span style="font-size:12px;font-weight:400">세대</span></div>
+      <div style="background:#e2e8f0;border-radius:4px;height:6px;margin-top:8px">
+        <div style="background:#94a3b8;border-radius:4px;height:6px;width:22%"></div>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px">전체의 22.8%</div>
+    </div>
+    <div style="border:2px solid #7c3aed;border-radius:8px;padding:12px">
+      <div style="font-weight:700;margin-bottom:4px">33평형 <span style="font-size:11px;color:var(--muted)">(84.88㎡)</span> <span style="font-size:10px;background:#7c3aed;color:#fff;border-radius:4px;padding:1px 5px">매물 B</span></div>
+      <div style="font-size:20px;font-weight:700;color:#7c3aed">786<span style="font-size:12px;font-weight:400">세대</span></div>
+      <div style="background:#e2e8f0;border-radius:4px;height:6px;margin-top:8px">
+        <div style="background:#7c3aed;border-radius:4px;height:6px;width:46%"></div>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px">전체의 46.3% — 최다 평형</div>
+    </div>
+    <div style="border:2px solid #0891b2;border-radius:8px;padding:12px">
+      <div style="font-weight:700;margin-bottom:4px">43평형 <span style="font-size:11px;color:var(--muted)">(114.75㎡)</span> <span style="font-size:10px;background:#0891b2;color:#fff;border-radius:4px;padding:1px 5px">매물 A</span></div>
+      <div style="font-size:20px;font-weight:700;color:#0891b2">524<span style="font-size:12px;font-weight:400">세대</span></div>
+      <div style="background:#e2e8f0;border-radius:4px;height:6px;margin-top:8px">
+        <div style="background:#0891b2;border-radius:4px;height:6px;width:30%"></div>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px">전체의 30.9%</div>
+    </div>
+  </div>
+
+  <!-- 실거래가 상세 테이블 -->
+  <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;letter-spacing:.05em">
+    💰 평형별 실거래가 현황
+    <span style="font-size:10px;font-weight:400;color:var(--muted)">(하드코딩: 확인된 거래 기준 / API 데이터는 로딩 시 자동 업데이트)</span>
+  </div>
+  <div style="overflow-x:auto;margin-bottom:8px">
+    <table style="width:100%;border-collapse:collapse;font-size:12px">
+      <thead>
+        <tr style="background:var(--bg2,#f1f5f9)">
+          <th style="padding:8px 10px;text-align:left;color:var(--muted)">평형</th>
+          <th style="padding:8px 10px;text-align:left;color:var(--muted)">거래일</th>
+          <th style="padding:8px 10px;text-align:right;color:var(--muted)">거래가</th>
+          <th style="padding:8px 10px;text-align:center;color:var(--muted)">층수</th>
+          <th style="padding:8px 10px;text-align:right;color:var(--muted)">평당가</th>
+          <th style="padding:8px 10px;text-align:left;color:var(--muted)">비고</th>
+        </tr>
+      </thead>
+      <tbody id="sindonga-tx-body">
+        <!-- 하드코딩 기준 데이터 -->
+        <tr style="border-bottom:1px solid var(--border);background:rgba(8,145,178,.05)">
+          <td style="padding:6px 10px;font-weight:700;color:#0891b2">43평 (114.75㎡)</td>
+          <td style="padding:6px 10px">2025.10</td>
+          <td style="padding:6px 10px;text-align:right;font-weight:700">14억 8,000만</td>
+          <td style="padding:6px 10px;text-align:center">25층</td>
+          <td style="padding:6px 10px;text-align:right">3,379만/평</td>
+          <td style="padding:6px 10px;font-size:11px;color:var(--muted)">확인 거래</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);background:rgba(8,145,178,.03)">
+          <td style="padding:6px 10px;font-weight:700;color:#0891b2">43평 (114.75㎡)</td>
+          <td style="padding:6px 10px">2024.09</td>
+          <td style="padding:6px 10px;text-align:right;font-weight:700">12억 9,500만</td>
+          <td style="padding:6px 10px;text-align:center">—</td>
+          <td style="padding:6px 10px;text-align:right">2,960만/평</td>
+          <td style="padding:6px 10px;font-size:11px;color:var(--muted)">확인 거래</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);background:rgba(124,58,237,.05)">
+          <td style="padding:6px 10px;font-weight:700;color:#7c3aed">33평 (84.88㎡)</td>
+          <td style="padding:6px 10px">2025.10</td>
+          <td style="padding:6px 10px;text-align:right;font-weight:700">~14억 1,000만</td>
+          <td style="padding:6px 10px;text-align:center">—</td>
+          <td style="padding:6px 10px;text-align:right">~4,273만/평</td>
+          <td style="padding:6px 10px;font-size:11px;color:var(--muted)">KB시세 기준 추정</td>
+        </tr>
+        <!-- API로 채워질 행 -->
+        <tr id="sindonga-api-row" style="border-bottom:1px solid var(--border);display:none">
+          <td colspan="6" style="padding:6px 10px;font-size:11px;color:var(--muted);text-align:center" id="sindonga-api-status">API 데이터 로딩 중…</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="font-size:11px;color:var(--muted);margin-bottom:16px">* 실거래 확인 거래 기준. 국토부 API 연결 시 자동으로 최근 12개월 데이터가 위 표에 추가됩니다.</div>
+
+  <!-- 현재 호가 vs 실거래가 갭 분석 -->
+  <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;letter-spacing:.05em">📊 호가 vs 실거래가 갭 분석 (2026.05 기준)</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px">
+    <div style="border:2px solid #0891b2;border-radius:8px;padding:14px">
+      <div style="font-weight:700;color:#0891b2;margin-bottom:8px;font-size:12px">매물 A — 705동 43평 (114.75㎡)</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px">
+        <div style="color:var(--muted)">현재 호가</div><div style="text-align:right;font-weight:700">17.2억</div>
+        <div style="color:var(--muted)">최근 실거래 (2025.10)</div><div style="text-align:right">14.8억</div>
+        <div style="color:var(--muted)">호가 프리미엄</div><div style="text-align:right;color:#ef4444;font-weight:700">+2.4억 (+16.2%)</div>
+        <div style="color:var(--muted)">현재 호가 평당가</div><div style="text-align:right;font-weight:700">3,945만</div>
+        <div style="color:var(--muted)">실거래 평당가</div><div style="text-align:right">3,379만</div>
+      </div>
+    </div>
+    <div style="border:2px solid #7c3aed;border-radius:8px;padding:14px">
+      <div style="font-weight:700;color:#7c3aed;margin-bottom:8px;font-size:12px">매물 B — 708동 33평 (84.88㎡)</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px">
+        <div style="color:var(--muted)">현재 호가</div><div style="text-align:right;font-weight:700">16.7억</div>
+        <div style="color:var(--muted)">최근 시세 (2025.10)</div><div style="text-align:right">~14.1억</div>
+        <div style="color:var(--muted)">호가 프리미엄</div><div style="text-align:right;color:#ef4444;font-weight:700">+2.6억 (+18.4%)</div>
+        <div style="color:var(--muted)">현재 호가 평당가</div><div style="text-align:right;font-weight:700">5,030만</div>
+        <div style="color:var(--muted)">시세 평당가</div><div style="text-align:right">~4,273만</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 평형별 실거래가 차트 -->
+  <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;letter-spacing:.05em">📈 평형별 실거래가 추이 (국토부 API · 최근 12개월)</div>
+  <div id="sindonga-chart-info" style="font-size:12px;color:var(--muted);margin-bottom:8px">데이터 로딩 중…</div>
+  <div style="position:relative;height:260px"><canvas id="sindongaDetailChart"></canvas></div>
+
+  <!-- 동별 특성 메모 -->
+  <div style="font-size:11px;font-weight:700;color:var(--muted);margin:16px 0 8px;letter-spacing:.05em">🏗️ 검토 동별 특성</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div style="background:rgba(8,145,178,.07);border:1px solid #0891b2;border-radius:8px;padding:12px;font-size:12px">
+      <div style="font-weight:700;color:#0891b2;margin-bottom:6px">705동 — 43평형 (매물 A)</div>
+      <div style="line-height:2;color:var(--text)">
+        해당층: <strong>22층</strong> / 총 28층<br>
+        전용면적: <strong>114.75㎡</strong> (43.7평)<br>
+        공급면적: 144.06㎡ · 전용률 80%<br>
+        방/욕실: 4방 2욕실<br>
+        향: 남서향 · 한강뷰 기대<br>
+        비고: 중고층, 최상층 대비 리스크 없음
+      </div>
+    </div>
+    <div style="background:rgba(124,58,237,.07);border:1px solid #7c3aed;border-radius:8px;padding:12px;font-size:12px">
+      <div style="font-weight:700;color:#7c3aed;margin-bottom:6px">708동 — 33평형 (매물 B)</div>
+      <div style="line-height:2;color:var(--text)">
+        해당층: <strong>27층</strong> / 총 27층 (최상층)<br>
+        전용면적: <strong>84.88㎡</strong> (25.7평)<br>
+        공급면적: 109.76㎡ · 전용률 77%<br>
+        방/욕실: 3방 2욕실<br>
+        향: 남서향 · 최상층 조망 최우수<br>
+        비고: <span style="color:#ef4444">최상층 누수·단열 이력 점검 필수</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:14px;padding:10px 14px;background:rgba(8,145,178,.08);border-radius:8px;font-size:12px;color:var(--text)">
+    💡 <strong>단지 인사이트:</strong> 33평(786세대)이 최다 평형으로 시장 유동성 가장 높음. 43평(524세대)은 희소성 있어 장기 보유 시 가격 방어력 우수. 두 매물 모두 2025.10 실거래 대비 약 16~18% 호가 프리미엄 — 협상 여지 존재.
+  </div>
+</div>
+
 <!-- ══ 6. 학군 ══ -->
 <div class="section">
   <div class="section-title">
@@ -1142,6 +1316,110 @@ async function loadPriceData() {
   }
 }
 
+/* ── 3-B. 신동아리버파크 평형별 실거래가 심층 분석 ── */
+let sindongaDetailChart = null;
+async function loadSindongaDetail() {
+  const statusEl = document.getElementById('sindonga-chart-info');
+  const tagEl    = document.getElementById('tag-sindonga-detail');
+  try {
+    const months  = recentMonths(12);
+    const xmls    = await Promise.all(months.map(m => fetchMolitMonth(C.lawdCd, m).catch(() => null)));
+
+    // 3개 평형 범위: 25평(59㎡대), 33평(84㎡대), 43평(114㎡대)
+    const p25 = xmls.map(x => x ? parseMolitXml(x, C.aptKw, 55, 67,  C.umdNm) : null);
+    const p33 = xmls.map(x => x ? parseMolitXml(x, C.aptKw, 80, 92,  C.umdNm) : null);
+    const p43 = xmls.map(x => x ? parseMolitXml(x, C.aptKw, 108, 122, C.umdNm) : null);
+    const labels = months.map(m => `${m.slice(0,4)}.${m.slice(4)}`);
+
+    // 차트 갱신
+    if (sindongaDetailChart) sindongaDetailChart.destroy();
+    const ctx = document.getElementById('sindongaDetailChart').getContext('2d');
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const lc = isDark ? '#94a3b8' : '#64748b';
+    sindongaDetailChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          { label: '25평 (59㎡)', data: p25, borderColor: '#94a3b8', backgroundColor: 'rgba(148,163,184,.1)', tension: 0.3, pointRadius: 4, spanGaps: true },
+          { label: '33평 (84㎡) — 매물B', data: p33, borderColor: '#7c3aed', backgroundColor: 'rgba(124,58,237,.1)', tension: 0.3, pointRadius: 5, borderWidth: 2.5, spanGaps: true },
+          { label: '43평 (114㎡) — 매물A', data: p43, borderColor: '#0891b2', backgroundColor: 'rgba(8,145,178,.1)', tension: 0.3, pointRadius: 5, borderWidth: 2.5, spanGaps: true },
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        scales: {
+          x: { ticks: { color: lc, maxRotation: 45 } },
+          y: { ticks: { color: lc, callback: v => v + '억' }, title: { display: true, text: '거래가 (억원)', color: lc } }
+        },
+        plugins: { legend: { labels: { color: lc } }, tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y?.toFixed(2)}억원` } } }
+      }
+    });
+
+    // API 데이터를 테이블에도 추가
+    const apiTxRows = [];
+    months.forEach((m, i) => {
+      const xml = xmls[i];
+      if (!xml) return;
+      const items = xml.querySelectorAll('item');
+      items.forEach(item => {
+        const name = (item.querySelector('aptNm')?.textContent ?? '').trim();
+        const dong = (item.querySelector('umdNm')?.textContent ?? '').trim();
+        if (!name.includes(C.aptKw) || dong !== C.umdNm) return;
+        const area  = parseFloat(item.querySelector('excluUseAr')?.textContent ?? '0');
+        const priceRaw = (item.querySelector('dealAmount')?.textContent ?? '').replace(/[,\s]/g,'');
+        const price = parseInt(priceRaw, 10);
+        const floor = (item.querySelector('floor')?.textContent ?? '').trim();
+        const day   = (item.querySelector('dealDay')?.textContent ?? '').trim();
+        if (!price || price <= 0) return;
+        const pyeong = area > 0 ? Math.round(price / (area / 3.3057) / 10000) : 0;
+        apiTxRows.push({ month: m, day, area, price, floor, pyeong });
+      });
+    });
+
+    if (apiTxRows.length > 0) {
+      apiTxRows.sort((a, b) => b.month.localeCompare(a.month) || b.price - a.price);
+      const tbody = document.getElementById('sindonga-tx-body');
+      const apiRow = document.getElementById('sindonga-api-row');
+      if (apiRow) apiRow.remove();
+      // 최근 6건만 추가 표시
+      apiTxRows.slice(0, 6).forEach(r => {
+        const py = r.area > 55 && r.area < 67 ? '25평' : r.area < 92 ? '33평' : r.area < 122 ? '43평' : `${Math.round(r.area/3.3)}평`;
+        const color = r.area < 67 ? '#94a3b8' : r.area < 92 ? '#7c3aed' : '#0891b2';
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = '1px solid var(--border)';
+        tr.innerHTML = `
+          <td style="padding:6px 10px;font-weight:700;color:${color}">${py} (${r.area.toFixed(1)}㎡)</td>
+          <td style="padding:6px 10px">${r.month.slice(0,4)}.${r.month.slice(4)}${r.day?`.${r.day}`:''}</td>
+          <td style="padding:6px 10px;text-align:right;font-weight:700">${Math.round(r.price/10000)}억 ${r.price%10000?r.price%10000+'만':''}</td>
+          <td style="padding:6px 10px;text-align:center">${r.floor?r.floor+'층':'—'}</td>
+          <td style="padding:6px 10px;text-align:right">${r.pyeong?r.pyeong+'만/평':'—'}</td>
+          <td style="padding:6px 10px;font-size:11px;color:var(--muted)">API 실거래</td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    const cnt = [p25, p33, p43].flatMap(a => a.filter(v => v !== null)).length;
+    if (cnt > 0) {
+      const lat = p43.filter(v=>v!==null).at(-1);
+      const lbt = p33.filter(v=>v!==null).at(-1);
+      statusEl.textContent = `API 실거래 확인 — 43평: ${p43.filter(v=>v!==null).length}개월 / 33평: ${p33.filter(v=>v!==null).length}개월 / 25평: ${p25.filter(v=>v!==null).length}개월${lat?` · 43평 최근 ${lat}억`:''  }${lbt?` · 33평 최근 ${lbt}억`:''}`;
+      if (tagEl) { tagEl.className = 'tag tag-live'; tagEl.textContent = '실데이터'; }
+    } else {
+      statusEl.textContent = '국토부 API 연결 실패 — 프록시 차단. 하드코딩 데이터 표시 중.';
+      if (tagEl) { tagEl.className = 'tag tag-sample'; tagEl.textContent = '하드코딩'; }
+      // 차트에 샘플 데이터 표시
+      sindongaDetailChart.data.datasets[2].data = [null,null,null,null,null,null,null,null,null,12.95,null,14.8];
+      sindongaDetailChart.data.datasets[1].data = [null,null,null,null,null,null,null,null,null,null, null,14.1];
+      sindongaDetailChart.update();
+    }
+  } catch(e) {
+    console.warn('[SindongaDetail]', e);
+    if (statusEl) statusEl.textContent = '국토부 API 연결 실패. 하드코딩 데이터 기준으로 표시 중.';
+    if (tagEl) { tagEl.className = 'tag tag-sample'; tagEl.textContent = '하드코딩'; }
+  }
+}
+
 /* ── 4. NEIS 학교알리미 ── */
 async function fetchNeisSchool(name) {
   const url = `https://open.neis.go.kr/hub/schoolInfo?KEY=${NEIS_API_KEY}&Type=json` +
@@ -1410,10 +1688,26 @@ async function runAiAnalysis() {
 async function main() {
   initCharts();
   initFloorChart();
+  // sindongaDetailChart 초기 빈 차트
+  const sdCtx = document.getElementById('sindongaDetailChart');
+  if (sdCtx) {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const lc = isDark ? '#94a3b8' : '#64748b';
+    sindongaDetailChart = new Chart(sdCtx.getContext('2d'), {
+      type: 'line',
+      data: { labels: recentMonths(12).map(m=>`${m.slice(0,4)}.${m.slice(4)}`), datasets: [
+        { label: '25평 (59㎡)', data: [], borderColor: '#94a3b8', spanGaps: true },
+        { label: '33평 (84㎡) — 매물B', data: [], borderColor: '#7c3aed', borderWidth: 2.5, spanGaps: true },
+        { label: '43평 (114㎡) — 매물A', data: [], borderColor: '#0891b2', borderWidth: 2.5, spanGaps: true },
+      ]},
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: lc } } }, scales: { x: { ticks: { color: lc } }, y: { ticks: { color: lc, callback: v => v+'억' } } } }
+    });
+  }
   await Promise.allSettled([
     Promise.resolve(loadMap()),
     loadFacilityData(),
     loadPriceData(),
+    loadSindongaDetail(),
     loadSchoolData(),
     loadAirData(),
   ]);
