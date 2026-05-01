@@ -116,9 +116,18 @@
   .fee-ref-rate { font-weight:700; }
 
   @media print {
-    .header-actions { display: none; }
-    .section-header { cursor: default; }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    body { font-size: 11px; background: #fff !important; color: #000 !important; }
+    .header-actions, .fee-ref, .chart-wrap, canvas { display: none !important; }
+    .section-header { cursor: default; break-after: avoid; }
     .section-body { display: block !important; }
+    .section { break-inside: avoid; margin-bottom: 12px; }
+    .summary-grid { grid-template-columns: repeat(4,1fr) !important; break-inside: avoid; }
+    .summary-card { border: 1px solid #ddd !important; padding: 8px !important; }
+    .result-box { border: 1px solid #ddd !important; break-inside: avoid; }
+    header h1 { font-size: 16px; }
+    .container { max-width: 100% !important; padding: 0 !important; }
+    a[href]:after { content: none !important; }
   }
 </style>
 </head>
@@ -134,7 +143,9 @@
   <h1>🏠 부동산 재정 계산기</h1>
   <div class="header-actions">
     <button class="btn" onclick="toggleTheme()">🌙 다크모드</button>
-    <button class="btn btn-primary" onclick="window.print()">🖨️ 인쇄/PDF</button>
+    <button class="btn" onclick="resetToDefaults()" style="color:var(--sub)">↺ 초기화</button>
+    <span id="saveIndicator" style="font-size:11px;color:var(--sub);align-self:center"></span>
+    <button class="btn btn-primary" onclick="exportPDF()">📄 PDF 저장</button>
   </div>
 </header>
 
@@ -851,6 +862,58 @@ const fmt = v => isNaN(v) ? '-' : Math.round(v).toLocaleString('ko-KR');
 const fmtF = (v, d=1) => isNaN(v) ? '-' : v.toFixed(d);
 const val = id => parseFloat($(id)?.value) || 0;
 
+// ===== localStorage 저장/복원 =====
+const SAVE_KEY = 'finance_inputs_v1';
+const INPUT_IDS = [
+  'salePrice','acquirePrice','moveCost','saleFeeInput',
+  'acquireYear','acquireMonth','saleYear','saleMonth',
+  'buyPrice','moveinCost','registrationFee','buyFeeInput',
+  'debtMortgage','debtMortgageRate','debtMaton','debtMatonRate',
+  'debtEtc','debtEtcRate','debtCar','debtCarMonths',
+  'daycareQuarters','daycarePerQ',
+  'newLoan','newLoanRate','newLoanYears',
+  'income1','income2','parkingRate',
+  'totalPlannedQ','paidQ',
+  'livingCost','elemSchoolMonthly',
+  'pension1','pension2','irp1','irp2','isa','parkingMonthly',
+  'remoShare','remoPeriod','remoMonthly','remoExpected',
+  'yunhoAge','giftPrior','giftLump','giftMonthly','giftRate','giftYears'
+];
+const CHECKBOX_IDS = ['debt_mortgage','debt_maton','debt_etc','debt_car','autoAllocate'];
+
+function saveInputs() {
+  const data = {};
+  INPUT_IDS.forEach(id => { const el = $(id); if (el) data[id] = el.value; });
+  CHECKBOX_IDS.forEach(id => { const el = $(id); if (el) data[id] = el.checked; });
+  data._savedAt = new Date().toLocaleString('ko-KR');
+  localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+  const ind = $('saveIndicator');
+  if (ind) ind.textContent = '저장됨 ' + data._savedAt;
+}
+
+function loadInputs() {
+  const raw = localStorage.getItem(SAVE_KEY);
+  if (!raw) return false;
+  try {
+    const data = JSON.parse(raw);
+    INPUT_IDS.forEach(id => { const el = $(id); if (el && data[id] !== undefined) el.value = data[id]; });
+    CHECKBOX_IDS.forEach(id => { const el = $(id); if (el && data[id] !== undefined) el.checked = data[id]; });
+    const ind = $('saveIndicator');
+    if (ind && data._savedAt) ind.textContent = '마지막 저장 ' + data._savedAt;
+    return true;
+  } catch(e) { return false; }
+}
+
+function resetToDefaults() {
+  if (!confirm('모든 입력값을 초기값으로 되돌릴까요?')) return;
+  localStorage.removeItem(SAVE_KEY);
+  location.reload();
+}
+
+function exportPDF() {
+  window.print();
+}
+
 function setColor(el, v, greenThr, yellowThr) {
   el.className = v >= greenThr ? 'color-green' : v >= yellowThr ? 'color-yellow' : 'color-red';
 }
@@ -1398,6 +1461,9 @@ function calc() {
   // S9 대시보드
 
   updateGiftChart(principal, totalReturn, giftYears, giftRate, giftLump, giftMo);
+
+  // 입력값 자동 저장
+  saveInputs();
 }
 
 // ===== 차트 =====
@@ -1509,6 +1575,7 @@ function toggleTheme() {
 }
 
 // ===== 초기 실행 =====
+loadInputs(); // 저장된 값 복원
 calc();
 </script>
 </body>
