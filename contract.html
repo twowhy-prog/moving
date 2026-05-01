@@ -420,6 +420,12 @@
         <div class="txn-stage-label">④ 중도금 <span id="ct_interim_badge" class="badge badge-yellow" style="margin-left:auto">예정</span></div>
         <div class="txn-cell sell" id="ct_sell_interim_cell">
           <div id="ct_sell_interim_content"><div class="txn-na">— 없음</div></div>
+          <div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--border)">
+            <div class="txn-row">
+              <span class="lbl" style="font-weight:600">①+③+④ 누계</span>
+              <span class="amt amt-in" id="t_sell_interim_cum">-</span>
+            </div>
+          </div>
         </div>
         <div class="txn-cell" id="ct_buy_interim_cell">
           <div id="ct_buy_interim_content"><div class="txn-na">— 없음</div></div>
@@ -697,6 +703,10 @@ function calc() {
   $('t_buy_earnest2').textContent      = fmt(ctDeposit1) + ' 만원';
   $('t_buy_contract_add').textContent  = '−' + fmt(buyContractAdd) + ' 만원';
   $('t_buy_contract_cum').textContent  = '−' + fmt(buyContract) + ' 만원';
+
+  // ④ 중도금 — 매도 누계
+  const sellCumTotal3 = ctSaleDeposit1 + sellContract + ctSaleInterim;
+  $('t_sell_interim_cum').textContent = '+' + fmt(sellCumTotal3) + ' 만원';
 
   // ④ 중도금 — 누계 vs 세입자 요청액 체크
   const buyCumTotal3 = ctDeposit1 + buyContract + buyInterim;
