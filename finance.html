@@ -105,22 +105,6 @@
   @media (max-width: 860px) { .cashflow-grid-3 { grid-template-columns: 1fr; } }
   .period-header { font-weight: 600; font-size: 13px; padding: 10px 12px; border-radius: 8px 8px 0 0; line-height: 1.6; }
 
-  /* ===== S10 계약 일정 ===== */
-  .contract-steps { display: flex; align-items: center; margin-bottom: 20px; overflow-x: auto; padding: 4px 0; }
-  .cs-step { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
-  .cs-dot { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border); background: var(--card); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
-  .cs-dot.done { background: var(--green); border-color: var(--green); color: #fff; }
-  .cs-dot.active { background: var(--yellow); border-color: var(--yellow); color: #fff; }
-  .cs-dot.skip { background: var(--border); border-color: var(--border); color: var(--sub); }
-  .cs-label { font-size: 11px; color: var(--sub); margin-top: 5px; white-space: nowrap; }
-  .cs-label.done { color: var(--green); font-weight: 600; }
-  .cs-label.active { color: var(--yellow); font-weight: 600; }
-  .cs-line { flex: 1; height: 2px; background: var(--border); min-width: 24px; margin-bottom: 20px; }
-  .cs-line.done { background: var(--green); }
-  .ct-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
-  @media (max-width: 860px) { .ct-summary { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 480px) { .ct-summary { grid-template-columns: 1fr; } }
-
   @media print {
     .header-actions { display: none; }
     .section-header { cursor: default; }
@@ -134,6 +118,7 @@
 <div style="background:#0f172a;display:flex;padding:0 20px">
   <a href="finance.html" style="display:inline-block;padding:10px 20px;color:#fff;font-size:13px;font-weight:700;border-bottom:3px solid #3b82f6;text-decoration:none">💰 재정 계산기</a>
   <a href="compare.html" style="display:inline-block;padding:10px 20px;color:#94a3b8;font-size:13px;font-weight:600;border-bottom:3px solid transparent;text-decoration:none" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'">📊 입지 비교</a>
+  <a href="contract.html" style="display:inline-block;padding:10px 20px;color:#94a3b8;font-size:13px;font-weight:600;border-bottom:3px solid transparent;text-decoration:none" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'">📋 계약 일정</a>
 </div>
 
 <header>
@@ -799,158 +784,6 @@
     </div>
   </div>
 
-  <!-- ===== S10 계약 일정 ===== -->
-  <div class="section" id="sec10">
-    <div class="section-header" onclick="toggleSection('sec10')">
-      <div class="section-num">10</div>
-      <h2>계약 일정 &nbsp;<span style="font-size:11px;font-weight:400;color:var(--sub)">가계약 → 토지거래허가 → 실계약 → 중도금 → 잔금</span></h2>
-      <span class="toggle-icon">▼</span>
-    </div>
-    <div class="section-body">
-
-      <!-- 진행 단계 표시 -->
-      <div class="contract-steps">
-        <div class="cs-step">
-          <div class="cs-dot done">✓</div>
-          <div class="cs-label done">가계약</div>
-        </div>
-        <div class="cs-line done"></div>
-        <div class="cs-step">
-          <div class="cs-dot active">⏳</div>
-          <div class="cs-label active">토지거래허가</div>
-        </div>
-        <div class="cs-line"></div>
-        <div class="cs-step">
-          <div class="cs-dot">3</div>
-          <div class="cs-label">실계약</div>
-        </div>
-        <div class="cs-line"></div>
-        <div class="cs-step">
-          <div class="cs-dot skip" id="ct_interim_dot">—</div>
-          <div class="cs-label" id="ct_interim_label">중도금</div>
-        </div>
-        <div class="cs-line"></div>
-        <div class="cs-step">
-          <div class="cs-dot">5</div>
-          <div class="cs-label">잔금</div>
-        </div>
-      </div>
-
-      <!-- 요약 카드 -->
-      <div class="ct-summary">
-        <div class="summary-card" style="border-left-color:#3b82f6">
-          <div class="s-num">계약금 합계</div>
-          <div class="value" id="r_ct_earnest">-</div>
-          <div class="sub">만원 (가계약금 포함)</div>
-        </div>
-        <div class="summary-card" style="border-left-color:#8b5cf6">
-          <div class="s-num">중도금</div>
-          <div class="value" id="r_ct_interim">-</div>
-          <div class="sub">만원</div>
-        </div>
-        <div class="summary-card" style="border-left-color:#10b981">
-          <div class="s-num">잔금</div>
-          <div class="value" id="r_ct_balance">-</div>
-          <div class="sub">만원 (매수가 − 계약금 − 중도금)</div>
-        </div>
-        <div class="summary-card" style="border-left-color:#ef4444">
-          <div class="s-num">잔금일 필요 현금</div>
-          <div class="value" id="r_ct_cashNeeded">-</div>
-          <div class="sub">만원 (잔금 − 주담대)</div>
-        </div>
-      </div>
-
-      <!-- 금액 입력 -->
-      <div class="grid-3" style="margin-bottom:16px">
-        <div class="field">
-          <label>가계약금 (만원)</label>
-          <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('ctDeposit1', -500)">▼</button>
-            <input type="number" id="ctDeposit1" value="1000" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('ctDeposit1', 500)">▲</button>
-          </div>
-        </div>
-        <div class="field">
-          <label>실계약 추가 계약금 (만원)</label>
-          <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('ctDeposit2', -500)">▼</button>
-            <input type="number" id="ctDeposit2" value="0" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('ctDeposit2', 500)">▲</button>
-          </div>
-        </div>
-        <div class="field">
-          <label>중도금 (만원, 없으면 0)</label>
-          <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('ctInterim', -1000)">▼</button>
-            <input type="number" id="ctInterim" value="0" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('ctInterim', 1000)">▲</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- 일정 테이블 -->
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>단계</th>
-              <th>날짜 / 기간</th>
-              <th>금액 (만원)</th>
-              <th>비고</th>
-              <th>상태</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>① 가계약</strong></td>
-              <td style="white-space:nowrap">2025.05.XX</td>
-              <td id="r_ct_row_d1">-</td>
-              <td style="color:var(--sub);font-size:11px">토지거래허가 전 의향금, 법적 계약 아님</td>
-              <td><span class="badge badge-green">완료</span></td>
-            </tr>
-            <tr>
-              <td><strong>② 토지거래허가</strong></td>
-              <td style="white-space:nowrap">2025.05 ~ 06</td>
-              <td style="color:var(--sub)">—</td>
-              <td style="color:var(--sub);font-size:11px">구청 접수 후 허가 (30일 이내), 허가 전 실계약 시 무효</td>
-              <td><span class="badge badge-yellow">진행중</span></td>
-            </tr>
-            <tr>
-              <td><strong>③ 실계약</strong></td>
-              <td style="white-space:nowrap">2025.06.XX</td>
-              <td id="r_ct_row_d2">-</td>
-              <td style="color:var(--sub);font-size:11px">계약금 합계 정산 (가계약금 차감)</td>
-              <td><span class="badge badge-yellow">예정</span></td>
-            </tr>
-            <tr id="ct_interim_row">
-              <td><strong>④ 중도금</strong></td>
-              <td style="white-space:nowrap;color:var(--sub)">미정</td>
-              <td id="r_ct_row_interim">-</td>
-              <td style="color:var(--sub);font-size:11px">중도금 대출 활용 가능</td>
-              <td><span class="badge badge-yellow">예정</span></td>
-            </tr>
-            <tr>
-              <td><strong>⑤ 잔금</strong></td>
-              <td style="white-space:nowrap;color:var(--sub)">미정</td>
-              <td id="r_ct_row_balance">-</td>
-              <td style="color:var(--sub);font-size:11px">이사일·주담대 실행일 동일 예정</td>
-              <td><span class="badge badge-yellow">예정</span></td>
-            </tr>
-            <tr style="font-weight:700;background:var(--input-bg)">
-              <td>합계</td>
-              <td></td>
-              <td id="r_ct_row_total">-</td>
-              <td colspan="2" style="color:var(--sub);font-size:11px;text-align:left">= S2 매수가 확인</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="info" style="margin-top:10px">
-        * 토지거래허가구역(사당우성3단지)은 반드시 <strong>허가 후</strong> 실계약 체결. 계약금 합계가 매수가의 10%가 되도록 실계약 추가 계약금을 조정하세요.
-      </div>
-    </div>
-  </div>
 
 </div><!-- /container -->
 
@@ -1415,35 +1248,6 @@ function calc() {
   // S9 대시보드
 
   updateGiftChart(principal, totalReturn, giftYears, giftRate, giftLump, giftMo);
-
-  // ─── 섹션 10: 계약 일정 ───
-  const ctD1      = val('ctDeposit1');
-  const ctD2      = val('ctDeposit2');
-  const ctInter   = val('ctInterim');
-  const ctEarnest = ctD1 + ctD2;
-  const ctBalance = Math.max(0, buyPrice - ctEarnest - ctInter);
-  const ctCashNeeded = Math.max(0, ctBalance - newLoan);
-  const ctTotal   = ctEarnest + ctInter + ctBalance;
-
-  $('r_ct_earnest').textContent     = fmt(ctEarnest);
-  $('r_ct_interim').textContent     = fmt(ctInter);
-  $('r_ct_balance').textContent     = fmt(ctBalance);
-  $('r_ct_cashNeeded').textContent  = fmt(ctCashNeeded);
-  $('r_ct_row_d1').textContent      = fmt(ctD1) + ' 만원';
-  $('r_ct_row_d2').textContent      = fmt(ctD2) + ' 만원';
-  $('r_ct_row_interim').textContent = fmt(ctInter) + ' 만원';
-  $('r_ct_row_balance').textContent = fmt(ctBalance) + ' 만원';
-  $('r_ct_row_total').textContent   = fmt(ctTotal) + ' 만원';
-
-  // 중도금 0이면 행·스텝 dimm
-  const hasInterim = ctInter > 0;
-  const interimRow = $('ct_interim_row');
-  if (interimRow) interimRow.style.opacity = hasInterim ? '1' : '0.35';
-  const interimDot = $('ct_interim_dot');
-  if (interimDot) {
-    interimDot.className = hasInterim ? 'cs-dot' : 'cs-dot skip';
-    interimDot.textContent = hasInterim ? '4' : '—';
-  }
 }
 
 // ===== 차트 =====
