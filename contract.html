@@ -73,8 +73,17 @@
   .cs-label { font-size: 11px; color: var(--sub); margin-top: 5px; white-space: nowrap; }
   .cs-label.done   { color: var(--green);  font-weight: 600; }
   .cs-label.active { color: var(--yellow); font-weight: 600; }
-  .cs-line { flex: 1; height: 2px; background: var(--border); min-width: 24px; margin-bottom: 20px; }
+  .cs-date { margin-top: 5px; }
+  .cs-date input[type="date"] { font-size: 10px; border: 1px solid var(--border); border-radius: 4px; padding: 2px 4px; background: var(--input-bg); color: var(--sub); width: 108px; cursor: pointer; }
+  .cs-date input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0.5; cursor: pointer; }
+  .cs-step:hover .cs-dot:not(.done):not(.active) { border-color: var(--blue); color: var(--blue); }
+  .cs-line { flex: 1; height: 2px; background: var(--border); min-width: 24px; margin-bottom: 50px; }
   .cs-line.done { background: var(--green); }
+
+  .stage-date-badge { font-size: 11px; font-weight: 500; color: var(--blue); margin-left: 6px; }
+  .stage-toggle-icon { font-size: 11px; color: var(--sub); margin-left: auto; margin-right: 4px; transition: transform 0.2s; flex-shrink: 0; }
+  .txn-stage-label { user-select: none; }
+  .txn-stage-label:hover { background: color-mix(in srgb, var(--input-bg) 80%, var(--blue) 20%); }
 
   /* 참조 인풋 박스 */
   .ref-box { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px 18px; margin-bottom: 12px; }
@@ -178,10 +187,18 @@
         </div>
       </div>
       <div class="field">
+        <label>취득가 — 삼익그린2차 (만원)</label>
+        <div class="field-adjust">
+          <button class="adjust-btn" onclick="adjustValue('refAcqCost', -1000)">▼</button>
+          <input type="number" id="refAcqCost" value="98000" oninput="calc()">
+          <button class="adjust-btn" onclick="adjustValue('refAcqCost', 1000)">▲</button>
+        </div>
+      </div>
+      <div class="field">
         <label>매수가 — 미정 (만원)</label>
         <div class="field-adjust">
           <button class="adjust-btn" onclick="adjustValue('refBuyPrice', -1000)">▼</button>
-          <input type="number" id="refBuyPrice" value="170000" oninput="calc()">
+          <input type="number" id="refBuyPrice" value="172000" oninput="calc()">
           <button class="adjust-btn" onclick="adjustValue('refBuyPrice', 1000)">▲</button>
         </div>
       </div>
@@ -197,7 +214,7 @@
         <label>신규 주담대 실행액 (만원)</label>
         <div class="field-adjust">
           <button class="adjust-btn" onclick="adjustValue('refNewLoan', -1000)">▼</button>
-          <input type="number" id="refNewLoan" value="100000" oninput="calc()">
+          <input type="number" id="refNewLoan" value="33000" oninput="calc()">
           <button class="adjust-btn" onclick="adjustValue('refNewLoan', 1000)">▲</button>
         </div>
       </div>
@@ -206,12 +223,13 @@
     <div style="font-size:11px;font-weight:700;color:var(--green);margin:10px 0 6px;letter-spacing:.3px">📥 매도 비용 (잔금 후 차감)</div>
     <div class="grid-4">
       <div class="field">
-        <label>양도세+지방소득세 (만원)</label>
+        <label>양도세+지방소득세 (만원) <button type="button" style="font-size:10px;padding:1px 5px;border-radius:4px;border:1px solid var(--border);background:var(--bg);cursor:pointer;color:var(--sub)" onclick="autoTransferTax()">자동</button></label>
         <div class="field-adjust">
           <button class="adjust-btn" onclick="adjustValue('refTransferTax', -100)">▼</button>
           <input type="number" id="refTransferTax" value="0" oninput="calc()">
           <button class="adjust-btn" onclick="adjustValue('refTransferTax', 100)">▲</button>
         </div>
+        <div style="font-size:10px;color:var(--sub);margin-top:3px">장특공 6년·부부공동명의 기준</div>
       </div>
       <div class="field">
         <label>매도 중개보수 (만원)</label>
@@ -241,7 +259,7 @@
         <label>취득세 합계 <small style="color:var(--sub)">(3.32% 자동)</small> <button type="button" style="font-size:10px;padding:1px 5px;border-radius:4px;border:1px solid var(--border);background:var(--bg);cursor:pointer;color:var(--sub)" onclick="autoAcqTax()">자동</button></label>
         <div class="field-adjust">
           <button class="adjust-btn" onclick="adjustValue('refAcqTax', -100)">▼</button>
-          <input type="number" id="refAcqTax" value="5644" oninput="calc()">
+          <input type="number" id="refAcqTax" value="5710" oninput="calc()">
           <button class="adjust-btn" onclick="adjustValue('refAcqTax', 100)">▲</button>
         </div>
       </div>
@@ -323,29 +341,34 @@
 
       <!-- 진행 단계 표시 -->
       <div class="contract-steps">
-        <div class="cs-step">
+        <div class="cs-step" onclick="scrollToStage('stage1')" style="cursor:pointer">
           <div class="cs-dot done">✓</div>
           <div class="cs-label done">가계약</div>
+          <div class="cs-date"><input type="date" id="date_stage1" onchange="updateStageDate('stage1')" title="가계약 날짜"></div>
         </div>
         <div class="cs-line done"></div>
-        <div class="cs-step">
+        <div class="cs-step" onclick="scrollToStage('stage2')" style="cursor:pointer">
           <div class="cs-dot active">⏳</div>
           <div class="cs-label active">토지거래허가</div>
+          <div class="cs-date"><input type="date" id="date_stage2" onchange="updateStageDate('stage2')" title="허가 결정 예정일"></div>
         </div>
         <div class="cs-line"></div>
-        <div class="cs-step">
+        <div class="cs-step" onclick="scrollToStage('stage3')" style="cursor:pointer">
           <div class="cs-dot">3</div>
           <div class="cs-label">계약</div>
+          <div class="cs-date"><input type="date" id="date_stage3" onchange="updateStageDate('stage3')" title="실계약 예정일"></div>
         </div>
         <div class="cs-line"></div>
-        <div class="cs-step">
+        <div class="cs-step" onclick="scrollToStage('stage4')" style="cursor:pointer">
           <div class="cs-dot skip" id="ct_interim_dot">—</div>
           <div class="cs-label" id="ct_interim_label">중도금</div>
+          <div class="cs-date"><input type="date" id="date_stage4" onchange="updateStageDate('stage4')" title="중도금 예정일"></div>
         </div>
         <div class="cs-line"></div>
-        <div class="cs-step">
+        <div class="cs-step" onclick="scrollToStage('stage5')" style="cursor:pointer">
           <div class="cs-dot">5</div>
           <div class="cs-label">잔금</div>
+          <div class="cs-date"><input type="date" id="date_stage5" onchange="updateStageDate('stage5')" title="잔금 예정일"></div>
         </div>
       </div>
 
@@ -404,7 +427,7 @@
         <div class="txn-col-header buy">📤 매수 — 미정 <small style="font-weight:400;opacity:.75">(내는 돈 ↑)</small></div>
 
         <!-- ① 가계약 -->
-        <div class="txn-stage-label">① 가계약 <span class="badge badge-green" style="margin-left:auto">완료</span></div>
+        <div class="txn-stage-label" id="stage1" onclick="toggleStage('stage1')" style="cursor:pointer">① 가계약 <span id="stage1_date" class="stage-date-badge"></span><span class="stage-toggle-icon">▼</span><span class="badge badge-green" style="margin-left:8px">완료</span></div>
         <div class="txn-cell sell">
           <div class="txn-row">
             <span class="lbl">가계약금 수취</span>
@@ -425,7 +448,7 @@
         </div>
 
         <!-- ② 토지거래허가 -->
-        <div class="txn-stage-label">② 토지거래허가 (미정) <span class="badge badge-yellow" style="margin-left:auto">진행중</span></div>
+        <div class="txn-stage-label" id="stage2" onclick="toggleStage('stage2')" style="cursor:pointer">② 토지거래허가 <span id="stage2_date" class="stage-date-badge"></span><span class="stage-toggle-icon">▼</span><span class="badge badge-yellow" style="margin-left:8px">진행중</span></div>
         <div class="txn-cell sell">
           <div class="txn-na">— 대기</div>
           <div class="txn-note">허가 기간 중 매수자 확정 후 삼익 매도 계약 준비.</div>
@@ -436,7 +459,7 @@
         </div>
 
         <!-- ③ 계약 -->
-        <div class="txn-stage-label">③ 계약 — 토허가 후 실계약 <span class="badge badge-yellow" style="margin-left:auto">예정</span></div>
+        <div class="txn-stage-label" id="stage3" onclick="toggleStage('stage3')" style="cursor:pointer">③ 계약 — 토허가 후 실계약 <span id="stage3_date" class="stage-date-badge"></span><span class="stage-toggle-icon">▼</span><span class="badge badge-yellow" style="margin-left:8px">예정</span></div>
         <div class="txn-cell sell">
           <div class="txn-row">
             <span class="lbl">계약금 합계 (<span id="t_sell_pct">10</span>%)</span>
@@ -475,7 +498,7 @@
         </div>
 
         <!-- ④ 중도금 / 세입자 전세보증금 -->
-        <div class="txn-stage-label">④ 중도금 <span id="ct_interim_badge" class="badge badge-yellow" style="margin-left:auto">예정</span></div>
+        <div class="txn-stage-label" id="stage4" onclick="toggleStage('stage4')" style="cursor:pointer">④ 중도금 <span id="stage4_date" class="stage-date-badge"></span><span class="stage-toggle-icon">▼</span><span id="ct_interim_badge" class="badge badge-yellow" style="margin-left:8px">예정</span></div>
         <div class="txn-cell sell" id="ct_sell_interim_cell">
           <div id="ct_sell_interim_content"><div class="txn-na">— 없음</div></div>
           <div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--border)">
@@ -504,7 +527,7 @@
         </div>
 
         <!-- ⑤ 잔금 -->
-        <div class="txn-stage-label">⑤ 잔금 <span class="badge badge-yellow" style="margin-left:auto">예정</span></div>
+        <div class="txn-stage-label" id="stage5" onclick="toggleStage('stage5')" style="cursor:pointer">⑤ 잔금 <span id="stage5_date" class="stage-date-badge"></span><span class="stage-toggle-icon">▼</span><span class="badge badge-yellow" style="margin-left:8px">예정</span></div>
         <div class="txn-cell sell">
           <div class="txn-row">
             <span class="lbl">잔금 수취</span>
@@ -527,7 +550,7 @@
         </div>
 
         <!-- ⑥ 잔금 후 처리 -->
-        <div class="txn-stage-label">⑥ 잔금 후 처리 — 당일 자금 정산 <span class="badge badge-blue" style="margin-left:auto">예정</span></div>
+        <div class="txn-stage-label" id="stage6" onclick="toggleStage('stage6')" style="cursor:pointer">⑥ 잔금 후 처리 — 당일 자금 정산 <span id="stage6_date" class="stage-date-badge"></span><span class="stage-toggle-icon">▼</span><span class="badge badge-blue" style="margin-left:8px">예정</span></div>
         <div class="txn-cell sell">
           <div class="txn-row">
             <span class="lbl">기존 부채 상환</span>
@@ -678,6 +701,58 @@ const $ = id => document.getElementById(id);
 const fmt = v => isNaN(v) ? '-' : Math.round(v).toLocaleString('ko-KR');
 const val = id => parseFloat($(id)?.value) || 0;
 
+// ── 단계 스크롤 ──
+function scrollToStage(stageId) {
+  const el = $(stageId);
+  if (!el) return;
+  // 접혀있으면 펼치기
+  const cells = getStageCells(stageId);
+  const isHidden = cells.length > 0 && cells[0].style.display === 'none';
+  if (isHidden) toggleStage(stageId);
+  setTimeout(() => {
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 50);
+}
+
+// ── 단계 접기/펼치기 ──
+function getStageCells(stageId) {
+  const label = $(stageId);
+  if (!label) return [];
+  const cells = [];
+  let next = label.nextElementSibling;
+  while (next && !next.classList.contains('txn-stage-label')) {
+    if (next.classList.contains('txn-cell')) cells.push(next);
+    next = next.nextElementSibling;
+  }
+  return cells;
+}
+
+function toggleStage(stageId) {
+  const cells = getStageCells(stageId);
+  const label = $(stageId);
+  const icon  = label?.querySelector('.stage-toggle-icon');
+  if (!cells.length) return;
+  const isHidden = cells[0].style.display === 'none';
+  cells.forEach(c => { c.style.display = isHidden ? '' : 'none'; });
+  if (icon) icon.style.transform = isHidden ? '' : 'rotate(-90deg)';
+}
+
+// ── 날짜 입력 → stage-label 뱃지 업데이트 ──
+function updateStageDate(stageId) {
+  const inputId = 'date_' + stageId;
+  const badgeId = stageId + '_date';
+  const dateVal = $(inputId)?.value;
+  const badge = $(badgeId);
+  if (!badge) return;
+  if (dateVal) {
+    const d = new Date(dateVal);
+    const label = `${d.getMonth()+1}/${d.getDate()}`;
+    badge.textContent = label;
+  } else {
+    badge.textContent = '';
+  }
+}
+
 function adjustValue(id, amount) {
   const el = $(id);
   if (el) { el.value = Math.max(0, (parseFloat(el.value) || 0) + amount); calc(); }
@@ -702,6 +777,40 @@ function setEl(id, text, cls) {
   if (!el) return;
   el.textContent = text;
   if (cls) el.className = cls;
+}
+
+function autoTransferTax() {
+  const sp = val('refSalePrice'); // 매도가 (만원)
+  const ap = val('refAcqCost');   // 취득가 (만원)
+  if (sp <= 0 || ap <= 0) return;
+
+  const gain = sp - ap;
+  if (gain <= 0) { $('refTransferTax').value = 0; calc(); return; }
+
+  // 1주택 12억 초과분만 과세
+  const taxableRatio = sp > 120000 ? (sp - 120000) / sp : 0;
+  const taxableGain  = gain * taxableRatio;
+
+  // 장기보유특별공제 6년 (보유 4%×6 + 거주 4%×6 = 48%)
+  // 부부공동명의: 각자 50%씩, 기본공제 250만원/인
+  const gainPerPerson = (taxableGain / 2) * (1 - 0.48) - 250;
+
+  function calcTax(b) {
+    if (b <= 0)      return 0;
+    if (b <= 1400)   return b * 0.06;
+    if (b <= 5000)   return b * 0.15 - 126;
+    if (b <= 8800)   return b * 0.24 - 576;
+    if (b <= 15000)  return b * 0.35 - 1544;
+    if (b <= 30000)  return b * 0.38 - 1994;
+    if (b <= 50000)  return b * 0.40 - 2594;
+    if (b <= 100000) return b * 0.42 - 3594;
+    return b * 0.45 - 6594;
+  }
+
+  // 양도세 2인 합산 + 지방소득세(×10%)
+  const totalTax = calcTax(gainPerPerson) * 2 * 1.1;
+  $('refTransferTax').value = Math.round(totalTax);
+  calc();
 }
 
 function autoAcqTax() {
