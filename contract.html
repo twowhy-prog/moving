@@ -673,6 +673,7 @@
           <div class="net-row"><span style="color:var(--sub)">— 매수 중개보수</span><span id="nr_buy_fee" style="color:var(--red)">-</span></div>
           <div class="net-row"><span style="color:var(--sub)">— 등기비</span><span id="nr_buy_reg" style="color:var(--red)">-</span></div>
           <div class="net-row"><span style="color:var(--sub)">— 입주비용</span><span id="nr_buy_movein" style="color:var(--red)">-</span></div>
+          <div class="net-row" id="nr_buy_tenant_row" style="display:none"><span style="color:var(--sub)">세입자 전세보증금 (자기자금)</span><span id="nr_buy_tenant" style="color:var(--red)">-</span></div>
           <div class="net-total"><span>매수 총 지출</span><span id="nr_buy_net" style="color:var(--red)">-</span></div>
         </div>
       </div>
@@ -1065,11 +1066,14 @@ function calc() {
   $('nr_buy_fee').textContent     = '−' + fmt(refBuyFee)     + ' 만원';
   $('nr_buy_reg').textContent     = '−' + fmt(refRegFee)     + ' 만원';
   $('nr_buy_movein').textContent  = '−' + fmt(refMoveinCost) + ' 만원';
-  const tenantNote = tenantIsOwnFunds
-    ? ` + 전세보증금 자기자금 ${fmt(ctTenantDeposit)}만 포함`
-    : ` (전세보증금 ${fmt(ctTenantDeposit)}만은 주담대 先실행)`;
+  const tenantRow = $('nr_buy_tenant_row');
+  if (tenantIsOwnFunds && ctTenantDeposit > 0) {
+    tenantRow.style.display = '';
+    $('nr_buy_tenant').textContent = '−' + fmt(ctTenantDeposit) + ' 만원';
+  } else {
+    tenantRow.style.display = 'none';
+  }
   $('nr_buy_net').textContent = fmt(buyEquityTotal) + ' 만원';
-  $('nr_buy_net').title = tenantNote;
 
   // 최종 정산
   $('final_sell_net').textContent = fmt(sellNet)        + ' 만원';
