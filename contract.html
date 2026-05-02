@@ -134,6 +134,9 @@
   .stage-card .sc-step { font-size: 10px; font-weight: 700; color: var(--sub); margin-bottom: 4px; }
   .stage-card .sc-net { font-size: 16px; font-weight: 700; }
   .stage-card .sc-note { font-size: 11px; color: var(--sub); margin-top: 3px; }
+  .sc-cum-row { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; padding-top: 6px; border-top: 1px dashed var(--border); }
+  .sc-cum-label { font-size: 10px; color: var(--sub); }
+  .sc-cum-val { font-size: 12px; font-weight: 700; }
 
   .net-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
   @media (max-width: 640px) { .net-grid { grid-template-columns: 1fr; } }
@@ -620,24 +623,28 @@
       <!-- 단계별 순현금 카드 -->
       <div class="stage-cards">
         <div class="stage-card" style="border-left: 3px solid var(--green)">
-          <div class="sc-step">① 가계약 지출</div>
-          <div class="sc-net" id="sc_earnest" style="color:var(--red)">-</div>
-          <div class="sc-note">만원 (매수 측 지출)</div>
+          <div class="sc-step">① 가계약 순현금</div>
+          <div class="sc-net" id="sc_earnest">-</div>
+          <div class="sc-note">만원</div>
+          <div class="sc-cum-row"><span class="sc-cum-label">누계 잔여</span><span class="sc-cum-val" id="sc_cum1">-</span></div>
         </div>
         <div class="stage-card" style="border-left: 3px solid var(--yellow)">
           <div class="sc-step">③ 계약 순현금</div>
           <div class="sc-net" id="sc_contract">-</div>
           <div class="sc-note" id="sc_contract_note">만원</div>
+          <div class="sc-cum-row"><span class="sc-cum-label">누계 잔여</span><span class="sc-cum-val" id="sc_cum3">-</span></div>
         </div>
         <div class="stage-card" style="border-left: 3px solid var(--purple)" id="sc_interim_card">
           <div class="sc-step">④ 중도금 순현금</div>
           <div class="sc-net" id="sc_interim">-</div>
           <div class="sc-note" id="sc_interim_note">만원</div>
+          <div class="sc-cum-row"><span class="sc-cum-label">누계 잔여</span><span class="sc-cum-val" id="sc_cum4">-</span></div>
         </div>
         <div class="stage-card" style="border-left: 3px solid var(--blue)">
-          <div class="sc-step">⑤ 잔금일 순현금</div>
+          <div class="sc-step">⑤+⑥ 잔금·정산 순현금</div>
           <div class="sc-net" id="sc_balance">-</div>
-          <div class="sc-note">만원 (매도수령 − 매수지급)</div>
+          <div class="sc-note">만원</div>
+          <div class="sc-cum-row" style="border-top:1px solid var(--border);margin-top:4px;padding-top:4px"><span class="sc-cum-label" style="font-weight:700;color:var(--text)">최종 잔여</span><span class="sc-cum-val" id="sc_cum5" style="font-weight:700">-</span></div>
         </div>
       </div>
 
@@ -995,28 +1002,42 @@ function calc() {
   buyNetEl.textContent = '−' + fmt(buyCost) + ' 만원';
   buyNetEl.className   = 'amt-neg';
 
-  // S2 단계별 순현금 카드
+  // S2 단계별 순현금 카드 + 누계
+  function setCumVal(id, val) {
+    const el = $(id);
+    el.textContent = (val >= 0 ? '+' : '−') + fmt(Math.abs(val)) + ' 만원';
+    el.style.color = val >= 0 ? 'var(--green)' : 'var(--red)';
+  }
+
   const scEarnest = $('sc_earnest');
   scEarnest.textContent = (earnestNet >= 0 ? '+' : '−') + fmt(Math.abs(earnestNet));
   scEarnest.style.color = earnestNet >= 0 ? 'var(--green)' : 'var(--red)';
+  const cum1 = earnestNet;
+  setCumVal('sc_cum1', cum1);
 
   const contractNet = sellContractAddAmt - buyContractAdd;
   const scCon = $('sc_contract');
   scCon.textContent = (contractNet >= 0 ? '+' : '−') + fmt(Math.abs(contractNet));
   scCon.style.color = contractNet >= 0 ? 'var(--green)' : 'var(--red)';
   $('sc_contract_note').textContent = contractNet >= 0 ? '만원 (매도 > 매수)' : '만원 (지출 > 수취)';
+  const cum3 = cum1 + contractNet;
+  setCumVal('sc_cum3', cum3);
 
-  // 중도금 순현금 = 매도 수취 − 매수 지급 (세입자 전세보증금은 주담대 先실행이므로 자기자본 흐름 아님)
+  // 중도금 순현금 = 매도 수취 − 매수 지급
   const interimNet = ctSaleInterim - ctInterim;
   const scInt = $('sc_interim');
   scInt.textContent = hasInterim ? ((interimNet >= 0 ? '+' : '−') + fmt(Math.abs(interimNet))) : '—';
   scInt.style.color = interimNet >= 0 ? 'var(--green)' : 'var(--red)';
   $('sc_interim_note').textContent = hasInterim ? '만원 (매도 수취 − 매수 지급)' : '(없음)';
+  const cum4 = cum3 + interimNet;
+  setCumVal('sc_cum4', cum4);
 
   const balanceDayNet = sellBalance - buyBalance + newLoan - debt - saleCost - buyCost;
   const scBal = $('sc_balance');
   scBal.textContent = (balanceDayNet >= 0 ? '+' : '−') + fmt(Math.abs(balanceDayNet));
   scBal.style.color = balanceDayNet >= 0 ? 'var(--green)' : 'var(--red)';
+  const cum5 = cum4 + balanceDayNet;
+  setCumVal('sc_cum5', cum5);
 
   // 매도 내역
   $('nr_sell_earnest').textContent  = '+' + fmt(ctSaleDeposit1) + ' 만원';
