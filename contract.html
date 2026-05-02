@@ -999,7 +999,7 @@ function calc() {
   scEarnest.textContent = (earnestNet >= 0 ? '+' : '−') + fmt(Math.abs(earnestNet));
   scEarnest.style.color = earnestNet >= 0 ? 'var(--green)' : 'var(--red)';
 
-  const contractNet = sellContract - buyContractAdd;
+  const contractNet = sellContractAddAmt - buyContractAdd;
   const scCon = $('sc_contract');
   scCon.textContent = (contractNet >= 0 ? '+' : '−') + fmt(Math.abs(contractNet));
   scCon.style.color = contractNet >= 0 ? 'var(--green)' : 'var(--red)';
