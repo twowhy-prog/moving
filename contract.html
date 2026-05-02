@@ -876,7 +876,7 @@ function calc() {
   const buyBalance     = buyPrice - buyContract - buyInterim;
 
   // 매수 ①+③+④ 누계 vs 세입자 요청액
-  const buyCumTotal = ctDeposit1 + buyContract + buyInterim;
+  const buyCumTotal = buyContract + buyInterim;
   const tenantDiff  = buyCumTotal - ctTenantDeposit;
   const buyEquity      = buyPrice + buyCost;
   const buyEquityTotal = buyPrice + buyCost + (tenantIsOwnFunds ? ctTenantDeposit : 0);
@@ -926,11 +926,11 @@ function calc() {
   $('t_buy_contract_cum').textContent  = '−' + fmt(buyContract) + ' 만원';
 
   // ④ 중도금 — 매도 누계
-  const sellCumTotal3 = ctSaleDeposit1 + sellContract + ctSaleInterim;
+  const sellCumTotal3 = sellContract + ctSaleInterim;
   $('t_sell_interim_cum').textContent = '+' + fmt(sellCumTotal3) + ' 만원';
 
   // ④ 중도금 — 누계 vs 세입자 요청액 체크
-  const buyCumTotal3 = ctDeposit1 + buyContract + buyInterim;
+  const buyCumTotal3 = buyContract + buyInterim;
   const tenantDiff3  = buyCumTotal3 - ctTenantDeposit;
   const cumEl3 = $('t_buy_tenant_cum');
   cumEl3.textContent = fmt(buyCumTotal3) + ' 만원';
@@ -977,7 +977,7 @@ function calc() {
 
   // ⑤ 잔금
   const sellTotalCum = sellContract + sellInterim + sellBalance;
-  const buyTotalCum  = ctDeposit1 + buyContract + buyInterim + buyBalance;
+  const buyTotalCum  = buyContract + buyInterim + buyBalance;
   $('t_sell_balance').textContent    = '+' + fmt(sellBalance) + ' 만원';
   $('t_sell_total_cum').textContent  = '+' + fmt(sellTotalCum) + ' 만원';
   $('t_buy_balance').textContent     = '−' + fmt(buyBalance) + ' 만원';
