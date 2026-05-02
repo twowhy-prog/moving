@@ -666,7 +666,7 @@
           <div class="net-row"><span style="color:var(--sub)">— 매수 중개보수</span><span id="nr_buy_fee" style="color:var(--red)">-</span></div>
           <div class="net-row"><span style="color:var(--sub)">— 등기비</span><span id="nr_buy_reg" style="color:var(--red)">-</span></div>
           <div class="net-row"><span style="color:var(--sub)">— 입주비용</span><span id="nr_buy_movein" style="color:var(--red)">-</span></div>
-          <div class="net-total"><span>자기자본 총 지출</span><span id="nr_buy_net" style="color:var(--red)">-</span></div>
+          <div class="net-total"><span>매수 총 지출</span><span id="nr_buy_net" style="color:var(--red)">-</span></div>
         </div>
       </div>
 
@@ -678,7 +678,7 @@
           <span id="final_sell_net" style="color:var(--green);font-weight:600">-</span>
         </div>
         <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px">
-          <span style="color:var(--sub)">매수 자기자본 지출</span>
+          <span style="color:var(--sub)">매수 총 지출</span>
           <span id="final_buy_net" style="color:var(--red);font-weight:600">-</span>
         </div>
         <div style="display:flex;justify-content:space-between;padding:8px 0 2px;font-weight:700;font-size:15px;border-top:2px solid var(--border);margin-top:4px">
@@ -874,7 +874,7 @@ function calc() {
   const buyEquity      = buyPrice + buyCost;
   const buyEquityTotal = buyPrice + buyCost + (tenantIsOwnFunds ? ctTenantDeposit : 0);
 
-  // 이사 후 잔여 = 매도 실수령 − 매수 자기자본
+  // 이사 후 잔여 = (매도 실수령 + 주담대) − 매수 총 지출
   const remainder = sellNet - buyEquityTotal;
 
   // 세입자 누계 체크 (상단 박스) — buyCumTotal3 재사용
