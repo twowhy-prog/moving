@@ -573,7 +573,7 @@
             <span class="amt amt-in" id="t_buy_loan">-</span>
           </div>
           <div class="txn-subtotal">
-            <span>매도+주담대 수령</span>
+            <span>단계 소계</span>
             <span id="t_sell_net">-</span>
           </div>
         </div>
@@ -595,7 +595,7 @@
             <span class="amt amt-neg" id="t_buy_movein">-</span>
           </div>
           <div class="txn-subtotal">
-            <span>자기자본 순지출</span>
+            <span>단계 소계</span>
             <span id="t_buy_net">-</span>
           </div>
         </div>
@@ -981,9 +981,10 @@ function calc() {
   $('t_sell_transfertax').textContent = '−' + fmt(refTransferTax)  + ' 만원';
   $('t_sell_fee').textContent         = '−' + fmt(refSaleFee)      + ' 만원';
   $('t_sell_move').textContent        = '−' + fmt(refMoveCost)     + ' 만원';
+  const stage6SellNet = newLoan - debt - saleCost;
   const sellNetEl = $('t_sell_net');
-  sellNetEl.textContent = fmt(sellNet) + ' 만원';
-  sellNetEl.className   = sellNet >= 0 ? 'amt-in' : 'amt-neg';
+  sellNetEl.textContent = (stage6SellNet >= 0 ? '+' : '−') + fmt(Math.abs(stage6SellNet)) + ' 만원';
+  sellNetEl.className   = stage6SellNet >= 0 ? 'amt-in' : 'amt-neg';
 
   $('t_buy_loan').textContent    = '+' + fmt(newLoan)       + ' 만원';
   $('t_buy_acqtax').textContent  = '−' + fmt(refAcqTax)    + ' 만원';
@@ -991,8 +992,8 @@ function calc() {
   $('t_buy_reg').textContent     = '−' + fmt(refRegFee)    + ' 만원';
   $('t_buy_movein').textContent  = '−' + fmt(refMoveinCost)+ ' 만원';
   const buyNetEl = $('t_buy_net');
-  buyNetEl.textContent = fmt(buyEquityTotal) + ' 만원';
-  buyNetEl.className   = 'amt-out';
+  buyNetEl.textContent = '−' + fmt(buyCost) + ' 만원';
+  buyNetEl.className   = 'amt-neg';
 
   // S2 단계별 순현금 카드
   const scEarnest = $('sc_earnest');
