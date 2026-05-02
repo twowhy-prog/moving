@@ -209,7 +209,7 @@
         <label>기존 부채 합계 — 잔금일 상환 (만원)</label>
         <div class="field-adjust">
           <button class="adjust-btn" onclick="adjustValue('refDebt', -500)">▼</button>
-          <input type="number" id="refDebt" value="32500" oninput="calc()">
+          <input type="number" id="refDebt" value="36200" oninput="calc()">
           <button class="adjust-btn" onclick="adjustValue('refDebt', 500)">▲</button>
         </div>
       </div>
@@ -229,7 +229,7 @@
         <label>양도세+지방소득세 (만원) <button type="button" style="font-size:10px;padding:1px 5px;border-radius:4px;border:1px solid var(--border);background:var(--bg);cursor:pointer;color:var(--sub)" onclick="autoTransferTax()">자동</button></label>
         <div class="field-adjust">
           <button class="adjust-btn" onclick="adjustValue('refTransferTax', -100)">▼</button>
-          <input type="number" id="refTransferTax" value="0" oninput="calc()">
+          <input type="number" id="refTransferTax" value="3254" oninput="calc()">
           <button class="adjust-btn" onclick="adjustValue('refTransferTax', 100)">▲</button>
         </div>
         <div style="font-size:10px;color:var(--sub);margin-top:3px">장특공 6년·부부공동명의 기준</div>
@@ -262,7 +262,7 @@
         <label>취득세 합계 <small style="color:var(--sub)">(3.32% 자동)</small> <button type="button" style="font-size:10px;padding:1px 5px;border-radius:4px;border:1px solid var(--border);background:var(--bg);cursor:pointer;color:var(--sub)" onclick="autoAcqTax()">자동</button></label>
         <div class="field-adjust">
           <button class="adjust-btn" onclick="adjustValue('refAcqTax', -100)">▼</button>
-          <input type="number" id="refAcqTax" value="5710" oninput="calc()">
+          <input type="number" id="refAcqTax" value="6020" oninput="calc()">
           <button class="adjust-btn" onclick="adjustValue('refAcqTax', 100)">▲</button>
         </div>
       </div>
@@ -310,7 +310,7 @@
         <label>매도 중도금 비율 (%, 없으면 0)</label>
         <div class="field-adjust">
           <button class="adjust-btn" onclick="adjustValue('refSaleInterimPct', -1)">▼</button>
-          <input type="number" id="refSaleInterimPct" value="0" step="1" min="0" max="50" oninput="calc()">
+          <input type="number" id="refSaleInterimPct" value="30" step="1" min="0" max="50" oninput="calc()">
           <button class="adjust-btn" onclick="adjustValue('refSaleInterimPct', 1)">▲</button>
         </div>
       </div>
@@ -326,7 +326,7 @@
         <label>매수 중도금 비율 (%, 없으면 0)</label>
         <div class="field-adjust">
           <button class="adjust-btn" onclick="adjustValue('refBuyInterimPct', -1)">▼</button>
-          <input type="number" id="refBuyInterimPct" value="0" step="1" min="0" max="50" oninput="calc()">
+          <input type="number" id="refBuyInterimPct" value="30" step="1" min="0" max="50" oninput="calc()">
           <button class="adjust-btn" onclick="adjustValue('refBuyInterimPct', 1)">▲</button>
         </div>
       </div>
