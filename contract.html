@@ -568,16 +568,16 @@
             <span class="lbl">이사비</span>
             <span class="amt amt-neg" id="t_sell_move">-</span>
           </div>
-          <div class="txn-subtotal">
-            <span>매도 최종 실수령</span>
-            <span id="t_sell_net">-</span>
-          </div>
-        </div>
-        <div class="txn-cell">
           <div class="txn-row">
             <span class="lbl">주담대 실행 (+)</span>
             <span class="amt amt-in" id="t_buy_loan">-</span>
           </div>
+          <div class="txn-subtotal">
+            <span>매도+주담대 수령</span>
+            <span id="t_sell_net">-</span>
+          </div>
+        </div>
+        <div class="txn-cell">
           <div class="txn-row">
             <span class="lbl">취득세 합계</span>
             <span class="amt amt-neg" id="t_buy_acqtax">-</span>
@@ -653,7 +653,8 @@
           <div class="net-row"><span style="color:var(--sub)">— 양도세+지방소득세</span><span id="nr_sell_transfertax" style="color:var(--red)">-</span></div>
           <div class="net-row"><span style="color:var(--sub)">— 매도 중개보수</span><span id="nr_sell_fee" style="color:var(--red)">-</span></div>
           <div class="net-row"><span style="color:var(--sub)">— 이사비</span><span id="nr_sell_move" style="color:var(--red)">-</span></div>
-          <div class="net-total"><span>최종 실수령</span><span id="nr_sell_net" style="color:var(--green)">-</span></div>
+          <div class="net-row"><span style="color:var(--sub)">+ 주담대 실행</span><span id="nr_buy_loan" style="color:var(--green)">-</span></div>
+          <div class="net-total"><span>매도+주담대 수령</span><span id="nr_sell_net" style="color:var(--green)">-</span></div>
         </div>
         <div class="net-card">
           <div class="net-card-title">📤 매수 (미정) 지급 내역</div>
@@ -661,7 +662,6 @@
           <div class="net-row"><span style="color:var(--sub)">추가 계약금</span><span id="nr_buy_add" style="color:var(--blue)">-</span></div>
           <div class="net-row" id="nr_buy_interim_row"><span style="color:var(--sub)">중도금</span><span id="nr_buy_interim" style="color:var(--blue)">-</span></div>
           <div class="net-row"><span style="color:var(--sub)">잔금</span><span id="nr_buy_balance" style="color:var(--blue)">-</span></div>
-          <div class="net-row"><span style="color:var(--sub)">+ 주담대 실행</span><span id="nr_buy_loan" style="color:var(--green)">-</span></div>
           <div class="net-row"><span style="color:var(--sub)">— 취득세 합계</span><span id="nr_buy_acqtax" style="color:var(--red)">-</span></div>
           <div class="net-row"><span style="color:var(--sub)">— 매수 중개보수</span><span id="nr_buy_fee" style="color:var(--red)">-</span></div>
           <div class="net-row"><span style="color:var(--sub)">— 등기비</span><span id="nr_buy_reg" style="color:var(--red)">-</span></div>
@@ -674,7 +674,7 @@
       <div style="background:var(--input-bg);border-radius:8px;padding:14px;margin-top:12px">
         <div style="font-size:12px;font-weight:700;color:var(--sub);margin-bottom:10px">🏦 이사 후 최종 자금 정산</div>
         <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px">
-          <span style="color:var(--sub)">매도 최종 실수령</span>
+          <span style="color:var(--sub)">매도+주담대 수령</span>
           <span id="final_sell_net" style="color:var(--green);font-weight:600">-</span>
         </div>
         <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px">
@@ -857,7 +857,7 @@ function calc() {
   const ctSaleInterim = salePrice * saleInterimPct;
   const sellInterim  = ctSaleInterim;
   const sellBalance  = salePrice - sellContract - sellInterim;
-  const sellNet      = salePrice - debt - saleCost;
+  const sellNet      = salePrice - debt - saleCost + newLoan;
 
   // ── 매수 ──
   const buyContract    = buyPrice * buyContractPct;
@@ -871,9 +871,8 @@ function calc() {
   // 매수 ①+③+④ 누계 vs 세입자 요청액
   const buyCumTotal = ctDeposit1 + buyContract + buyInterim;
   const tenantDiff  = buyCumTotal - ctTenantDeposit;
-  const buyEquity      = buyPrice + buyCost - newLoan + (tenantIsOwnFunds ? 0 : 0);
-  // 자기자본 지출 = 총매수비용 - 주담대 (세입자 전세금은 주담대 안에 포함되어 있거나 별도 자기자금)
-  const buyEquityTotal = buyPrice + buyCost - newLoan + (tenantIsOwnFunds ? ctTenantDeposit : 0);
+  const buyEquity      = buyPrice + buyCost;
+  const buyEquityTotal = buyPrice + buyCost + (tenantIsOwnFunds ? ctTenantDeposit : 0);
 
   // 이사 후 잔여 = 매도 실수령 − 매수 자기자본
   const remainder = sellNet - buyEquityTotal;
