@@ -403,12 +403,8 @@
           </div>
         </div>
         <div class="field">
-          <label>주담대 금액 (만원)</label>
-          <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('newLoan', -500)">▼</button>
-            <input type="number" id="newLoan" value="30000" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('newLoan', 500)">▲</button>
-          </div>
+          <label>주담대 금액 (만원) <span style="font-size:10px;color:var(--sub)">(최소필요액 기준 천만원 단위 자동)</span></label>
+          <input type="number" id="newLoan" value="30000" readonly style="background:var(--input-bg);color:var(--blue);font-weight:600">
         </div>
         <div class="field">
           <label>주담대 금리 (%)</label>
@@ -864,7 +860,7 @@ const INPUT_IDS = [
   'debtMortgage','debtMortgageRate','debtMaton','debtMatonRate',
   'debtEtc','debtEtcRate','debtCar','debtCarMonths',
   'daycareQuarters','daycarePerQ',
-  'newLoan','newLoanRate','newLoanYears',
+  'newLoanRate','newLoanYears',
   'totalIncome','parkingRate',
   'totalPlannedQ','paidQ',
   'livingCost','elemSchoolMonthly',
@@ -1118,7 +1114,6 @@ function calc() {
   $('r_buyCostBase').textContent    = fmt(buyCostBase) + ' 만원';
 
   // ─── 섹션 3: 주담대 필요액 산출 ───
-  const newLoan      = val('newLoan');
   const newLoanRate  = val('newLoanRate');
   const newLoanYears = val('newLoanYears');
   const daycareQ     = val('daycareQuarters');
@@ -1135,6 +1130,11 @@ function calc() {
   const daycareIncluded = daycareQ * daycarePerQ;
   const buyCostTotal    = buyCostBase + daycareIncluded; // 총 필요금액
   const minLoan         = buyCostTotal - availCash;      // 최소 필요 주담대
+
+  // 최소 필요액 기준 천만원 단위 올림 자동 반영
+  const autoLoan = Math.max(0, Math.ceil(minLoan / 1000) * 1000);
+  $('newLoan').value = autoLoan;
+  const newLoan = autoLoan;
 
   const monthlyPayment = calcMonthlyPayment(newLoan, newLoanRate, newLoanYears);
 
