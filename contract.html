@@ -345,32 +345,32 @@
       <!-- 진행 단계 표시 -->
       <div class="contract-steps">
         <div class="cs-step" onclick="scrollToStage('stage1')" style="cursor:pointer">
-          <div class="cs-dot done">✓</div>
-          <div class="cs-label done">가계약</div>
+          <div class="cs-dot done" id="dot_stage1">✓</div>
+          <div class="cs-label done" id="lbl_stage1">가계약</div>
           <div class="cs-date"><input type="date" id="date_stage1" onchange="updateStageDate('stage1')" title="가계약 날짜"></div>
         </div>
-        <div class="cs-line done"></div>
+        <div class="cs-line done" id="line_stage1"></div>
         <div class="cs-step" onclick="scrollToStage('stage2')" style="cursor:pointer">
-          <div class="cs-dot active">⏳</div>
-          <div class="cs-label active">토지거래허가</div>
+          <div class="cs-dot active" id="dot_stage2">⏳</div>
+          <div class="cs-label active" id="lbl_stage2">토지거래허가</div>
           <div class="cs-date"><input type="date" id="date_stage2" onchange="updateStageDate('stage2')" title="허가 결정 예정일"></div>
         </div>
-        <div class="cs-line"></div>
+        <div class="cs-line" id="line_stage2"></div>
         <div class="cs-step" onclick="scrollToStage('stage3')" style="cursor:pointer">
-          <div class="cs-dot">3</div>
-          <div class="cs-label">계약</div>
+          <div class="cs-dot" id="dot_stage3">3</div>
+          <div class="cs-label" id="lbl_stage3">계약</div>
           <div class="cs-date"><input type="date" id="date_stage3" onchange="updateStageDate('stage3')" title="실계약 예정일"></div>
         </div>
-        <div class="cs-line"></div>
+        <div class="cs-line" id="line_stage3"></div>
         <div class="cs-step" onclick="scrollToStage('stage4')" style="cursor:pointer">
-          <div class="cs-dot skip" id="ct_interim_dot">—</div>
-          <div class="cs-label" id="ct_interim_label">중도금</div>
+          <div class="cs-dot skip" id="dot_stage4">—</div>
+          <div class="cs-label" id="lbl_stage4">중도금</div>
           <div class="cs-date"><input type="date" id="date_stage4" onchange="updateStageDate('stage4')" title="중도금 예정일"></div>
         </div>
-        <div class="cs-line"></div>
+        <div class="cs-line" id="line_stage4"></div>
         <div class="cs-step" onclick="scrollToStage('stage5')" style="cursor:pointer">
-          <div class="cs-dot">5</div>
-          <div class="cs-label">잔금</div>
+          <div class="cs-dot" id="dot_stage5">5</div>
+          <div class="cs-label" id="lbl_stage5">잔금</div>
           <div class="cs-date"><input type="date" id="date_stage5" onchange="updateStageDate('stage5')" title="잔금 예정일"></div>
         </div>
       </div>
@@ -736,19 +736,47 @@ function toggleStage(stageId) {
   if (icon) icon.style.transform = isHidden ? '' : 'rotate(-90deg)';
 }
 
-// ── 날짜 입력 → stage-label 뱃지 업데이트 ──
+// 날짜 없을 때 각 단계의 기본 dot 상태
+const STAGE_DEFAULTS = {
+  stage1: { cls: 'done',   text: '✓' },
+  stage2: { cls: 'active', text: '⏳' },
+  stage3: { cls: '',       text: '3' },
+  stage4: { cls: 'skip',   text: '—' },
+  stage5: { cls: '',       text: '5' },
+};
+
+// ── 날짜 입력 → 상단 타임라인 + stage-label 뱃지 업데이트 ──
 function updateStageDate(stageId) {
-  const inputId = 'date_' + stageId;
-  const badgeId = stageId + '_date';
-  const dateVal = $(inputId)?.value;
-  const badge = $(badgeId);
-  if (!badge) return;
+  const dateVal = $('date_' + stageId)?.value;
+
+  // 하단 자금흐름 섹션 날짜 뱃지
+  const badge = $(stageId + '_date');
+  if (badge) {
+    if (dateVal) {
+      const d = new Date(dateVal);
+      badge.textContent = `${d.getMonth()+1}/${d.getDate()}`;
+    } else {
+      badge.textContent = '';
+    }
+  }
+
+  // 상단 타임라인 dot · label
+  const dot = $('dot_' + stageId);
+  const lbl = $('lbl_' + stageId);
+  const line = $('line_' + stageId); // 해당 단계 뒤 연결선
+  const def = STAGE_DEFAULTS[stageId];
+  if (!dot || !lbl || !def) return;
+
   if (dateVal) {
-    const d = new Date(dateVal);
-    const label = `${d.getMonth()+1}/${d.getDate()}`;
-    badge.textContent = label;
+    dot.className = 'cs-dot done';
+    dot.textContent = '✓';
+    lbl.className = 'cs-label done';
+    if (line) line.classList.add('done');
   } else {
-    badge.textContent = '';
+    dot.className = 'cs-dot' + (def.cls ? ' ' + def.cls : '');
+    dot.textContent = def.text;
+    lbl.className = 'cs-label' + (def.cls ? ' ' + def.cls : '');
+    if (line) line.classList.remove('done');
   }
 }
 
@@ -937,9 +965,12 @@ function calc() {
   }
 
   const hasInterim = ctInterim > 0 || ctSaleInterim > 0 || ctTenantDeposit > 0;
-  const interimDot = $('ct_interim_dot');
-  interimDot.className   = hasInterim ? 'cs-dot' : 'cs-dot skip';
-  interimDot.textContent = hasInterim ? '4' : '—';
+  const interimDot = $('dot_stage4');
+  const hasDate4 = !!$('date_stage4')?.value;
+  interimDot.className   = hasDate4 ? 'cs-dot done' : (hasInterim ? 'cs-dot' : 'cs-dot skip');
+  interimDot.textContent = hasDate4 ? '✓' : (hasInterim ? '4' : '—');
+  // STAGE_DEFAULTS의 skip/일반 상태도 hasInterim에 따라 동기화
+  STAGE_DEFAULTS.stage4 = { cls: hasInterim ? '' : 'skip', text: hasInterim ? '4' : '—' };
 
   const sellInterimContent = $('ct_sell_interim_content');
   if (ctSaleInterim > 0) {
@@ -1074,6 +1105,7 @@ function calc() {
 }
 
 calc();
+['stage1','stage2','stage3','stage4','stage5'].forEach(updateStageDate);
 </script>
 </body>
 </html>
