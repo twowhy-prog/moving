@@ -384,12 +384,22 @@
 
       <!-- 가계약금 입력 -->
       <div class="grid-2" style="margin-bottom:8px">
-        <div class="field">
-          <label>매도 약정계약금 1차 (만원)</label>
-          <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('ctSaleDeposit1', -500)">▼</button>
-            <input type="number" id="ctSaleDeposit1" value="5000" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('ctSaleDeposit1', 500)">▲</button>
+        <div>
+          <div class="field">
+            <label>매도 약정계약금 1차 (만원)</label>
+            <div class="field-adjust">
+              <button class="adjust-btn" onclick="adjustValue('ctSaleDeposit1', -500)">▼</button>
+              <input type="number" id="ctSaleDeposit1" value="5000" oninput="calc()">
+              <button class="adjust-btn" onclick="adjustValue('ctSaleDeposit1', 500)">▲</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>매도 약정계약금 2차 (만원) <small style="color:var(--sub)">약정서 작성 시</small></label>
+            <div class="field-adjust">
+              <button class="adjust-btn" onclick="adjustValue('ctSaleDeposit2', -500)">▼</button>
+              <input type="number" id="ctSaleDeposit2" value="5000" oninput="calc()">
+              <button class="adjust-btn" onclick="adjustValue('ctSaleDeposit2', 500)">▲</button>
+            </div>
           </div>
         </div>
         <div class="field">
@@ -398,14 +408,6 @@
             <button class="adjust-btn" onclick="adjustValue('ctDeposit1', -500)">▼</button>
             <input type="number" id="ctDeposit1" value="5000" oninput="calc()">
             <button class="adjust-btn" onclick="adjustValue('ctDeposit1', 500)">▲</button>
-          </div>
-        </div>
-        <div class="field">
-          <label>매도 약정계약금 2차 (만원) <small style="color:var(--sub)">약정서 작성 시</small></label>
-          <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('ctSaleDeposit2', -500)">▼</button>
-            <input type="number" id="ctSaleDeposit2" value="5000" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('ctSaleDeposit2', 500)">▲</button>
           </div>
         </div>
       </div>
@@ -793,6 +795,17 @@ function adjustValue(id, amount) {
   if (el) { el.value = Math.max(0, (parseFloat(el.value) || 0) + amount); calc(); }
 }
 
+function updateInterimDates() {
+  // stage4 뱃지를 첫 번째 날짜로 표시
+  const d1 = $('date_sell_interim1')?.value;
+  const badge = $('stage4_date');
+  if (badge && d1) {
+    const dt = new Date(d1);
+    badge.textContent = `${dt.getMonth()+1}/${dt.getDate()}~`;
+  }
+  calc();
+}
+
 function toggleSection(id) {
   const sec = $(id);
   const body = sec.querySelector('.section-body');
@@ -977,30 +990,38 @@ function calc() {
 
   const hasInterim = ctInterim > 0 || ctSaleInterim > 0 || ctTenantDeposit > 0;
   const interimDot = $('dot_stage4');
-  const hasDate4 = !!$('date_stage4')?.value;
+  const hasDate4 = !!$('date_sell_interim1')?.value || !!$('date_buy_interim1')?.value;
   interimDot.className   = hasDate4 ? 'cs-dot done' : (hasInterim ? 'cs-dot' : 'cs-dot skip');
   interimDot.textContent = hasDate4 ? '✓' : (hasInterim ? '4' : '—');
   // STAGE_DEFAULTS의 skip/일반 상태도 hasInterim에 따라 동기화
   STAGE_DEFAULTS.stage4 = { cls: hasInterim ? '' : 'skip', text: hasInterim ? '4' : '—' };
 
+  const fmt_d = d => { if (!d) return ''; const dt = new Date(d); return `(${dt.getMonth()+1}/${dt.getDate()})`; };
+
   const sellInterimContent = $('ct_sell_interim_content');
   if (ctSaleInterim > 0) {
+    const si1 = val('saleInterim1'), si2 = val('saleInterim2');
+    const d_si1 = $('date_sell_interim1')?.value, d_si2 = $('date_sell_interim2')?.value;
     sellInterimContent.innerHTML =
-      `<div class="txn-row"><span class="lbl">중도금 수취 (${val('refSaleInterimPct')}%)</span><span class="amt amt-in">+${fmt(ctSaleInterim)} 만원</span></div>` +
-      `<div class="txn-note">잔금에서 차감됨.</div>`;
+      `<div class="txn-row"><span class="lbl">1차 중도금 수취 ${fmt_d(d_si1)}</span><span class="amt amt-in">+${fmt(si1)} 만원</span></div>` +
+      (si2 > 0 ? `<div class="txn-row"><span class="lbl">2차 중도금 수취 ${fmt_d(d_si2)}</span><span class="amt amt-in">+${fmt(si2)} 만원</span></div>` : '') +
+      `<div class="txn-note">합계 ${fmt(ctSaleInterim)}만원. 잔금에서 차감.</div>`;
   } else {
     sellInterimContent.innerHTML =
-      `<div class="txn-na">— 없음 (0%)</div><div class="txn-note">중도금 없이 잔금 직결.</div>`;
+      `<div class="txn-na">— 없음</div><div class="txn-note">중도금 없이 잔금 직결.</div>`;
   }
 
   const buyInterimContent = $('ct_buy_interim_content');
   if (ctInterim > 0) {
+    const bi1 = val('buyInterim1'), bi2 = val('buyInterim2');
+    const d_bi1 = $('date_buy_interim1')?.value, d_bi2 = $('date_buy_interim2')?.value;
     buyInterimContent.innerHTML =
-      `<div class="txn-row"><span class="lbl">중도금 지급 (${val('refBuyInterimPct')}%)</span><span class="amt amt-out">−${fmt(ctInterim)} 만원</span></div>` +
-      `<div class="txn-note">잔금에서 차감됨.</div>`;
+      `<div class="txn-row"><span class="lbl">1차 중도금 지급 ${fmt_d(d_bi1)}</span><span class="amt amt-out">−${fmt(bi1)} 만원</span></div>` +
+      (bi2 > 0 ? `<div class="txn-row"><span class="lbl">2차 중도금 지급 ${fmt_d(d_bi2)}</span><span class="amt amt-out">−${fmt(bi2)} 만원</span></div>` : '') +
+      `<div class="txn-note">합계 ${fmt(ctInterim)}만원. 잔금에서 차감.</div>`;
   } else {
     buyInterimContent.innerHTML =
-      `<div class="txn-na">— 없음 (0%)</div><div class="txn-note">중도금 없이 잔금 직결.</div>`;
+      `<div class="txn-na">— 없음</div><div class="txn-note">중도금 없이 잔금 직결.</div>`;
   }
 
   $('ct_sell_interim_cell').style.opacity = hasInterim ? '1' : '0.4';
