@@ -217,7 +217,7 @@
         <label>신규 주담대 실행액 (만원)</label>
         <div class="field-adjust">
           <button class="adjust-btn" onclick="adjustValue('refNewLoan', -1000)">▼</button>
-          <input type="number" id="refNewLoan" value="33000" oninput="calc()">
+          <input type="number" id="refNewLoan" value="30000" oninput="calc()">
           <button class="adjust-btn" onclick="adjustValue('refNewLoan', 1000)">▲</button>
         </div>
       </div>
@@ -295,8 +295,8 @@
         <div style="padding:7px 10px;background:var(--input-bg);border-radius:6px;border:1px solid var(--border);font-size:14px;font-weight:600;color:var(--red)" id="r_buyCostTotal">-</div>
       </div>
     </div>
-    <!-- 비율 -->
-    <div style="font-size:11px;font-weight:700;color:var(--sub);margin:10px 0 6px;letter-spacing:.3px">📊 계약 비율</div>
+    <!-- 비율 / 중도금 직접 입력 -->
+    <div style="font-size:11px;font-weight:700;color:var(--sub);margin:10px 0 6px;letter-spacing:.3px">📊 계약 비율 및 중도금</div>
     <div class="grid-4">
       <div class="field">
         <label>매도 계약금 비율 (%)</label>
@@ -307,12 +307,12 @@
         </div>
       </div>
       <div class="field">
-        <label>매도 중도금 비율 (%, 없으면 0)</label>
-        <div class="field-adjust">
-          <button class="adjust-btn" onclick="adjustValue('refSaleInterimPct', -1)">▼</button>
-          <input type="number" id="refSaleInterimPct" value="23" step="1" min="0" max="50" oninput="calc()">
-          <button class="adjust-btn" onclick="adjustValue('refSaleInterimPct', 1)">▲</button>
-        </div>
+        <label>매도 1차 중도금 (만원)</label>
+        <input type="number" id="saleInterim1" value="30000" oninput="calc()">
+      </div>
+      <div class="field">
+        <label>매도 2차 중도금 (만원)</label>
+        <input type="number" id="saleInterim2" value="12000" oninput="calc()">
       </div>
       <div class="field">
         <label>매수 계약금 비율 (%)</label>
@@ -323,12 +323,12 @@
         </div>
       </div>
       <div class="field">
-        <label>매수 중도금 비율 (%, 없으면 0)</label>
-        <div class="field-adjust">
-          <button class="adjust-btn" onclick="adjustValue('refBuyInterimPct', -1)">▼</button>
-          <input type="number" id="refBuyInterimPct" value="23" step="1" min="0" max="50" oninput="calc()">
-          <button class="adjust-btn" onclick="adjustValue('refBuyInterimPct', 1)">▲</button>
-        </div>
+        <label>매수 1차 중도금 (만원)</label>
+        <input type="number" id="buyInterim1" value="30000" oninput="calc()">
+      </div>
+      <div class="field">
+        <label>매수 2차 중도금 (만원)</label>
+        <input type="number" id="buyInterim2" value="10000" oninput="calc()">
       </div>
     </div>
   </div>
@@ -359,13 +359,20 @@
         <div class="cs-step" onclick="scrollToStage('stage3')" style="cursor:pointer">
           <div class="cs-dot" id="dot_stage3">3</div>
           <div class="cs-label" id="lbl_stage3">계약</div>
-          <div class="cs-date"><input type="date" id="date_stage3" onchange="updateStageDate('stage3')" title="실계약 예정일"></div>
+          <div class="cs-date"><input type="date" id="date_stage3" value="2026-06-05" onchange="updateStageDate('stage3')" title="실계약 예정일"></div>
         </div>
         <div class="cs-line" id="line_stage3"></div>
         <div class="cs-step" onclick="scrollToStage('stage4')" style="cursor:pointer">
           <div class="cs-dot skip" id="dot_stage4">—</div>
           <div class="cs-label" id="lbl_stage4">중도금</div>
-          <div class="cs-date"><input type="date" id="date_stage4" value="2026-07-17" onchange="updateStageDate('stage4')" title="중도금 예정일"></div>
+          <div class="cs-date" style="display:flex;flex-direction:column;gap:2px">
+            <div style="font-size:11px;color:var(--sub);margin-bottom:2px">매도</div>
+            <input type="date" id="date_sell_interim1" value="2026-07-17" onchange="updateInterimDates()" title="매도 1차 중도금">
+            <input type="date" id="date_sell_interim2" value="2026-08-03" onchange="updateInterimDates()" title="매도 2차 중도금">
+            <div style="font-size:11px;color:var(--sub);margin-top:4px;margin-bottom:2px">매수</div>
+            <input type="date" id="date_buy_interim1" value="2026-07-20" onchange="updateInterimDates()" title="매수 1차 중도금">
+            <input type="date" id="date_buy_interim2" value="2026-08-05" onchange="updateInterimDates()" title="매수 2차 중도금">
+          </div>
         </div>
         <div class="cs-line" id="line_stage4"></div>
         <div class="cs-step" onclick="scrollToStage('stage5')" style="cursor:pointer">
@@ -377,12 +384,22 @@
 
       <!-- 가계약금 입력 -->
       <div class="grid-2" style="margin-bottom:8px">
-        <div class="field">
-          <label>매도 가계약금 수취 (만원)</label>
-          <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('ctSaleDeposit1', -500)">▼</button>
-            <input type="number" id="ctSaleDeposit1" value="5000" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('ctSaleDeposit1', 500)">▲</button>
+        <div>
+          <div class="field">
+            <label>매도 약정계약금 1차 (만원)</label>
+            <div class="field-adjust">
+              <button class="adjust-btn" onclick="adjustValue('ctSaleDeposit1', -500)">▼</button>
+              <input type="number" id="ctSaleDeposit1" value="5000" oninput="calc()">
+              <button class="adjust-btn" onclick="adjustValue('ctSaleDeposit1', 500)">▲</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>매도 약정계약금 2차 (만원) <small style="color:var(--sub)">약정서 작성 시</small></label>
+            <div class="field-adjust">
+              <button class="adjust-btn" onclick="adjustValue('ctSaleDeposit2', -500)">▼</button>
+              <input type="number" id="ctSaleDeposit2" value="5000" oninput="calc()">
+              <button class="adjust-btn" onclick="adjustValue('ctSaleDeposit2', 500)">▲</button>
+            </div>
           </div>
         </div>
         <div class="field">
@@ -395,24 +412,13 @@
         </div>
       </div>
 
-      <!-- 세입자 전세보증금 목표액 + 누계 체크 -->
-      <div style="background:var(--input-bg);border-radius:8px;padding:12px 14px;margin-bottom:12px;border-left:3px solid var(--yellow)">
-        <div style="font-size:12px;font-weight:700;color:var(--sub);margin-bottom:10px">🏠 세입자 전세보증금 — ①가계약+③계약+④중도금 누계가 이 금액에 맞아야 함</div>
-        <div class="grid-2">
-          <div class="field" style="margin-bottom:0">
-            <label>세입자 요청 총액 (만원)</label>
-            <div class="field-adjust">
-              <button class="adjust-btn" onclick="adjustValue('ctTenantDeposit', -1000)">▼</button>
-              <input type="number" id="ctTenantDeposit" value="66000" oninput="calc()">
-              <button class="adjust-btn" onclick="adjustValue('ctTenantDeposit', 1000)">▲</button>
-            </div>
-          </div>
-        </div>
-        <div style="margin-top:10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-          <span style="font-size:12px;color:var(--sub)">누계: 가계약금 + 계약금 + 중도금 =</span>
-          <span id="tenant_cumTotal" style="font-size:14px;font-weight:700">-</span>
-          <span id="tenant_cumDiff" style="font-size:12px;font-weight:600;padding:2px 8px;border-radius:10px"></span>
-        </div>
+      <!-- 세입자 전세보증금 (세입자 없음) -->
+      <div style="background:var(--input-bg);border-radius:8px;padding:12px 14px;margin-bottom:12px;border-left:3px solid var(--border);opacity:0.6">
+        <div style="font-size:12px;font-weight:700;color:var(--sub);margin-bottom:6px">🏠 세입자 전세보증금</div>
+        <div style="font-size:12px;color:var(--sub)">세입자 없음 — 해당 없음</div>
+        <input type="hidden" id="ctTenantDeposit" value="0">
+        <span id="tenant_cumTotal" style="display:none"></span>
+        <span id="tenant_cumDiff" style="display:none"></span>
       </div>
 
       <!-- 매도 / 매수 2단 타임라인 -->
@@ -426,8 +432,12 @@
         <div class="txn-stage-label" id="stage1" onclick="toggleStage('stage1')" style="cursor:pointer">① 가계약 <span id="stage1_date" class="stage-date-badge"></span><span class="stage-toggle-icon">▼</span><span class="badge badge-green" style="margin-left:8px">완료</span></div>
         <div class="txn-cell sell">
           <div class="txn-row">
-            <span class="lbl">가계약금 수취</span>
+            <span class="lbl">약정계약금 1차 수취</span>
             <span class="amt amt-in" id="t_sell_earnest">-</span>
+          </div>
+          <div class="txn-row" id="t_sell_earnest_d2_row">
+            <span class="lbl" style="font-size:11px;color:var(--sub)">약정계약금 2차 (약정서)</span>
+            <span class="amt" id="t_sell_earnest2_note" style="font-size:11px;color:var(--sub)">-</span>
           </div>
           <div class="txn-note">삼익 매수자로부터 수령.<br>이 돈으로 사당 가계약금 지급 가능. 실계약 시 계약금에 포함.</div>
           <div class="txn-subtotal">
@@ -656,7 +666,7 @@
           <div class="net-total"><span>매도+주담대 수령</span><span id="nr_sell_net" style="color:var(--green)">-</span></div>
         </div>
         <div class="net-card">
-          <div class="net-card-title">📤 매수 (미정) 지급 내역</div>
+          <div class="net-card-title">📤 매수 (신동아리버파크) 지급 내역</div>
           <div class="net-row"><span style="color:var(--sub)">가계약금</span><span id="nr_buy_earnest" style="color:var(--blue)">-</span></div>
           <div class="net-row"><span style="color:var(--sub)">추가 계약금</span><span id="nr_buy_add" style="color:var(--blue)">-</span></div>
           <div class="net-row" id="nr_buy_interim_row"><span style="color:var(--sub)">중도금</span><span id="nr_buy_interim" style="color:var(--blue)">-</span></div>
@@ -785,6 +795,17 @@ function adjustValue(id, amount) {
   if (el) { el.value = Math.max(0, (parseFloat(el.value) || 0) + amount); calc(); }
 }
 
+function updateInterimDates() {
+  // stage4 뱃지를 첫 번째 날짜로 표시
+  const d1 = $('date_sell_interim1')?.value;
+  const badge = $('stage4_date');
+  if (badge && d1) {
+    const dt = new Date(d1);
+    badge.textContent = `${dt.getMonth()+1}/${dt.getDate()}~`;
+  }
+  calc();
+}
+
 function toggleSection(id) {
   const sec = $(id);
   const body = sec.querySelector('.section-body');
@@ -873,24 +894,24 @@ function calc() {
   const saleContractPct  = val('refSaleContractPct') / 100;
   const buyContractPct   = val('refBuyContractPct')  / 100;
   const ctSaleDeposit1   = val('ctSaleDeposit1');
+  const ctSaleDeposit2   = val('ctSaleDeposit2');
   const ctDeposit1       = val('ctDeposit1');
-  const saleInterimPct   = val('refSaleInterimPct') / 100;
-  const buyInterimPct    = val('refBuyInterimPct')  / 100;
   const ctTenantDeposit  = val('ctTenantDeposit');
 
+  // ── 중도금 직접 입력 ──
+  const ctSaleInterim = val('saleInterim1') + val('saleInterim2'); // 1차+2차 합계
+  const sellInterim   = ctSaleInterim;
+  const ctInterim     = val('buyInterim1') + val('buyInterim2');   // 1차+2차 합계
+  const buyInterim    = ctInterim;
 
   // ── 매도 ──
   const sellContract = salePrice * saleContractPct;
-  const ctSaleInterim = salePrice * saleInterimPct;
-  const sellInterim  = ctSaleInterim;
   const sellBalance  = salePrice - sellContract - sellInterim;
   const sellNet      = salePrice - debt - saleCost + newLoan;
 
   // ── 매수 ──
   const buyContract    = buyPrice * buyContractPct;
   const buyContractAdd = Math.max(0, buyContract - ctDeposit1);
-  const ctInterim      = buyPrice * buyInterimPct;
-  const buyInterim     = ctInterim;
 
   const buyBalance     = buyPrice - buyContract - buyInterim;
 
@@ -928,15 +949,18 @@ function calc() {
   // ① 가계약
   const earnestNet = ctSaleDeposit1 - ctDeposit1;
   $('t_sell_earnest').textContent = '+' + fmt(ctSaleDeposit1) + ' 만원';
+  const dep2El = $('t_sell_earnest2_note');
+  if (dep2El) dep2El.textContent = '약정계약금 2차: +' + fmt(ctSaleDeposit2) + ' 만원 (약정서 작성 시)';
   const earnestNetEl = $('t_earnest_net');
   earnestNetEl.textContent = (earnestNet >= 0 ? '+' : '−') + fmt(Math.abs(earnestNet)) + ' 만원';
   earnestNetEl.className   = earnestNet >= 0 ? 'amt-in' : 'amt-neg';
   $('t_buy_earnest').textContent = '−' + fmt(ctDeposit1) + ' 만원';
 
   // ③ 계약
-  const sellContractAddAmt = Math.max(0, sellContract - ctSaleDeposit1);
+  const totalSaleEarnest   = ctSaleDeposit1 + ctSaleDeposit2;
+  const sellContractAddAmt = Math.max(0, sellContract - totalSaleEarnest);
   $('t_sell_contract').textContent     = fmt(sellContract) + ' 만원';
-  $('t_sell_earnest2').textContent     = fmt(ctSaleDeposit1) + ' 만원';
+  $('t_sell_earnest2').textContent     = fmt(totalSaleEarnest) + ' 만원';
   $('t_sell_contract_add').textContent = '+' + fmt(sellContractAddAmt) + ' 만원';
   $('t_sell_contract_cum').textContent = '+' + fmt(sellContract) + ' 만원';
   $('t_buy_contract').textContent      = fmt(buyContract) + ' 만원';
@@ -966,30 +990,38 @@ function calc() {
 
   const hasInterim = ctInterim > 0 || ctSaleInterim > 0 || ctTenantDeposit > 0;
   const interimDot = $('dot_stage4');
-  const hasDate4 = !!$('date_stage4')?.value;
+  const hasDate4 = !!$('date_sell_interim1')?.value || !!$('date_buy_interim1')?.value;
   interimDot.className   = hasDate4 ? 'cs-dot done' : (hasInterim ? 'cs-dot' : 'cs-dot skip');
   interimDot.textContent = hasDate4 ? '✓' : (hasInterim ? '4' : '—');
   // STAGE_DEFAULTS의 skip/일반 상태도 hasInterim에 따라 동기화
   STAGE_DEFAULTS.stage4 = { cls: hasInterim ? '' : 'skip', text: hasInterim ? '4' : '—' };
 
+  const fmt_d = d => { if (!d) return ''; const dt = new Date(d); return `(${dt.getMonth()+1}/${dt.getDate()})`; };
+
   const sellInterimContent = $('ct_sell_interim_content');
   if (ctSaleInterim > 0) {
+    const si1 = val('saleInterim1'), si2 = val('saleInterim2');
+    const d_si1 = $('date_sell_interim1')?.value, d_si2 = $('date_sell_interim2')?.value;
     sellInterimContent.innerHTML =
-      `<div class="txn-row"><span class="lbl">중도금 수취 (${val('refSaleInterimPct')}%)</span><span class="amt amt-in">+${fmt(ctSaleInterim)} 만원</span></div>` +
-      `<div class="txn-note">잔금에서 차감됨.</div>`;
+      `<div class="txn-row"><span class="lbl">1차 중도금 수취 ${fmt_d(d_si1)}</span><span class="amt amt-in">+${fmt(si1)} 만원</span></div>` +
+      (si2 > 0 ? `<div class="txn-row"><span class="lbl">2차 중도금 수취 ${fmt_d(d_si2)}</span><span class="amt amt-in">+${fmt(si2)} 만원</span></div>` : '') +
+      `<div class="txn-note">합계 ${fmt(ctSaleInterim)}만원. 잔금에서 차감.</div>`;
   } else {
     sellInterimContent.innerHTML =
-      `<div class="txn-na">— 없음 (0%)</div><div class="txn-note">중도금 없이 잔금 직결.</div>`;
+      `<div class="txn-na">— 없음</div><div class="txn-note">중도금 없이 잔금 직결.</div>`;
   }
 
   const buyInterimContent = $('ct_buy_interim_content');
   if (ctInterim > 0) {
+    const bi1 = val('buyInterim1'), bi2 = val('buyInterim2');
+    const d_bi1 = $('date_buy_interim1')?.value, d_bi2 = $('date_buy_interim2')?.value;
     buyInterimContent.innerHTML =
-      `<div class="txn-row"><span class="lbl">중도금 지급 (${val('refBuyInterimPct')}%)</span><span class="amt amt-out">−${fmt(ctInterim)} 만원</span></div>` +
-      `<div class="txn-note">잔금에서 차감됨.</div>`;
+      `<div class="txn-row"><span class="lbl">1차 중도금 지급 ${fmt_d(d_bi1)}</span><span class="amt amt-out">−${fmt(bi1)} 만원</span></div>` +
+      (bi2 > 0 ? `<div class="txn-row"><span class="lbl">2차 중도금 지급 ${fmt_d(d_bi2)}</span><span class="amt amt-out">−${fmt(bi2)} 만원</span></div>` : '') +
+      `<div class="txn-note">합계 ${fmt(ctInterim)}만원. 잔금에서 차감.</div>`;
   } else {
     buyInterimContent.innerHTML =
-      `<div class="txn-na">— 없음 (0%)</div><div class="txn-note">중도금 없이 잔금 직결.</div>`;
+      `<div class="txn-na">— 없음</div><div class="txn-note">중도금 없이 잔금 직결.</div>`;
   }
 
   $('ct_sell_interim_cell').style.opacity = hasInterim ? '1' : '0.4';
