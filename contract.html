@@ -185,7 +185,7 @@
         <label>매도가 — 삼익그린2차 (만원)</label>
         <div class="field-adjust">
           <button class="adjust-btn" onclick="adjustValue('refSalePrice', -1000)">▼</button>
-          <input type="number" id="refSalePrice" value="190000" oninput="calc()">
+          <input type="number" id="refSalePrice" value="185000" oninput="calc()">
           <button class="adjust-btn" onclick="adjustValue('refSalePrice', 1000)">▲</button>
         </div>
       </div>
@@ -198,10 +198,10 @@
         </div>
       </div>
       <div class="field">
-        <label>매수가 — 미정 (만원)</label>
+        <label>매수가 — 신동아리버파크 (만원)</label>
         <div class="field-adjust">
           <button class="adjust-btn" onclick="adjustValue('refBuyPrice', -1000)">▼</button>
-          <input type="number" id="refBuyPrice" value="172000" oninput="calc()">
+          <input type="number" id="refBuyPrice" value="172500" oninput="calc()">
           <button class="adjust-btn" onclick="adjustValue('refBuyPrice', 1000)">▲</button>
         </div>
       </div>
@@ -238,7 +238,7 @@
         <label>매도 중개보수 (만원)</label>
         <div class="field-adjust">
           <button class="adjust-btn" onclick="adjustValue('refSaleFee', -100)">▼</button>
-          <input type="number" id="refSaleFee" value="1000" oninput="calc()">
+          <input type="number" id="refSaleFee" value="1295" oninput="calc()">
           <button class="adjust-btn" onclick="adjustValue('refSaleFee', 100)">▲</button>
         </div>
       </div>
@@ -262,7 +262,7 @@
         <label>취득세 합계 <small style="color:var(--sub)">(3.32% 자동)</small> <button type="button" style="font-size:10px;padding:1px 5px;border-radius:4px;border:1px solid var(--border);background:var(--bg);cursor:pointer;color:var(--sub)" onclick="autoAcqTax()">자동</button></label>
         <div class="field-adjust">
           <button class="adjust-btn" onclick="adjustValue('refAcqTax', -100)">▼</button>
-          <input type="number" id="refAcqTax" value="6020" oninput="calc()">
+          <input type="number" id="refAcqTax" value="6038" oninput="calc()">
           <button class="adjust-btn" onclick="adjustValue('refAcqTax', 100)">▲</button>
         </div>
       </div>
@@ -270,7 +270,7 @@
         <label>매수 중개보수 (만원)</label>
         <div class="field-adjust">
           <button class="adjust-btn" onclick="adjustValue('refBuyFee', -100)">▼</button>
-          <input type="number" id="refBuyFee" value="900" oninput="calc()">
+          <input type="number" id="refBuyFee" value="1208" oninput="calc()">
           <button class="adjust-btn" onclick="adjustValue('refBuyFee', 100)">▲</button>
         </div>
       </div>
@@ -310,7 +310,7 @@
         <label>매도 중도금 비율 (%, 없으면 0)</label>
         <div class="field-adjust">
           <button class="adjust-btn" onclick="adjustValue('refSaleInterimPct', -1)">▼</button>
-          <input type="number" id="refSaleInterimPct" value="30" step="1" min="0" max="50" oninput="calc()">
+          <input type="number" id="refSaleInterimPct" value="23" step="1" min="0" max="50" oninput="calc()">
           <button class="adjust-btn" onclick="adjustValue('refSaleInterimPct', 1)">▲</button>
         </div>
       </div>
@@ -318,7 +318,7 @@
         <label>매수 계약금 비율 (%)</label>
         <div class="field-adjust">
           <button class="adjust-btn" onclick="adjustValue('refBuyContractPct', -1)">▼</button>
-          <input type="number" id="refBuyContractPct" value="10" step="1" min="1" max="30" oninput="calc()">
+          <input type="number" id="refBuyContractPct" value="12" step="1" min="1" max="30" oninput="calc()">
           <button class="adjust-btn" onclick="adjustValue('refBuyContractPct', 1)">▲</button>
         </div>
       </div>
@@ -326,7 +326,7 @@
         <label>매수 중도금 비율 (%, 없으면 0)</label>
         <div class="field-adjust">
           <button class="adjust-btn" onclick="adjustValue('refBuyInterimPct', -1)">▼</button>
-          <input type="number" id="refBuyInterimPct" value="30" step="1" min="0" max="50" oninput="calc()">
+          <input type="number" id="refBuyInterimPct" value="23" step="1" min="0" max="50" oninput="calc()">
           <button class="adjust-btn" onclick="adjustValue('refBuyInterimPct', 1)">▲</button>
         </div>
       </div>
@@ -347,7 +347,7 @@
         <div class="cs-step" onclick="scrollToStage('stage1')" style="cursor:pointer">
           <div class="cs-dot done" id="dot_stage1">✓</div>
           <div class="cs-label done" id="lbl_stage1">가계약</div>
-          <div class="cs-date"><input type="date" id="date_stage1" onchange="updateStageDate('stage1')" title="가계약 날짜"></div>
+          <div class="cs-date"><input type="date" id="date_stage1" value="2026-05-22" onchange="updateStageDate('stage1')" title="가계약 날짜"></div>
         </div>
         <div class="cs-line done" id="line_stage1"></div>
         <div class="cs-step" onclick="scrollToStage('stage2')" style="cursor:pointer">
@@ -365,13 +365,13 @@
         <div class="cs-step" onclick="scrollToStage('stage4')" style="cursor:pointer">
           <div class="cs-dot skip" id="dot_stage4">—</div>
           <div class="cs-label" id="lbl_stage4">중도금</div>
-          <div class="cs-date"><input type="date" id="date_stage4" onchange="updateStageDate('stage4')" title="중도금 예정일"></div>
+          <div class="cs-date"><input type="date" id="date_stage4" value="2026-07-17" onchange="updateStageDate('stage4')" title="중도금 예정일"></div>
         </div>
         <div class="cs-line" id="line_stage4"></div>
         <div class="cs-step" onclick="scrollToStage('stage5')" style="cursor:pointer">
           <div class="cs-dot" id="dot_stage5">5</div>
           <div class="cs-label" id="lbl_stage5">잔금</div>
-          <div class="cs-date"><input type="date" id="date_stage5" onchange="updateStageDate('stage5')" title="잔금 예정일"></div>
+          <div class="cs-date"><input type="date" id="date_stage5" value="2026-09-04" onchange="updateStageDate('stage5')" title="잔금 예정일"></div>
         </div>
       </div>
 
@@ -381,7 +381,7 @@
           <label>매도 가계약금 수취 (만원)</label>
           <div class="field-adjust">
             <button class="adjust-btn" onclick="adjustValue('ctSaleDeposit1', -500)">▼</button>
-            <input type="number" id="ctSaleDeposit1" value="1000" oninput="calc()">
+            <input type="number" id="ctSaleDeposit1" value="5000" oninput="calc()">
             <button class="adjust-btn" onclick="adjustValue('ctSaleDeposit1', 500)">▲</button>
           </div>
         </div>
@@ -389,7 +389,7 @@
           <label>매수 가계약금 지급 (만원)</label>
           <div class="field-adjust">
             <button class="adjust-btn" onclick="adjustValue('ctDeposit1', -500)">▼</button>
-            <input type="number" id="ctDeposit1" value="1000" oninput="calc()">
+            <input type="number" id="ctDeposit1" value="5000" oninput="calc()">
             <button class="adjust-btn" onclick="adjustValue('ctDeposit1', 500)">▲</button>
           </div>
         </div>
@@ -420,7 +420,7 @@
 
         <!-- 컬럼 헤더 -->
         <div class="txn-col-header sell">📥 매도 — 삼익그린2차 <small style="font-weight:400;opacity:.75">(받는 돈 ↓)</small></div>
-        <div class="txn-col-header buy">📤 매수 — 미정 <small style="font-weight:400;opacity:.75">(내는 돈 ↑)</small></div>
+        <div class="txn-col-header buy">📤 매수 — 신동아리버파크 <small style="font-weight:400;opacity:.75">(내는 돈 ↑)</small></div>
 
         <!-- ① 가계약 -->
         <div class="txn-stage-label" id="stage1" onclick="toggleStage('stage1')" style="cursor:pointer">① 가계약 <span id="stage1_date" class="stage-date-badge"></span><span class="stage-toggle-icon">▼</span><span class="badge badge-green" style="margin-left:8px">완료</span></div>
