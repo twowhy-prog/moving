@@ -350,6 +350,12 @@
           <div class="cs-date"><input type="date" id="date_stage1" value="2026-05-22" onchange="updateStageDate('stage1')" title="가계약 날짜"></div>
         </div>
         <div class="cs-line done" id="line_stage1"></div>
+        <div class="cs-step" onclick="scrollToStage('stageYak')" style="cursor:pointer">
+          <div class="cs-dot done" id="dot_stageYak">✓</div>
+          <div class="cs-label done" id="lbl_stageYak">약정서</div>
+          <div class="cs-date"><input type="date" id="date_stageYak" value="2026-05-22" onchange="updateStageDate('stageYak')" title="약정서 작성일"></div>
+        </div>
+        <div class="cs-line done" id="line_stageYak"></div>
         <div class="cs-step" onclick="scrollToStage('stage2')" style="cursor:pointer">
           <div class="cs-dot active" id="dot_stage2">⏳</div>
           <div class="cs-label active" id="lbl_stage2">토지거래허가</div>
@@ -435,11 +441,7 @@
             <span class="lbl">약정계약금 1차 수취</span>
             <span class="amt amt-in" id="t_sell_earnest">-</span>
           </div>
-          <div class="txn-row" id="t_sell_earnest_d2_row">
-            <span class="lbl" style="font-size:11px;color:var(--sub)">약정계약금 2차 (약정서)</span>
-            <span class="amt" id="t_sell_earnest2_note" style="font-size:11px;color:var(--sub)">-</span>
-          </div>
-          <div class="txn-note">삼익 매수자로부터 수령.<br>이 돈으로 사당 가계약금 지급 가능. 실계약 시 계약금에 포함.</div>
+          <div class="txn-note">삼익 매수자로부터 수령. 실계약 시 계약금에 포함.</div>
           <div class="txn-subtotal">
             <span>가계약 후 순현금</span>
             <span id="t_earnest_net">-</span>
@@ -450,7 +452,25 @@
             <span class="lbl">가계약금 지급</span>
             <span class="amt amt-out" id="t_buy_earnest">-</span>
           </div>
-          <div class="txn-note">토허가 전 의향금. 법적 구속력 없음.<br>허가 불허 시 전액 반환. 실계약 시 계약금으로 포함.</div>
+          <div class="txn-note">토허가 전 의향금. 허가 불허 시 전액 반환. 실계약 시 계약금으로 포함.</div>
+        </div>
+
+        <!-- ① 약정서 작성 -->
+        <div class="txn-stage-label" id="stageYak" onclick="toggleStage('stageYak')" style="cursor:pointer">① 약정서 작성 <span id="stageYak_date" class="stage-date-badge">5/22</span><span class="stage-toggle-icon">▼</span><span class="badge badge-green" style="margin-left:8px">완료</span></div>
+        <div class="txn-cell sell">
+          <div class="txn-row">
+            <span class="lbl">약정계약금 2차 수취</span>
+            <span class="amt amt-in" id="t_sell_earnest2_note">-</span>
+          </div>
+          <div class="txn-note">영수증 수취 5/22 · 실입금 5/23<br>약정서 작성 후 삼익 매수자로부터 수령.</div>
+          <div class="txn-subtotal">
+            <span>약정계약금 총 수취 (1차+2차)</span>
+            <span class="amt-in" id="t_earnest_total">-</span>
+          </div>
+        </div>
+        <div class="txn-cell">
+          <div class="txn-na">— 없음</div>
+          <div class="txn-note">신동아 측 추가 지급 없음.</div>
         </div>
 
         <!-- ② 토지거래허가 -->
@@ -748,11 +768,12 @@ function toggleStage(stageId) {
 
 // 날짜 없을 때 각 단계의 기본 dot 상태
 const STAGE_DEFAULTS = {
-  stage1: { cls: 'done',   text: '✓' },
-  stage2: { cls: 'active', text: '⏳' },
-  stage3: { cls: '',       text: '3' },
-  stage4: { cls: 'skip',   text: '—' },
-  stage5: { cls: '',       text: '5' },
+  stage1:   { cls: 'done',   text: '✓' },
+  stageYak: { cls: 'done',   text: '✓' },
+  stage2:   { cls: 'active', text: '⏳' },
+  stage3:   { cls: '',       text: '3' },
+  stage4:   { cls: 'skip',   text: '—' },
+  stage5:   { cls: '',       text: '5' },
 };
 
 // ── 날짜 입력 → 상단 타임라인 + stage-label 뱃지 업데이트 ──
@@ -949,12 +970,16 @@ function calc() {
   // ① 가계약
   const earnestNet = ctSaleDeposit1 - ctDeposit1;
   $('t_sell_earnest').textContent = '+' + fmt(ctSaleDeposit1) + ' 만원';
-  const dep2El = $('t_sell_earnest2_note');
-  if (dep2El) dep2El.textContent = '약정계약금 2차: +' + fmt(ctSaleDeposit2) + ' 만원 (약정서 작성 시)';
   const earnestNetEl = $('t_earnest_net');
   earnestNetEl.textContent = (earnestNet >= 0 ? '+' : '−') + fmt(Math.abs(earnestNet)) + ' 만원';
   earnestNetEl.className   = earnestNet >= 0 ? 'amt-in' : 'amt-neg';
   $('t_buy_earnest').textContent = '−' + fmt(ctDeposit1) + ' 만원';
+
+  // ① 약정서
+  const dep2El = $('t_sell_earnest2_note');
+  if (dep2El) dep2El.textContent = '+' + fmt(ctSaleDeposit2) + ' 만원';
+  const totalEl = $('t_earnest_total');
+  if (totalEl) totalEl.textContent = '+' + fmt(ctSaleDeposit1 + ctSaleDeposit2) + ' 만원';
 
   // ③ 계약
   const totalSaleEarnest   = ctSaleDeposit1 + ctSaleDeposit2;
