@@ -217,7 +217,7 @@
         <label>신규 주담대 실행액 (만원)</label>
         <div class="field-adjust">
           <button class="adjust-btn" onclick="adjustValue('refNewLoan', -1000)">▼</button>
-          <input type="number" id="refNewLoan" value="33000" oninput="calc()">
+          <input type="number" id="refNewLoan" value="30000" oninput="calc()">
           <button class="adjust-btn" onclick="adjustValue('refNewLoan', 1000)">▲</button>
         </div>
       </div>
@@ -359,7 +359,7 @@
         <div class="cs-step" onclick="scrollToStage('stage3')" style="cursor:pointer">
           <div class="cs-dot" id="dot_stage3">3</div>
           <div class="cs-label" id="lbl_stage3">계약</div>
-          <div class="cs-date"><input type="date" id="date_stage3" onchange="updateStageDate('stage3')" title="실계약 예정일"></div>
+          <div class="cs-date"><input type="date" id="date_stage3" value="2026-06-05" onchange="updateStageDate('stage3')" title="실계약 예정일"></div>
         </div>
         <div class="cs-line" id="line_stage3"></div>
         <div class="cs-step" onclick="scrollToStage('stage4')" style="cursor:pointer">
