@@ -295,16 +295,13 @@
         <div style="padding:7px 10px;background:var(--input-bg);border-radius:6px;border:1px solid var(--border);font-size:14px;font-weight:600;color:var(--red)" id="r_buyCostTotal">-</div>
       </div>
     </div>
-    <!-- 비율 / 중도금 직접 입력 -->
-    <div style="font-size:11px;font-weight:700;color:var(--sub);margin:10px 0 6px;letter-spacing:.3px">📊 계약 비율 및 중도금</div>
+    <!-- 계약금 금액 / 중도금 직접 입력 -->
+    <div style="font-size:11px;font-weight:700;color:var(--sub);margin:10px 0 6px;letter-spacing:.3px">📊 계약금 및 중도금</div>
     <div class="grid-4">
       <div class="field">
-        <label>매도 계약금 비율 (%)</label>
-        <div class="field-adjust">
-          <button class="adjust-btn" onclick="adjustValue('refSaleContractPct', -1)">▼</button>
-          <input type="number" id="refSaleContractPct" value="10" step="1" min="1" max="30" oninput="calc()">
-          <button class="adjust-btn" onclick="adjustValue('refSaleContractPct', 1)">▲</button>
-        </div>
+        <label>매도 계약금 (만원)</label>
+        <input type="number" id="refSaleContractAmt" value="18500" oninput="calc()">
+        <div style="font-size:11px;color:var(--sub);margin-top:3px">= 매도가의 <span id="r_saleContractPct" style="font-weight:700;color:var(--blue)">—</span>%</div>
       </div>
       <div class="field">
         <label>매도 1차 중도금 (만원)</label>
@@ -315,12 +312,9 @@
         <input type="number" id="saleInterim2" value="12000" oninput="calc()">
       </div>
       <div class="field">
-        <label>매수 계약금 비율 (%)</label>
-        <div class="field-adjust">
-          <button class="adjust-btn" onclick="adjustValue('refBuyContractPct', -1)">▼</button>
-          <input type="number" id="refBuyContractPct" value="12" step="1" min="1" max="30" oninput="calc()">
-          <button class="adjust-btn" onclick="adjustValue('refBuyContractPct', 1)">▲</button>
-        </div>
+        <label>매수 계약금 (만원)</label>
+        <input type="number" id="refBuyContractAmt" value="20000" oninput="calc()">
+        <div style="font-size:11px;color:var(--sub);margin-top:3px">= 매수가의 <span id="r_buyContractPct" style="font-weight:700;color:var(--blue)">—</span>%</div>
       </div>
       <div class="field">
         <label>매수 1차 중도금 (만원)</label>
@@ -436,8 +430,8 @@
             <span class="amt amt-in" id="t_sell_earnest">-</span>
           </div>
           <div class="txn-row" id="t_sell_earnest_d2_row">
-            <span class="lbl" style="font-size:11px;color:var(--sub)">약정계약금 2차 (약정서)</span>
-            <span class="amt" id="t_sell_earnest2_note" style="font-size:11px;color:var(--sub)">-</span>
+            <span class="lbl">약정계약금 2차 (약정서 완료)</span>
+            <span class="amt amt-in" id="t_sell_earnest2_note">-</span>
           </div>
           <div class="txn-note">삼익 매수자로부터 수령.<br>이 돈으로 사당 가계약금 지급 가능. 실계약 시 계약금에 포함.</div>
           <div class="txn-subtotal">
@@ -891,8 +885,6 @@ function calc() {
   $('r_saleCostTotal').textContent = fmt(saleCost) + ' 만원';
   $('r_buyCostTotal').textContent  = fmt(buyCost)  + ' 만원';
 
-  const saleContractPct  = val('refSaleContractPct') / 100;
-  const buyContractPct   = val('refBuyContractPct')  / 100;
   const ctSaleDeposit1   = val('ctSaleDeposit1');
   const ctSaleDeposit2   = val('ctSaleDeposit2');
   const ctDeposit1       = val('ctDeposit1');
@@ -904,13 +896,21 @@ function calc() {
   const ctInterim     = val('buyInterim1') + val('buyInterim2');   // 1차+2차 합계
   const buyInterim    = ctInterim;
 
+  // ── 계약금 금액 직접 입력 ──
+  const sellContract   = val('refSaleContractAmt');
+  const buyContract    = val('refBuyContractAmt');
+  const saleContractPct = salePrice > 0 ? (sellContract / salePrice * 100) : 0;
+  const buyContractPct  = buyPrice  > 0 ? (buyContract  / buyPrice  * 100) : 0;
+
+  // 비율 표시
+  $('r_saleContractPct').textContent = saleContractPct.toFixed(1);
+  $('r_buyContractPct').textContent  = buyContractPct.toFixed(1);
+
   // ── 매도 ──
-  const sellContract = salePrice * saleContractPct;
   const sellBalance  = salePrice - sellContract - sellInterim;
   const sellNet      = salePrice - debt - saleCost + newLoan;
 
   // ── 매수 ──
-  const buyContract    = buyPrice * buyContractPct;
   const buyContractAdd = Math.max(0, buyContract - ctDeposit1);
 
   const buyBalance     = buyPrice - buyContract - buyInterim;
@@ -943,14 +943,18 @@ function calc() {
   }
 
   // 스텝 표시
-  $('t_sell_pct').textContent = val('refSaleContractPct');
-  $('t_buy_pct').textContent  = val('refBuyContractPct');
+  $('t_sell_pct').textContent = saleContractPct.toFixed(1);
+  $('t_buy_pct').textContent  = buyContractPct.toFixed(1);
 
-  // ① 가계약
-  const earnestNet = ctSaleDeposit1 - ctDeposit1;
+  // ① 가계약 (약정계약금 1차 + 2차 모두 수취 완료)
+  const earnestNet = ctSaleDeposit1 + ctSaleDeposit2 - ctDeposit1;
   $('t_sell_earnest').textContent = '+' + fmt(ctSaleDeposit1) + ' 만원';
   const dep2El = $('t_sell_earnest2_note');
-  if (dep2El) dep2El.textContent = '약정계약금 2차: +' + fmt(ctSaleDeposit2) + ' 만원 (약정서 작성 시)';
+  if (dep2El) {
+    dep2El.textContent = '+' + fmt(ctSaleDeposit2) + ' 만원 (약정서 작성완료)';
+    dep2El.style.color = 'var(--green)';
+    dep2El.className = 'amt amt-in';
+  }
   const earnestNetEl = $('t_earnest_net');
   earnestNetEl.textContent = (earnestNet >= 0 ? '+' : '−') + fmt(Math.abs(earnestNet)) + ' 만원';
   earnestNetEl.className   = earnestNet >= 0 ? 'amt-in' : 'amt-neg';
