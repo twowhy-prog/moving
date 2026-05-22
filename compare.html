@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>단지 입지 비교 | 삼익그린2차 vs 사당우성3단지 vs 노량진신동아리버파크</title>
+<title>단지 입지 비교 | 삼익그린2차 vs 신동아리버파크</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
@@ -12,8 +12,8 @@
 /* ── 공통 ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --a:#2563eb; --b:#16a34a; --c:#7c3aed;
-  --a-light:#dbeafe; --b-light:#dcfce7; --c-light:#ede9fe;
+  --a:#2563eb; --b:#16a34a;
+  --a-light:#dbeafe; --b-light:#dcfce7;
   --border:#e2e8f0; --text:#1e293b; --muted:#64748b;
   --radius:12px;
 }
@@ -28,7 +28,6 @@ h1,h2,h3{line-height:1.3}
 .badge{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600}
 .badge-a{background:var(--a);color:#fff}
 .badge-b{background:var(--b);color:#fff}
-.badge-c{background:var(--c);color:#fff}
 
 /* ── API 상태 패널 ── */
 .api-status-panel{background:#fff;border-bottom:1px solid var(--border);padding:10px 16px}
@@ -54,7 +53,7 @@ h1,h2,h3{line-height:1.3}
 /* ── 지도 ── */
 #map-container{position:relative;width:100%;height:400px;border-radius:8px;overflow:hidden;background:#e2e8f0}
 .lf-pin{width:34px;height:34px;border-radius:50% 50% 50% 0;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#fff;transform:rotate(-45deg);box-shadow:0 2px 8px rgba(0,0,0,.35)}
-.lf-pin-a{background:var(--a)} .lf-pin-b{background:var(--b)} .lf-pin-c{background:var(--c)}
+.lf-pin-a{background:var(--a)} .lf-pin-b{background:var(--b)}
 .lf-inner{transform:rotate(45deg)}
 .map-mock{width:100%;height:100%;background:linear-gradient(180deg,#c8d8e8,#d4e6c3);display:flex;align-items:center;justify-content:center}
 
@@ -65,16 +64,13 @@ h1,h2,h3{line-height:1.3}
 .ctbl thead th{background:#f8fafc;font-weight:700}
 .ctbl thead .th-a{background:var(--a-light);color:var(--a)}
 .ctbl thead .th-b{background:var(--b-light);color:var(--b)}
-.ctbl thead .th-c{background:var(--c-light);color:var(--c)}
 .ctbl tbody tr:hover{background:#f8fafc}
 .ctbl .lbl{text-align:left;font-weight:600}
 .win-a{background:var(--a-light);font-weight:700;color:var(--a)}
 .win-b{background:var(--b-light);font-weight:700;color:var(--b)}
-.win-c{background:var(--c-light);font-weight:700;color:var(--c)}
 .wtag{display:inline-block;font-size:10px;padding:1px 6px;border-radius:8px;margin-left:4px;font-weight:600}
 .wtag-a{background:var(--a);color:#fff}
 .wtag-b{background:var(--b);color:#fff}
-.wtag-c{background:var(--c);color:#fff}
 .wtag-tie{background:#94a3b8;color:#fff}
 
 /* ── 그리드 ── */
@@ -88,12 +84,11 @@ h1,h2,h3{line-height:1.3}
 .chart-wrap-tall{position:relative;height:340px}
 
 /* ── 정보 카드 ── */
-.info-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.info-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 @media(max-width:780px){.info-cards{grid-template-columns:1fr}}
 .icard{border-radius:8px;padding:12px 14px;border:1.5px solid var(--border)}
 .icard.a{border-color:var(--a);background:var(--a-light)}
 .icard.b{border-color:var(--b);background:var(--b-light)}
-.icard.c{border-color:var(--c);background:var(--c-light)}
 .icard h4{font-size:13px;font-weight:700;margin-bottom:8px}
 .icard .row{font-size:12px;margin-bottom:4px;display:flex;gap:6px}
 .icard .row .k{color:var(--muted);min-width:62px;flex-shrink:0}
@@ -110,12 +105,11 @@ h1,h2,h3{line-height:1.3}
 .loading-row td{color:#94a3b8;font-style:italic}
 
 /* ── 현재 수치 카드 ── */
-.stat-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+.stat-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
 @media(max-width:600px){.stat-cards{grid-template-columns:1fr}}
 .stat-card{border-radius:8px;padding:14px;text-align:center;border:1.5px solid var(--border)}
 .stat-card.a{border-color:var(--a);background:var(--a-light)}
 .stat-card.b{border-color:var(--b);background:var(--b-light)}
-.stat-card.c{border-color:var(--c);background:var(--c-light)}
 .stat-card .val{font-size:28px;font-weight:900;line-height:1}
 .stat-card .grade{font-size:12px;margin-top:4px;font-weight:600}
 .stat-card .sub{font-size:11px;color:var(--muted);margin-top:2px}
@@ -123,7 +117,7 @@ h1,h2,h3{line-height:1.3}
 /* ── 종합점수 ── */
 .score-section{background:linear-gradient(135deg,#1e293b,#0f172a);color:#fff;border-radius:var(--radius);padding:24px}
 .score-title{font-size:18px;font-weight:800;margin-bottom:20px;text-align:center}
-.score-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px}
+.score-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
 @media(max-width:600px){.score-grid{grid-template-columns:1fr}}
 .score-card{background:rgba(255,255,255,.08);border-radius:10px;padding:16px;text-align:center}
 .score-card.winner{background:rgba(124,58,237,.25);border:1.5px solid #7c3aed}
@@ -152,9 +146,9 @@ const SEOUL_AIR_API_KEY  = "684c4a667374776f3436726c4a6a76";
 // worker.js 파일을 배포하면 됩니다. 없으면 null로 두세요.
 const CUSTOM_PROXY_URL = null; // 예: "https://my-proxy.yourname.workers.dev"
 
-const A = { id:'a', name:'삼익그린2차',          lat:37.5526, lng:127.1485, lawdCd:'11740', aptKw:'삼익그린2차',    umdNm:'명일동'   };
-const B = { id:'b', name:'사당우성3단지',         lat:37.4899, lng:126.9759, lawdCd:'11590', aptKw:'우성3',          umdNm:'사당동'   };
-const C = { id:'c', name:'노량진신동아리버파크',   lat:37.5138, lng:126.9424, lawdCd:'11590', aptKw:'신동아리버파크', umdNm:'노량진동' };
+const A = { id:'a', name:'삼익그린2차',     lat:37.5526, lng:127.1485, lawdCd:'11740', aptKw:'삼익그린2차',    umdNm:'명일동'   };
+const B = { id:'b', name:'신동아리버파크', lat:37.5138, lng:126.9424, lawdCd:'11590', aptKw:'신동아리버파크', umdNm:'노량진동' };
+// const C 삭제됨 — 사당우성3단지 제거, 신동아리버파크를 B로 승격 (2026.05 실계약 완료)
 
 const CATS = [
   { code:'SW8', label:'지하철역', icon:'🚇' },
@@ -176,12 +170,11 @@ const CATS = [
 
 <!-- 헤더 -->
 <div class="header">
-  <h1>🏠 세 단지 입지 비교 분석</h1>
-  <p>데이터 기준일: 2026년 4월 27일 · API 실시간 연동</p>
+  <h1>🏠 단지 입지 비교 분석</h1>
+  <p>데이터 기준일: 2026년 5월 22일 · API 실시간 연동</p>
   <div class="badge-row">
     <span class="badge badge-a">A. 삼익그린2차 (현 거주지)</span>
-    <span class="badge badge-b">B. 사당우성3단지 (매수 검토)</span>
-    <span class="badge badge-c">C. 노량진신동아리버파크 (매수 검토)</span>
+    <span class="badge badge-b">B. 신동아리버파크 (매수 확정)</span>
   </div>
 </div>
 
@@ -236,43 +229,31 @@ const CATS = [
     </div>
     <!-- B -->
     <div class="icard b">
-      <h4>B. 사당우성3단지</h4>
-      <div class="row"><span class="k">주소</span><span class="v">동작구 사당동</span></div>
-      <div class="row"><span class="k">지하철</span><span class="v">4·7호선 이수역 도보 7~10분</span></div>
-      <div class="row"><span class="k">노선수</span><span class="v">2개 (더블역세권) ⭐ ⚠️ 4↔7호선 막장환승 주의</span></div>
-      <div class="row"><span class="k">리모델링</span><span class="v">포스코이앤씨 더샵이수역엘플레노</span></div>
-      <div class="row"><span class="k">이주예정</span><span class="v">2027~2028 / 준공 2031~2032</span></div>
-      <div class="row"><span class="k">세대수</span><span class="v">855세대 (우성3차 단독) · 조합(극동+우성2·3차) 3,485세대</span></div>
-      <div class="row"><span class="k">세대증가</span><span class="v">3,485 → 4,006세대 (+521세대)</span></div>
-      <div class="row"><span class="k">지형</span><span class="v">완만한 오르막 (리모델링 후 개선)</span></div>
-      <div class="row"><span class="k">강남접근</span><span class="v">4·7호선 직결 우수 ⭐</span></div>
-      <div class="row"><span class="k">상권</span><span class="v">남성사계시장·이마트이수·메가박스</span></div>
-      <div class="row"><span class="k">배정초</span><span class="v">서울삼일초</span></div>
-      <div class="row"><span class="k">배정중</span><span class="v">사당중 (전국18%·서울62%) ⭐</span></div>
-    </div>
-    <!-- C -->
-      <div class="icard c">
-      <h4>C. 노량진신동아리버파크</h4>
-      <div class="row"><span class="k">주소</span><span class="v">동작구 노량진동 255 (한강변)</span></div>
-      <div class="row"><span class="k">지하철</span><span class="v">1·9호선 노량진역 도보 5분 ⭐</span></div>
-      <div class="row"><span class="k">노선수</span><span class="v">2개 (더블역세권, 9호선 급행 포함) ⭐</span></div>
-      <div class="row"><span class="k">준공</span><span class="v">2003년 (약 23년 경과)</span></div>
-      <div class="row"><span class="k">세대수</span><span class="v">약 1,120세대 (4개 동)</span></div>
-      <div class="row"><span class="k">주요 평형</span><span class="v">33평형 (공급109/전용84㎡) · 40평형 (공급139/전용109㎡)</span></div>
-      <div class="row"><span class="k">재건축</span><span class="v">추진 준비 중 (노후도 기준 도달)</span></div>
-      <div class="row"><span class="k">개발호재</span><span class="v">노량진 뉴타운 8개 구역 2027년 전면 착공·2031년 완공 목표 / 수협 부지 복합개발 2026년 재추진 / 인근 1만 가구 신규 입주로 상권 전환</span></div>
+      <h4>B. 신동아리버파크 (실계약 완료)</h4>
+      <div class="row"><span class="k">주소</span><span class="v">동작구 노량진동 325번지</span></div>
+      <div class="row"><span class="k">지하철</span><span class="v">상도역(7호선) 도보 9분, 장승배기역(7호선) 도보 10분</span></div>
+      <div class="row"><span class="k">노량진역</span><span class="v">1·9호선 노량진역 도보 15분</span></div>
+      <div class="row"><span class="k">노선수</span><span class="v">2개 (7호선 + 1·9호선 접근) ⭐</span></div>
+      <div class="row"><span class="k">세대수</span><span class="v">1,696세대 / 7개동 / 최고 28층</span></div>
+      <div class="row"><span class="k">준공</span><span class="v">2001년 2월 (약 25년 경과)</span></div>
+      <div class="row"><span class="k">실계약 호수</span><span class="v">705동 2405호 (24층)</span></div>
+      <div class="row"><span class="k">전용면적</span><span class="v">109~144㎡ (대형 평형)</span></div>
+      <div class="row"><span class="k">매수가</span><span class="v">17억 2,500만원</span></div>
+      <div class="row"><span class="k">재건축</span><span class="v">추진 여부 미정 (2001년 준공 25년차)</span></div>
+      <div class="row"><span class="k">개발호재</span><span class="v">노량진 뉴타운 8개 구역 2027년 전면 착공·2031년 완공 목표 / 수협 부지 복합개발 2026년 재추진</span></div>
       <div class="row"><span class="k">지형</span><span class="v">평지 (한강변, 우수)</span></div>
       <div class="row"><span class="k">강남접근</span><span class="v">9호선 급행 직결 약 20분 ⭐</span></div>
-      <div class="row"><span class="k">상권</span><span class="v">노량진수산시장, 여의도 10분, 대방상권 / 뉴타운 완공 후 주거 소비 상권으로 전환 기대</span></div>
+      <div class="row"><span class="k">상권</span><span class="v">노량진수산시장, 여의도 10분, 대방상권</span></div>
       <div class="row"><span class="k">한강조망</span><span class="v">일부 동 가능 ⭐</span></div>
+      <div class="row"><span class="k">특이사항</span><span class="v">토지거래허가구역</span></div>
       <div class="row"><span class="k">배정초</span><span class="v">노량진초등학교</span></div>
       <div class="row"><span class="k">배정중</span><span class="v">대방중학교</span></div>
       <div class="row"><span class="k">학원가</span><span class="v">노량진 학원가 (공무원 특화, 뉴타운 완공 후 일반 학원가 전환 전망)</span></div>
     </div>
   </div>
   <div class="remodel">
-    <h3>🔨 사당우성3단지 리모델링 (포스코이앤씨 더샵이수역엘플레노)</h3>
-    <p>이주예정 2027~2028 | 준공목표 2031~2032 | 3개 단지(극동·우성2·3차) 합산 3,485세대 → 4,006세대 (+521세대) | 리모델링 후 신축급 프리미엄 기대</p>
+    <h3>🏠 신동아리버파크 — 2001년 준공 25년차 (재건축·리모델링 추진 여부 미정)</h3>
+    <p>705동 2405호 (24층) 실계약 완료 | 전용 109~144㎡ 대형 평형 | 1·9호선 노량진역 도보 15분 · 상도역(7호선) 도보 9분 | 한강 조망 가능 | 토지거래허가구역</p>
   </div>
 </div>
 
@@ -281,18 +262,18 @@ const CATS = [
   <div class="section-title"><span class="icon">🚇</span> 교통 비교<span class="tag tag-hard" style="margin-left:auto">하드코딩</span></div>
   <div class="tbl-wrap">
     <table class="ctbl">
-      <thead><tr><th class="lbl">항목</th><th class="th-a">A. 삼익그린2차</th><th class="th-b">B. 사당우성3단지</th><th class="th-c">C. 노량진신동아</th><th>우위</th></tr></thead>
+      <thead><tr><th class="lbl">항목</th><th class="th-a">A. 삼익그린2차</th><th class="th-b">B. 신동아리버파크</th><th>우위</th></tr></thead>
       <tbody>
-        <tr><td class="lbl">최근접역</td><td>5호선 고덕역 (도보 5~10분)</td><td>4·7호선 이수역 (도보 7~10분)</td><td class="win-c">1·9호선 노량진역 (도보 5분) ⭐</td><td><span class="wtag wtag-c">C</span></td></tr>
-        <tr><td class="lbl">이용 노선수</td><td>1개 (9호선 4단계 2028년 개통 예정)</td><td>2개 (더블역세권) ⚠️막장환승</td><td class="win-c">2개 (더블역세권, 9호선 급행) ⭐</td><td><span class="wtag wtag-c">C</span></td></tr>
-        <tr><td class="lbl">9호선</td><td>4단계 공사 중 (2028년 개통 예정)</td><td>7호선→고속터미널역 환승 (직접 아님)</td><td class="win-c">노량진역 9호선 급행 직접 이용 ⭐</td><td><span class="wtag wtag-c">C</span></td></tr>
-        <tr><td class="lbl">강남(강남역)</td><td>5호선→2호선 환승 약 45~50분</td><td>4호선 직결 약 20~25분</td><td class="win-c">9호선 급행 직결 약 20분 ⭐</td><td><span class="wtag wtag-c">C</span></td></tr>
-        <tr><td class="lbl">도심(광화문)</td><td>5호선 직결 약 40분</td><td>4호선→1호선 환승 약 35분</td><td class="win-c">1호선 직결 약 15분 ⭐</td><td><span class="wtag wtag-c">C</span></td></tr>
-        <tr><td class="lbl">삼일대로330 (직장)</td><td>5호선→을지로3가 환승 약 35~40분</td><td>4호선 이수→을지로3가 직통 약 25~30분</td><td class="win-c">1호선 직통 약 15~20분 ⭐</td><td><span class="wtag wtag-c">C</span></td></tr>
-        <tr><td class="lbl">GTX</td><td>GTX-D 강동구 경유 확정 (2024.1 발표, 착공 미확정)</td><td>수서·삼성역 GTX-A 접근 가능</td><td>여의도·용산 개발 수혜 간접</td><td><span class="wtag wtag-tie">상황별</span></td></tr>
-        <tr><td class="lbl">비즈밸리/특수입지</td><td class="win-a">⭐ 고덕비즈밸리 인근 (23만㎡, 완성)</td><td>사당·이수 교통허브 상권</td><td>여의도 금융가 10분 ⭐</td><td><span class="wtag wtag-tie">상황별</span></td></tr>
-        <tr><td class="lbl">지형 편의성</td><td class="win-a">평지 (우수)</td><td>완만한 오르막 (리모델링 후 개선)</td><td class="win-c">평지·한강변 (우수)</td><td><span class="wtag wtag-tie">A·C</span></td></tr>
-        <tr><td class="lbl">버스 허브</td><td>중간 (고덕·강일 노선)</td><td class="win-b">풍부 (사당·이수 교통허브)</td><td>양호 (노량진·대방 노선)</td><td><span class="wtag wtag-b">B</span></td></tr>
+        <tr><td class="lbl">최근접역</td><td>5호선 고덕역 (도보 5~10분)</td><td class="win-b">상도역(7호선) 도보 9분 · 노량진역(1·9호선) 도보 15분 ⭐</td><td><span class="wtag wtag-b">B</span></td></tr>
+        <tr><td class="lbl">이용 노선수</td><td>1개 (9호선 4단계 2028년 개통 예정)</td><td class="win-b">2개 (7호선 + 1·9호선 접근) ⭐</td><td><span class="wtag wtag-b">B</span></td></tr>
+        <tr><td class="lbl">9호선</td><td>4단계 공사 중 (2028년 개통 예정)</td><td class="win-b">노량진역 9호선 급행 도보 15분 ⭐</td><td><span class="wtag wtag-b">B</span></td></tr>
+        <tr><td class="lbl">강남(강남역)</td><td>5호선→2호선 환승 약 45~50분</td><td class="win-b">9호선 급행 직결 약 20분 ⭐</td><td><span class="wtag wtag-b">B</span></td></tr>
+        <tr><td class="lbl">도심(광화문)</td><td>5호선 직결 약 40분</td><td class="win-b">1호선 직결 약 15분 ⭐</td><td><span class="wtag wtag-b">B</span></td></tr>
+        <tr><td class="lbl">삼일대로330 (직장)</td><td>5호선→을지로3가 환승 약 35~40분</td><td class="win-b">1호선 직통 약 15~20분 ⭐</td><td><span class="wtag wtag-b">B</span></td></tr>
+        <tr><td class="lbl">GTX</td><td>GTX-D 강동구 경유 확정 (2024.1 발표, 착공 미확정)</td><td>여의도·용산 개발 수혜 간접</td><td><span class="wtag wtag-tie">상황별</span></td></tr>
+        <tr><td class="lbl">비즈밸리/특수입지</td><td class="win-a">⭐ 고덕비즈밸리 인근 (23만㎡, 완성)</td><td>여의도 금융가 10분 ⭐</td><td><span class="wtag wtag-tie">상황별</span></td></tr>
+        <tr><td class="lbl">지형 편의성</td><td class="win-a">평지 (우수)</td><td class="win-b">평지·한강변 (우수)</td><td><span class="wtag wtag-tie">A·B</span></td></tr>
+        <tr><td class="lbl">버스 허브</td><td>중간 (고덕·강일 노선)</td><td>양호 (노량진·대방·상도 노선)</td><td><span class="wtag wtag-tie">동일</span></td></tr>
       </tbody>
     </table>
   </div>
@@ -303,13 +284,13 @@ const CATS = [
   <div class="section-title"><span class="icon">🚗</span> 주차 · 전기차 충전 현황<span class="tag tag-hard" style="margin-left:auto">하드코딩</span></div>
   <div class="tbl-wrap">
     <table class="ctbl">
-      <thead><tr><th class="lbl">항목</th><th class="th-a">A. 삼익그린2차</th><th class="th-b">B. 사당우성3단지</th><th class="th-c">C. 노량진신동아</th><th>우위</th></tr></thead>
+      <thead><tr><th class="lbl">항목</th><th class="th-a">A. 삼익그린2차</th><th class="th-b">B. 신동아리버파크</th><th>우위</th></tr></thead>
       <tbody>
-        <tr><td class="lbl">총 세대수</td><td>2,400세대</td><td>855세대 (우성3차 단독)</td><td>약 1,120세대</td><td><span class="wtag wtag-tie">-</span></td></tr>
-        <tr><td class="lbl">주차 대수</td><td>약 1,200대 (세대당 ≈0.5대)</td><td>약 1,850대 (세대당 ≈0.53대)</td><td class="win-c">약 900대 (세대당 ≈0.8대)</td><td><span class="wtag wtag-c">C</span></td></tr>
-        <tr><td class="lbl">주차 방식</td><td>지상+지하 혼합 (부족)</td><td>지하+기계식 (부족)</td><td>지하+지상 (보통)</td><td><span class="wtag wtag-tie">동일</span></td></tr>
-        <tr><td class="lbl">전기차 충전</td><td>완속 일부 (세대당 1/20 미만)</td><td>완속 일부 설치</td><td>완속 일부 설치</td><td><span class="wtag wtag-tie">동일</span></td></tr>
-        <tr><td class="lbl">리모델링/재건축 후</td><td>재건축 시 지하 확대 예정</td><td class="win-b">⭐ 지하주차장 확대 + EV충전 대폭 증설</td><td>재건축 추진 시 개선 예정</td><td><span class="wtag wtag-b">B</span></td></tr>
+        <tr><td class="lbl">총 세대수</td><td>2,400세대</td><td>1,696세대 / 7개동</td><td><span class="wtag wtag-tie">-</span></td></tr>
+        <tr><td class="lbl">주차 대수</td><td>약 1,200대 (세대당 ≈0.5대)</td><td class="win-b">약 1,360대 (세대당 ≈0.8대)</td><td><span class="wtag wtag-b">B</span></td></tr>
+        <tr><td class="lbl">주차 방식</td><td>지상+지하 혼합 (부족)</td><td>지하+지상 (보통)</td><td><span class="wtag wtag-tie">동일</span></td></tr>
+        <tr><td class="lbl">전기차 충전</td><td>완속 일부 (세대당 1/20 미만)</td><td>완속 일부 설치</td><td><span class="wtag wtag-tie">동일</span></td></tr>
+        <tr><td class="lbl">재건축 후</td><td>재건축 시 지하 확대 예정</td><td>재건축·리모델링 추진 시 개선 예정</td><td><span class="wtag wtag-tie">동일</span></td></tr>
       </tbody>
     </table>
   </div>
@@ -328,12 +309,11 @@ const CATS = [
           <th class="lbl">시설</th>
           <th class="th-a">A 최근접</th><th class="th-a">A 수</th>
           <th class="th-b">B 최근접</th><th class="th-b">B 수</th>
-          <th class="th-c">C 최근접</th><th class="th-c">C 수</th>
           <th>우위</th>
         </tr>
       </thead>
       <tbody id="fac-tbody">
-        <tr class="loading-row"><td colspan="8" style="text-align:center"><span class="spinner"></span> 카카오 API 로딩중…</td></tr>
+        <tr class="loading-row"><td colspan="6" style="text-align:center"><span class="spinner"></span> 카카오 API 로딩중…</td></tr>
       </tbody>
     </table>
   </div>
