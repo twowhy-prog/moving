@@ -858,8 +858,8 @@ function syncFromFinance() {
     Object.entries(map).forEach(([from, to]) => {
       if (d[from] !== undefined && $(to)) $(to).value = d[from];
     });
-    // 주담대: 직접입력 모드면 그 값, 아니면 _currentLoan 사용
     if (d._currentLoan && $('refNewLoan')) $('refNewLoan').value = d._currentLoan;
+    if (d._currentTransferTax !== undefined && $('refTransferTax')) $('refTransferTax').value = d._currentTransferTax;
     calc();
     ctSaveInputs();
     const ind = $('ctSaveIndicator');
