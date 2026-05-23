@@ -334,8 +334,6 @@
         <div class="result-row"><span>취득세 합계</span><span id="r_taxTotal">-</span></div>
         <div class="result-row"><span>매수 중개보수</span><span id="r_buyFee">-</span></div>
         <div class="result-row"><span>등기비</span><span id="r_regFee">-</span></div>
-        <div class="result-row"><span>입주비용</span><span id="r_movein">-</span></div>
-        <div class="result-row"><span>수리비용</span><span id="r_renovationCost">-</span></div>
         <div class="sep"></div>
         <div class="result-row total"><span>🏠 매수 순수 비용 합계 <small style="font-weight:400;color:var(--sub)">(영유비·주담대 제외)</small></span><span id="r_buyCostBase">-</span></div>
       </div>
@@ -1184,8 +1182,6 @@ function calc() {
   $('r_buyFeeMax').textContent      = fmt(calcBrokerageFee(buyPrice));
   highlightFeeRef('feeRefBuy', buyPrice);
   $('r_regFee').textContent         = fmt(regFee) + ' 만원';
-  $('r_movein').textContent         = fmt(moveinCost) + ' 만원';
-  $('r_renovationCost').textContent = fmt(renovationCost) + ' 만원';
   $('r_buyCostBase').textContent    = fmt(buyCostBase) + ' 만원';
 
   // ─── 섹션 3: 주담대 필요액 산출 ───
