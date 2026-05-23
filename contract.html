@@ -176,6 +176,8 @@
   <h1>📋 계약 일정 — 매도·매수 자금 흐름</h1>
   <div class="header-actions">
     <button class="btn" onclick="toggleTheme()">🌙 다크모드</button>
+    <button class="btn" onclick="ctSaveInputs()" style="color:var(--blue);border-color:var(--blue)">💾 저장</button>
+    <span id="ctSaveIndicator" style="font-size:11px;color:var(--sub);align-self:center"></span>
   </div>
 </header>
 
@@ -830,7 +832,12 @@ function ctSaveInputs() {
   const data = {};
   CT_INPUT_IDS.forEach(id => { const el = $(id); if (el) data[id] = el.value; });
   CT_DATE_IDS.forEach(id  => { const el = $(id); if (el) data[id] = el.value; });
-  try { localStorage.setItem(CT_SAVE_KEY, JSON.stringify(data)); } catch(e) {}
+  data._savedAt = new Date().toLocaleString('ko-KR');
+  try {
+    localStorage.setItem(CT_SAVE_KEY, JSON.stringify(data));
+    const ind = $('ctSaveIndicator');
+    if (ind) ind.textContent = '저장됨 ' + data._savedAt;
+  } catch(e) {}
 }
 
 function ctLoadInputs() {
