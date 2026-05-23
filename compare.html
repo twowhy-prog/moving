@@ -1245,7 +1245,7 @@ async function loadFacilityData() {
 let chartPrice = null;
 function recentMonths(n) {
   const list = [];
-  const now = new Date(2026, 3, 1);
+  const now = new Date();
   for (let i = n - 1; i >= 0; i--) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
     list.push(`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}`);
@@ -1434,8 +1434,10 @@ async function loadSindongaDetail() {
       statusEl.textContent = '국토부 API 연결 실패 — 프록시 차단. 하드코딩 데이터 표시 중.';
       if (tagEl) { tagEl.className = 'tag tag-sample'; tagEl.textContent = '하드코딩'; }
       // 차트에 샘플 데이터 표시
-      sindongaDetailChart.data.datasets[2].data = [null,null,null,null,null,null,null,null,null,12.95,null,14.8];
-      sindongaDetailChart.data.datasets[1].data = [null,null,null,null,null,null,null,null,null,null, null,14.1];
+      // 43평 2025.10 확인거래 14.8억 → index 4 (Jun~May 기준 2025.10=idx4)
+      // 33평 2025.10 KB추정 14.1억 → index 4
+      sindongaDetailChart.data.datasets[2].data = [null,null,null,null,14.8,null,null,null,null,null,null,null];
+      sindongaDetailChart.data.datasets[1].data = [null,null,null,null,14.1,null,null,null,null,null,null,null];
       sindongaDetailChart.update();
     }
   } catch(e) {
@@ -1533,8 +1535,9 @@ function initCharts() {
   const CA = '#2563eb', CB = '#16a34a', CB2 = '#0891b2';
   const months12 = recentMonths(12).map(m => `${m.slice(0,4)}.${m.slice(4)}`);
   const sampleA  = months12.map((_,i) => +(10.5 + i*0.08 + Math.sin(i*.5)*.4).toFixed(2));
-  const sampleB  = months12.map((_,i) => +(12.0 + i*0.10 + Math.sin(i*.6)*.3).toFixed(2));
-  const sampleB2 = months12.map((_,i) => +(15.5 + i*0.12 + Math.sin(i*.6)*.4).toFixed(2));
+  const sampleB  = months12.map((_,i) => +(13.5 + i*0.08 + Math.sin(i*.6)*.3).toFixed(2));
+  // 43평(114㎡): 2025.10 확인거래 14.8억 기준, 최근 12개월 샘플 (17억+ 거래 없음 확인)
+  const sampleB2 = months12.map((_,i) => +(13.8 + i*0.09 + Math.sin(i*.6)*.3).toFixed(2));
   chartPrice = new Chart(document.getElementById('priceChart'), {
     type: 'line',
     data: {
