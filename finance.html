@@ -452,8 +452,13 @@
           </div>
         </div>
         <div class="field">
-          <label>주담대 금액 (만원) <span style="font-size:10px;color:var(--sub)">(최소필요액 기준 천만원 단위 자동)</span></label>
-          <input type="number" id="newLoan" value="30000" readonly style="background:var(--input-bg);color:var(--blue);font-weight:600">
+          <label style="display:flex;align-items:center;gap:6px;">
+            주담대 확정액 (만원)
+            <span id="loanAutoTag" style="font-size:10px;padding:1px 5px;border-radius:3px;background:var(--blue);color:#fff;cursor:default">자동</span>
+            <button id="loanResetBtn" onclick="resetLoanAuto()" style="display:none;font-size:10px;padding:1px 6px;border-radius:3px;border:1px solid var(--blue);background:transparent;color:var(--blue);cursor:pointer;">↺ 자동계산</button>
+          </label>
+          <input type="number" id="newLoan" value="30000" oninput="setLoanManual()" style="background:var(--input-bg);color:var(--blue);font-weight:600">
+          <small id="loanCalcHint" style="color:var(--sub);margin-top:2px;display:block"></small>
         </div>
         <div class="field">
           <label>주담대 금리 (%)</label>
@@ -476,8 +481,8 @@
         <div class="result-row"><span>영유비 포함액 (<span id="r_dqLabel">-</span>분기)</span><span id="r_daycareIncluded">-</span></div>
         <div class="result-row total"><span>총 필요금액</span><span id="r_buyCostTotal">-</span></div>
         <div class="sep"></div>
-        <div class="result-row total"><span>🏦 최소 필요 주담대</span><span id="r_minLoan" class="color-blue">-</span></div>
-        <div class="result-row"><span>신청 주담대</span><span id="r_loanApplied">-</span></div>
+        <div class="result-row total"><span>🏦 최소 필요 주담대 (계산치)</span><span id="r_minLoan" class="color-blue">-</span></div>
+        <div class="result-row"><span>확정 주담대 <small style="color:var(--sub)">(직접 입력 가능)</small></span><span id="r_loanApplied">-</span></div>
         <div class="result-row"><span>월 원리금 (원리금균등)</span><span id="r_monthlyPayment" class="color-red">-</span></div>
         <div class="info">* 가용자금 = 세후수령 − 상환부채 + 크립토자산 &nbsp;|&nbsp; 최소주담대 = 총필요금액 − 가용자금</div>
       </div>
@@ -1011,6 +1016,21 @@ let taxChart = null;
 let giftChart = null;
 let xrpPriceKRW = 0;
 let btcPriceKRW = 0;
+let loanManual = false;
+
+function setLoanManual() {
+  loanManual = true;
+  $('loanAutoTag').style.display = 'none';
+  $('loanResetBtn').style.display = '';
+  calc();
+}
+
+function resetLoanAuto() {
+  loanManual = false;
+  $('loanAutoTag').style.display = '';
+  $('loanResetBtn').style.display = 'none';
+  calc();
+}
 
 // ===== 유틸 =====
 const $ = id => document.getElementById(id);
@@ -1044,6 +1064,8 @@ function saveInputs() {
   const data = {};
   INPUT_IDS.forEach(id => { const el = $(id); if (el) data[id] = el.value; });
   CHECKBOX_IDS.forEach(id => { const el = $(id); if (el) data[id] = el.checked; });
+  data._loanManual = loanManual;
+  if (loanManual) data._newLoanManualVal = $('newLoan') ? $('newLoan').value : '';
   data._savedAt = new Date().toLocaleString('ko-KR');
   localStorage.setItem(SAVE_KEY, JSON.stringify(data));
   const ind = $('saveIndicator');
@@ -1057,6 +1079,12 @@ function loadInputs() {
     const data = JSON.parse(raw);
     INPUT_IDS.forEach(id => { const el = $(id); if (el && data[id] !== undefined) el.value = data[id]; });
     CHECKBOX_IDS.forEach(id => { const el = $(id); if (el && data[id] !== undefined) el.checked = data[id]; });
+    if (data._loanManual) {
+      loanManual = true;
+      $('loanAutoTag').style.display = 'none';
+      $('loanResetBtn').style.display = '';
+      if (data._newLoanManualVal !== undefined && $('newLoan')) $('newLoan').value = data._newLoanManualVal;
+    }
     const ind = $('saveIndicator');
     if (ind && data._savedAt) ind.textContent = '마지막 저장 ' + data._savedAt;
     return true;
@@ -1336,10 +1364,17 @@ function calc() {
   const buyCostTotal    = buyCostBase + daycareIncluded; // 총 필요금액
   const minLoan         = buyCostTotal - availCash;      // 최소 필요 주담대
 
-  // 최소 필요액 기준 천만원 단위 올림 자동 반영
+  // 최소 필요액 기준 천만원 단위 올림
   const autoLoan = Math.max(0, Math.ceil(minLoan / 1000) * 1000);
-  $('newLoan').value = autoLoan;
-  const newLoan = autoLoan;
+  let newLoan;
+  if (loanManual) {
+    newLoan = val('newLoan');
+    $('loanCalcHint').textContent = `계산치: ${fmt(autoLoan)} 만원 (최소 ${fmt(minLoan)} 만원)`;
+  } else {
+    $('newLoan').value = autoLoan;
+    newLoan = autoLoan;
+    $('loanCalcHint').textContent = `최소 필요액 기준 천만원 단위 자동 반영`;
+  }
 
   const monthlyPayment = calcMonthlyPayment(newLoan, newLoanRate, newLoanYears);
 
