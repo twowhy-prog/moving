@@ -494,31 +494,80 @@
     <div class="section-body">
       <div class="grid-3">
         <div class="field">
-          <label>부부 세후 월수입 합계 (만원)</label>
+          <label>본인 세후 월수입 (만원)</label>
           <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('totalIncome', -10)">▼</button>
-            <input type="number" id="totalIncome" value="900" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('totalIncome', 10)">▲</button>
+            <button class="adjust-btn" onclick="adjustValue('myIncome', -10)">▼</button>
+            <input type="number" id="myIncome" value="500" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('myIncome', 10)">▲</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>배우자 세후 월수입 (만원)</label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('spouseIncome', -10)">▼</button>
+            <input type="number" id="spouseIncome" value="400" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('spouseIncome', 10)">▲</button>
           </div>
         </div>
       </div>
 
-      <div class="result-box">
-        <div class="result-row"><span>부부합산 연소득</span><span id="r_annualIncome">-</span></div>
-
-        <div class="result-row"><span>LTV 한도</span><span id="r_ltvLimit">-</span></div>
-        <div class="result-row"><span>DSR 40% 월한도</span><span id="r_dsrMonthlyLimit">-</span></div>
+      <!-- 공통 부채 현황 -->
+      <div class="result-box" style="margin-bottom:14px">
+        <div style="font-weight:600;margin-bottom:6px;font-size:12px">공통 — 기존부채 월상환 (DSR 산입)</div>
         <div class="result-row indent"><span>마통 월이자 <small style="color:var(--sub)">(상환전 기준)</small></span><span id="r_matonMonthly">-</span></div>
         <div class="result-row indent"><span>기타대출 월이자 <small style="color:var(--sub)">(상환전 기준)</small></span><span id="r_etcMonthly">-</span></div>
         <div class="result-row indent"><span>자동차대출 월원리금 <small style="color:var(--sub)">(상환전 기준)</small></span><span id="r_carMonthly">-</span></div>
-        <div class="result-row"><span>기존부채 월상환 합계 <small style="color:var(--sub)">(대출신청 시점)</small></span><span id="r_existDebtMonthly">-</span></div>
-        <div class="result-row"><span>신규주담대 가능 월원리금</span><span id="r_newLoanMonthlyCap">-</span></div>
-        <div class="result-row"><span>역산 DSR 대출한도</span><span id="r_dsrLoanLimit">-</span></div>
-        <div class="sep"></div>
-        <div class="result-row total"><span>최종 한도 (MIN)</span><span id="r_finalLoanLimit">-</span></div>
-        <div class="result-row total"><span>신청 주담대 / 최종한도</span><span id="r_loanVsLimit">-</span></div>
-        <div class="result-row"><span>실제 DSR 비율</span><span id="r_actualDsr">-</span></div>
+        <div class="result-row"><span>기존부채 월상환 합계</span><span id="r_existDebtMonthly">-</span></div>
+        <div class="result-row"><span>LTV 한도 <small style="color:var(--sub)">(매수가 기준)</small></span><span id="r_ltvLimit">-</span></div>
       </div>
+
+      <!-- 3-케이스 비교 -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+
+        <!-- 본인 단독 -->
+        <div style="border:1px solid var(--border);border-top:3px solid #3b82f6;border-radius:8px;padding:12px">
+          <div style="font-weight:700;font-size:12px;color:#3b82f6;margin-bottom:10px;text-align:center">👤 본인 단독</div>
+          <div class="result-row" style="font-size:12px"><span style="color:var(--sub)">월수입</span><span id="r4_my_income">-</span></div>
+          <div class="result-row" style="font-size:12px"><span style="color:var(--sub)">연소득</span><span id="r4_my_annual">-</span></div>
+          <div class="result-row" style="font-size:12px"><span style="color:var(--sub)">DSR 40% 월한도</span><span id="r4_my_dsrCap">-</span></div>
+          <div class="result-row" style="font-size:12px"><span style="color:var(--sub)">신규가능 월원리금</span><span id="r4_my_newCap">-</span></div>
+          <div class="result-row" style="font-size:12px"><span style="color:var(--sub)">DSR 역산 한도</span><span id="r4_my_dsrLimit">-</span></div>
+          <div class="sep"></div>
+          <div class="result-row" style="font-size:12px;font-weight:700"><span>최종 한도</span><span id="r4_my_final">-</span></div>
+          <div class="result-row" style="font-size:12px;font-weight:700"><span>신청/한도</span><span id="r4_my_vs">-</span></div>
+          <div class="result-row" style="font-size:12px"><span style="color:var(--sub)">실DSR</span><span id="r4_my_dsr">-</span></div>
+        </div>
+
+        <!-- 배우자 단독 -->
+        <div style="border:1px solid var(--border);border-top:3px solid #8b5cf6;border-radius:8px;padding:12px">
+          <div style="font-weight:700;font-size:12px;color:#8b5cf6;margin-bottom:10px;text-align:center">👤 배우자 단독</div>
+          <div class="result-row" style="font-size:12px"><span style="color:var(--sub)">월수입</span><span id="r4_sp_income">-</span></div>
+          <div class="result-row" style="font-size:12px"><span style="color:var(--sub)">연소득</span><span id="r4_sp_annual">-</span></div>
+          <div class="result-row" style="font-size:12px"><span style="color:var(--sub)">DSR 40% 월한도</span><span id="r4_sp_dsrCap">-</span></div>
+          <div class="result-row" style="font-size:12px"><span style="color:var(--sub)">신규가능 월원리금</span><span id="r4_sp_newCap">-</span></div>
+          <div class="result-row" style="font-size:12px"><span style="color:var(--sub)">DSR 역산 한도</span><span id="r4_sp_dsrLimit">-</span></div>
+          <div class="sep"></div>
+          <div class="result-row" style="font-size:12px;font-weight:700"><span>최종 한도</span><span id="r4_sp_final">-</span></div>
+          <div class="result-row" style="font-size:12px;font-weight:700"><span>신청/한도</span><span id="r4_sp_vs">-</span></div>
+          <div class="result-row" style="font-size:12px"><span style="color:var(--sub)">실DSR</span><span id="r4_sp_dsr">-</span></div>
+        </div>
+
+        <!-- 연대보증 -->
+        <div style="border:1px solid var(--border);border-top:3px solid #10b981;border-radius:8px;padding:12px">
+          <div style="font-weight:700;font-size:12px;color:#10b981;margin-bottom:10px;text-align:center">👫 연대보증 (합산)</div>
+          <div class="result-row" style="font-size:12px"><span style="color:var(--sub)">월수입 합계</span><span id="r4_jt_income">-</span></div>
+          <div class="result-row" style="font-size:12px"><span style="color:var(--sub)">연소득 합계</span><span id="r4_jt_annual">-</span></div>
+          <div class="result-row" style="font-size:12px"><span style="color:var(--sub)">DSR 40% 월한도</span><span id="r4_jt_dsrCap">-</span></div>
+          <div class="result-row" style="font-size:12px"><span style="color:var(--sub)">신규가능 월원리금</span><span id="r4_jt_newCap">-</span></div>
+          <div class="result-row" style="font-size:12px"><span style="color:var(--sub)">DSR 역산 한도</span><span id="r4_jt_dsrLimit">-</span></div>
+          <div class="sep"></div>
+          <div class="result-row" style="font-size:12px;font-weight:700"><span>최종 한도</span><span id="r4_jt_final">-</span></div>
+          <div class="result-row" style="font-size:12px;font-weight:700"><span>신청/한도</span><span id="r4_jt_vs">-</span></div>
+          <div class="result-row" style="font-size:12px"><span style="color:var(--sub)">실DSR</span><span id="r4_jt_dsr">-</span></div>
+        </div>
+
+      </div>
+      <div class="info" style="margin-top:10px">* DSR 40% 기준 (2025 스트레스DSR 2단계) | LTV: 토지거래허가구역 투기과열 기준 | 기존부채는 세 케이스 모두 동일 적용</div>
     </div>
   </div>
 
@@ -980,8 +1029,9 @@ const INPUT_IDS = [
   'daycareQuarters','daycarePerQ',
   'xrpQty','btcQty','cryptoEtc',
   'xrpHold','btcHold','cryptoEtcHold',
+  'myIncome','spouseIncome',
   'newLoanRate','newLoanYears',
-  'totalIncome','parkingRate',
+  'parkingRate',
   'totalPlannedQ','paidQ',
   'livingCost','elemSchoolMonthly',
   'pension1','pension2','irp1','irp2','isa','parkingMonthly',
@@ -1314,14 +1364,15 @@ function calc() {
   mpEl.className = loanGap >= 0 ? 'color-green' : 'color-red';
 
   // ─── 섹션 4: 주담대 한도 검증 ───
-  const totalIncomeInput = val('totalIncome');
-  const annualIncome    = totalIncomeInput * 12;
-  const dsrMonthlyLimit = annualIncome * 0.4 / 12;
+  const myIncome     = val('myIncome');
+  const spouseIncome = val('spouseIncome');
+  const totalIncomeInput = myIncome + spouseIncome; // S6 현금흐름에서 참조
 
+  // LTV (투기과열구역 기준)
   let ltvLimit = 0;
-  if (buyPrice <= 150000)      ltvLimit = 60000;
-  else if (buyPrice <= 250000) ltvLimit = 40000;
-  else                         ltvLimit = 20000;
+  if (buyPrice <= 90000)      ltvLimit = Math.round(buyPrice * 0.40);
+  else if (buyPrice <= 150000) ltvLimit = 36000 + Math.round((buyPrice - 90000) * 0.20);
+  else                         ltvLimit = 48000 + Math.round((buyPrice - 150000) * 0.10);
 
   // DSR 기존부채: 대출 신청 시점 → 상환 여부와 무관하게 모두 포함
   const matonMonthly  = val('debtMaton') * val('debtMatonRate') / 100 / 12;
@@ -1329,30 +1380,42 @@ function calc() {
   const carMonthly    = calcMonthlyPayment(val('debtCar'), 6, val('debtCarMonths') / 12);
   const existDebtMonthly = matonMonthly + etcMonthly + carMonthly;
 
-  const newLoanMonthlyCap = dsrMonthlyLimit - existDebtMonthly;
-  const dsrLoanLimit  = calcLoanFromMonthly(newLoanMonthlyCap, newLoanRate, newLoanYears);
-  const finalLoanLimit= Math.min(ltvLimit, dsrLoanLimit);
-  const actualDsr     = ((monthlyPayment + existDebtMonthly) / (annualIncome / 12)) * 100;
-
-  $('r_annualIncome').textContent     = fmt(annualIncome) + ' 만원';
-  $('r_ltvLimit').textContent         = fmt(ltvLimit) + ' 만원';
-  $('r_dsrMonthlyLimit').textContent  = fmt(dsrMonthlyLimit) + ' 만원/월';
   $('r_matonMonthly').textContent     = fmt(matonMonthly) + ' 만원';
   $('r_etcMonthly').textContent       = fmt(etcMonthly) + ' 만원';
   $('r_carMonthly').textContent       = fmt(carMonthly) + ' 만원';
   $('r_existDebtMonthly').textContent = fmt(existDebtMonthly) + ' 만원';
-  $('r_newLoanMonthlyCap').textContent= fmt(newLoanMonthlyCap) + ' 만원';
-  $('r_dsrLoanLimit').textContent     = fmt(dsrLoanLimit) + ' 만원';
-  $('r_finalLoanLimit').textContent   = fmt(finalLoanLimit) + ' 만원';
+  $('r_ltvLimit').textContent         = fmt(ltvLimit) + ' 만원';
 
-  const loanRatio    = newLoan / finalLoanLimit;
-  const loanStatusEl = $('r_loanVsLimit');
-  loanStatusEl.textContent = `${fmt(newLoan)} / ${fmt(finalLoanLimit)} 만원`;
-  loanStatusEl.className   = loanRatio < 0.9 ? 'color-green' : loanRatio <= 1 ? 'color-yellow' : 'color-red';
+  // 케이스별 DSR 계산 헬퍼
+  function calcDsrCase(monthlyInc, prefix) {
+    const annualInc  = monthlyInc * 12;
+    const dsrCap     = annualInc * 0.4 / 12;
+    const newCap     = dsrCap - existDebtMonthly;
+    const dsrLimit   = newCap > 0 ? calcLoanFromMonthly(newCap, newLoanRate, newLoanYears) : 0;
+    const finalLimit = Math.min(ltvLimit, Math.max(0, dsrLimit));
+    const actualDsr  = monthlyInc > 0 ? ((monthlyPayment + existDebtMonthly) / monthlyInc) * 100 : 999;
+    $(prefix + '_income').textContent   = fmt(monthlyInc) + ' 만원';
+    $(prefix + '_annual').textContent   = fmt(annualInc) + ' 만원';
+    $(prefix + '_dsrCap').textContent   = fmt(dsrCap) + ' 만원';
+    $(prefix + '_newCap').textContent   = fmt(Math.max(0, newCap)) + ' 만원';
+    $(prefix + '_dsrLimit').textContent = fmt(Math.max(0, dsrLimit)) + ' 만원';
+    $(prefix + '_final').textContent    = fmt(finalLimit) + ' 만원';
+    const vsEl = $(prefix + '_vs');
+    vsEl.textContent = `${fmt(newLoan)} / ${fmt(finalLimit)} 만원`;
+    vsEl.className   = newLoan <= finalLimit ? 'color-green' : 'color-red';
+    const dsrEl = $(prefix + '_dsr');
+    dsrEl.textContent = fmtF(actualDsr) + '%';
+    dsrEl.className   = actualDsr <= 35 ? 'color-green' : actualDsr <= 40 ? '' : 'color-red';
+    return finalLimit;
+  }
 
-  const dsrEl = $('r_actualDsr');
-  dsrEl.textContent = fmtF(actualDsr) + '%';
-  dsrEl.className   = actualDsr <= 35 ? 'color-green' : actualDsr <= 40 ? 'color-yellow' : 'color-red';
+  calcDsrCase(myIncome,                'r4_my');
+  calcDsrCase(spouseIncome,            'r4_sp');
+  calcDsrCase(myIncome + spouseIncome, 'r4_jt');
+
+  // S5 이하에서 참조하는 변수들 (연대보증 기준 유지)
+  const annualIncome   = totalIncomeInput * 12;
+  const finalLoanLimit = Math.min(ltvLimit, calcLoanFromMonthly(annualIncome * 0.4 / 12 - existDebtMonthly, newLoanRate, newLoanYears));
 
   // ─── 섹션 5: 영유비 운용 ───
   const parkingRate    = val('parkingRate') / 100 / 4;
