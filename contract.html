@@ -299,6 +299,42 @@
         <div style="padding:7px 10px;background:var(--input-bg);border-radius:6px;border:1px solid var(--border);font-size:14px;font-weight:600;color:var(--red)" id="r_buyCostTotal">-</div>
       </div>
     </div>
+    <!-- 크립토 가용 자산 -->
+    <div style="font-size:11px;font-weight:700;color:var(--sub);margin:10px 0 6px;letter-spacing:.3px;display:flex;align-items:center;gap:8px">🪙 크립토 — 잔금 전 매도 예정 <button class="btn" style="font-size:11px;padding:2px 10px;margin-left:auto" onclick="fetchCtCryptoPrices()">🔄 시세 갱신</button><span id="ct_priceTime" style="font-size:11px;color:var(--sub)"></span></div>
+    <div class="grid-4">
+      <div class="field">
+        <label>XRP <span id="ct_xrpPriceLabel" style="font-size:10px;color:var(--blue);font-weight:600"></span></label>
+        <div class="field-adjust">
+          <button class="adjust-btn" onclick="adjustValue('ctXrpQty', -1000)">▼</button>
+          <input type="number" id="ctXrpQty" value="58000" oninput="calc()">
+          <button class="adjust-btn" onclick="adjustValue('ctXrpQty', 1000)">▲</button>
+        </div>
+        <div style="font-size:11px;color:var(--sub);margin-top:2px">개 ≈ <span id="ct_xrpVal" style="color:var(--green);font-weight:600">-</span> 만원</div>
+      </div>
+      <div class="field">
+        <label>BTC <span id="ct_btcPriceLabel" style="font-size:10px;color:var(--blue);font-weight:600"></span></label>
+        <div class="field-adjust">
+          <button class="adjust-btn" onclick="adjustValue('ctBtcQty', -0.1)">▼</button>
+          <input type="number" id="ctBtcQty" value="0.89" step="0.01" oninput="calc()">
+          <button class="adjust-btn" onclick="adjustValue('ctBtcQty', 0.1)">▲</button>
+        </div>
+        <div style="font-size:11px;color:var(--sub);margin-top:2px">개 ≈ <span id="ct_btcVal" style="color:var(--green);font-weight:600">-</span> 만원</div>
+      </div>
+      <div class="field">
+        <label>기타 코인 (만원)</label>
+        <div class="field-adjust">
+          <button class="adjust-btn" onclick="adjustValue('ctCryptoEtc', -100)">▼</button>
+          <input type="number" id="ctCryptoEtc" value="1000" oninput="calc()">
+          <button class="adjust-btn" onclick="adjustValue('ctCryptoEtc', 100)">▲</button>
+        </div>
+      </div>
+      <div class="field">
+        <label style="font-weight:600">크립토 총 예상 매도액</label>
+        <div style="padding:7px 10px;background:var(--input-bg);border-radius:6px;border:1px solid var(--border);font-size:14px;font-weight:600;color:var(--green)" id="r_cryptoProceeds">-</div>
+        <div style="font-size:10px;color:var(--sub);margin-top:3px">* 업비트 시세 미조회 시 XRP·BTC는 0원 처리</div>
+      </div>
+    </div>
+
     <!-- 계약금 금액 / 중도금 직접 입력 -->
     <div style="font-size:11px;font-weight:700;color:var(--sub);margin:10px 0 6px;letter-spacing:.3px">📊 계약금 및 중도금</div>
 
@@ -699,7 +735,8 @@
           <div class="net-row"><span style="color:var(--sub)">— 매도 중개보수</span><span id="nr_sell_fee" style="color:var(--red)">-</span></div>
           <div class="net-row"><span style="color:var(--sub)">— 이사비</span><span id="nr_sell_move" style="color:var(--red)">-</span></div>
           <div class="net-row"><span style="color:var(--sub)">+ 주담대 실행</span><span id="nr_buy_loan" style="color:var(--green)">-</span></div>
-          <div class="net-total"><span>매도+주담대 수령</span><span id="nr_sell_net" style="color:var(--green)">-</span></div>
+          <div class="net-row"><span style="color:var(--sub)">+ 크립토 매도</span><span id="nr_crypto" style="color:var(--green)">-</span></div>
+          <div class="net-total"><span>매도+주담대+크립토</span><span id="nr_sell_net" style="color:var(--green)">-</span></div>
         </div>
         <div class="net-card">
           <div class="net-card-title">📤 매수 (신동아리버파크) 지급 내역</div>
@@ -721,6 +758,10 @@
         <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px">
           <span style="color:var(--sub)">매도+주담대 수령</span>
           <span id="final_sell_net" style="color:var(--green);font-weight:600">-</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px">
+          <span style="color:var(--sub)">🪙 크립토 매도 예상</span>
+          <span id="final_crypto" style="color:var(--green);font-weight:600">-</span>
         </div>
         <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px">
           <span style="color:var(--sub)">매수 총 지출</span>
@@ -745,6 +786,60 @@
 const $ = id => document.getElementById(id);
 const fmt = v => isNaN(v) ? '-' : Math.round(v).toLocaleString('ko-KR');
 const val = id => parseFloat($(id)?.value) || 0;
+
+// ── 크립토 시세 ──
+let ctXrpPriceKRW = 0;
+let ctBtcPriceKRW = 0;
+
+async function fetchCtCryptoPrices() {
+  const timeEl = $('ct_priceTime');
+  if (timeEl) timeEl.textContent = '조회 중…';
+  try {
+    const res  = await fetch('https://api.upbit.com/v1/ticker?markets=KRW-XRP,KRW-BTC');
+    const data = await res.json();
+    data.forEach(item => {
+      if (item.market === 'KRW-XRP') ctXrpPriceKRW = item.trade_price;
+      if (item.market === 'KRW-BTC') ctBtcPriceKRW = item.trade_price;
+    });
+    $('ct_xrpPriceLabel').textContent = ctXrpPriceKRW.toLocaleString('ko-KR') + '원';
+    $('ct_btcPriceLabel').textContent = ctBtcPriceKRW.toLocaleString('ko-KR') + '원';
+    if (timeEl) timeEl.textContent = new Date().toLocaleTimeString('ko-KR') + ' 기준';
+    calc();
+  } catch(e) {
+    if (timeEl) timeEl.textContent = '시세 로드 실패';
+  }
+}
+
+// ── localStorage ──
+const CT_SAVE_KEY = 'contract_inputs_v1';
+const CT_INPUT_IDS = [
+  'refSalePrice','refAcqCost','refBuyPrice','refDebt','refNewLoan',
+  'refTransferTax','refSaleFee','refMoveCost',
+  'refAcqTax','refBuyFee','refRegFee','refMoveinCost',
+  'refSaleDeposit','saleInterim1','saleInterim2',
+  'refBuyDeposit','buyInterim1','buyInterim2',
+  'ctSaleDeposit1','ctSaleDeposit2','ctDeposit1',
+  'ctXrpQty','ctBtcQty','ctCryptoEtc',
+];
+const CT_DATE_IDS = [
+  'date_stage1','date_stageYak','date_stage2','date_stage3','date_stage5',
+  'date_sell_interim1','date_sell_interim2','date_buy_interim1','date_buy_interim2',
+];
+
+function ctSaveInputs() {
+  const data = {};
+  CT_INPUT_IDS.forEach(id => { const el = $(id); if (el) data[id] = el.value; });
+  CT_DATE_IDS.forEach(id  => { const el = $(id); if (el) data[id] = el.value; });
+  try { localStorage.setItem(CT_SAVE_KEY, JSON.stringify(data)); } catch(e) {}
+}
+
+function ctLoadInputs() {
+  try {
+    const data = JSON.parse(localStorage.getItem(CT_SAVE_KEY) || '{}');
+    CT_INPUT_IDS.forEach(id => { const el = $(id); if (el && id in data) el.value = data[id]; });
+    CT_DATE_IDS.forEach(id  => { const el = $(id); if (el && id in data && data[id]) el.value = data[id]; });
+  } catch(e) {}
+}
 
 // ── 단계 스크롤 ──
 function scrollToStage(stageId) {
@@ -941,9 +1036,19 @@ function calc() {
   const ctInterim     = val('buyInterim1') + val('buyInterim2');   // 1차+2차 합계
   const buyInterim    = ctInterim;
 
+  // ── 크립토 ──
+  const ctXrpVal  = ctXrpPriceKRW > 0 ? Math.round(val('ctXrpQty') * ctXrpPriceKRW / 10000) : 0;
+  const ctBtcVal  = ctBtcPriceKRW > 0 ? Math.round(val('ctBtcQty') * ctBtcPriceKRW / 10000) : 0;
+  const ctEtcVal  = val('ctCryptoEtc');
+  const cryptoProceeds = ctXrpVal + ctBtcVal + ctEtcVal;
+
+  $('ct_xrpVal').textContent       = ctXrpPriceKRW > 0 ? fmt(ctXrpVal) : '(시세 미조회)';
+  $('ct_btcVal').textContent       = ctBtcPriceKRW > 0 ? fmt(ctBtcVal) : '(시세 미조회)';
+  $('r_cryptoProceeds').textContent = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? fmt(cryptoProceeds) : `${fmt(ctEtcVal)} + α`) + ' 만원';
+
   // ── 매도 ──
   const sellBalance  = salePrice - sellContract - sellInterim;
-  const sellNet      = salePrice - debt - saleCost + newLoan;
+  const sellNet      = salePrice - debt - saleCost + newLoan + cryptoProceeds;
 
   // ── 매수 ──
   const buyContract    = buyContractAmt;
@@ -1170,18 +1275,23 @@ function calc() {
   $('nr_buy_net').textContent = fmt(buyEquityTotal) + ' 만원';
 
   // 최종 정산
-  $('final_sell_net').textContent = fmt(sellNet)        + ' 만원';
+  $('final_sell_net').textContent = fmt(sellNet - cryptoProceeds) + ' 만원';
+  $('final_crypto').textContent   = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? '+' + fmt(cryptoProceeds) : `+${fmt(ctEtcVal)} + α`) + ' 만원';
   $('final_buy_net').textContent  = fmt(buyEquityTotal) + ' 만원';
+  $('nr_crypto').textContent = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? '+' + fmt(cryptoProceeds) : `+${fmt(ctEtcVal)} + α`) + ' 만원';
   const remEl = $('final_remainder');
   remEl.textContent = fmt(remainder) + ' 만원';
   remEl.style.color = remainder >= 0 ? 'var(--green)' : 'var(--red)';
   $('final_note').textContent = remainder >= 0
     ? `✅ 이사 후 여유 현금 ${fmt(remainder)}만원. 영유비·비상금으로 활용 가능.`
     : `⚠️ 현금 ${fmt(-remainder)}만원 부족. 추가 자금 계획 필요.`;
+  ctSaveInputs();
 }
 
+ctLoadInputs();
 calc();
 ['stage1','stage2','stage3','stage4','stage5'].forEach(updateStageDate);
+fetchCtCryptoPrices();
 
 // ===== 단계 완료 체크 =====
 const COMPLETE_KEY = 'contract_complete_v1';
