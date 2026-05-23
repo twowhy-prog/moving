@@ -835,6 +835,35 @@ const CT_DATE_IDS = [
   'date_sell_interim1','date_sell_interim2','date_buy_interim1','date_buy_interim2',
 ];
 
+// finance_inputs_v1 → contract 필드 매핑
+const FINANCE_SYNC_MAP = {
+  salePrice:       'refSalePrice',
+  buyPrice:        'refBuyPrice',
+  saleFeeInput:    'refSaleFee',
+  moveCost:        'refMoveCost',
+  registrationFee: 'refRegFee',
+  buyFeeInput:     'refBuyFee',
+  moveinCost:      'refMoveinCost',
+  // 크립토: S3 가용분(xrpQty)보다 S10 보유량(xrpHold) 기준이 더 직관적
+  xrpHold:         'ctXrpQty',
+  btcHold:         'ctBtcQty',
+  cryptoEtcHold:   'ctCryptoEtc',
+};
+
+function _applyFinanceData(d, silent) {
+  Object.entries(FINANCE_SYNC_MAP).forEach(([from, to]) => {
+    if (d[from] !== undefined && $(to)) $(to).value = d[from];
+  });
+  if (d._currentLoan && $('refNewLoan')) $('refNewLoan').value = d._currentLoan;
+  if (d._currentTransferTax !== undefined && $('refTransferTax')) $('refTransferTax').value = d._currentTransferTax;
+  if (!silent) {
+    calc();
+    ctSaveInputs();
+    const ind = $('ctSaveIndicator');
+    if (ind) ind.textContent = '재정계산기에서 동기화됨 ' + new Date().toLocaleString('ko-KR');
+  }
+}
+
 function syncFromFinance() {
   const raw = localStorage.getItem('finance_inputs_v1');
   if (!raw) {
@@ -842,28 +871,7 @@ function syncFromFinance() {
     return;
   }
   try {
-    const d = JSON.parse(raw);
-    const map = {
-      salePrice:       'refSalePrice',
-      buyPrice:        'refBuyPrice',
-      saleFeeInput:    'refSaleFee',
-      moveCost:        'refMoveCost',
-      registrationFee: 'refRegFee',
-      buyFeeInput:     'refBuyFee',
-      moveinCost:      'refMoveinCost',
-      xrpQty:          'ctXrpQty',
-      btcQty:          'ctBtcQty',
-      cryptoEtc:       'ctCryptoEtc',
-    };
-    Object.entries(map).forEach(([from, to]) => {
-      if (d[from] !== undefined && $(to)) $(to).value = d[from];
-    });
-    if (d._currentLoan && $('refNewLoan')) $('refNewLoan').value = d._currentLoan;
-    if (d._currentTransferTax !== undefined && $('refTransferTax')) $('refTransferTax').value = d._currentTransferTax;
-    calc();
-    ctSaveInputs();
-    const ind = $('ctSaveIndicator');
-    if (ind) ind.textContent = '재정계산기에서 동기화됨 ' + new Date().toLocaleString('ko-KR');
+    _applyFinanceData(JSON.parse(raw), false);
   } catch(e) { alert('동기화 오류: ' + e.message); }
 }
 
@@ -1344,6 +1352,11 @@ function calc() {
 }
 
 ctLoadInputs();
+// 재정계산기 데이터가 있으면 로드 후 자동 동기화 (크립토·공통 필드 갱신)
+try {
+  const fRaw = localStorage.getItem('finance_inputs_v1');
+  if (fRaw) _applyFinanceData(JSON.parse(fRaw), true);
+} catch(e) {}
 calc();
 ['stage1','stage2','stage3','stage4','stage5'].forEach(updateStageDate);
 fetchCtCryptoPrices();
