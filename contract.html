@@ -295,40 +295,52 @@
         <div style="padding:7px 10px;background:var(--input-bg);border-radius:6px;border:1px solid var(--border);font-size:14px;font-weight:600;color:var(--red)" id="r_buyCostTotal">-</div>
       </div>
     </div>
-    <!-- 비율 / 중도금 직접 입력 -->
-    <div style="font-size:11px;font-weight:700;color:var(--sub);margin:10px 0 6px;letter-spacing:.3px">📊 계약 비율 및 중도금</div>
-    <div class="grid-4">
-      <div class="field">
-        <label>매도 계약금 비율 (%)</label>
-        <div class="field-adjust">
-          <button class="adjust-btn" onclick="adjustValue('refSaleContractPct', -1)">▼</button>
-          <input type="number" id="refSaleContractPct" value="10" step="1" min="1" max="30" oninput="calc()">
-          <button class="adjust-btn" onclick="adjustValue('refSaleContractPct', 1)">▲</button>
+    <!-- 계약금 금액 / 중도금 직접 입력 -->
+    <div style="font-size:11px;font-weight:700;color:var(--sub);margin:10px 0 6px;letter-spacing:.3px">📊 계약금 및 중도금</div>
+
+    <!-- 매도 라인 -->
+    <div style="border:1px solid var(--border);border-left:3px solid #f59e0b;border-radius:6px;padding:10px 12px;margin-bottom:8px;background:rgba(245,158,11,.04)">
+      <div style="font-size:11px;font-weight:700;color:#b45309;margin-bottom:8px">📤 매도 — 삼익그린2차</div>
+      <div class="grid-3">
+        <div class="field">
+          <label>계약금 (만원) <span id="r_saleDepositPct" style="font-size:10px;color:var(--sub);font-weight:400"></span></label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('refSaleDeposit', -1000)">▼</button>
+            <input type="number" id="refSaleDeposit" value="18500" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('refSaleDeposit', 1000)">▲</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>1차 중도금 (만원)</label>
+          <input type="number" id="saleInterim1" value="30000" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>2차 중도금 (만원)</label>
+          <input type="number" id="saleInterim2" value="12000" oninput="calc()">
         </div>
       </div>
-      <div class="field">
-        <label>매도 1차 중도금 (만원)</label>
-        <input type="number" id="saleInterim1" value="30000" oninput="calc()">
-      </div>
-      <div class="field">
-        <label>매도 2차 중도금 (만원)</label>
-        <input type="number" id="saleInterim2" value="12000" oninput="calc()">
-      </div>
-      <div class="field">
-        <label>매수 계약금 비율 (%)</label>
-        <div class="field-adjust">
-          <button class="adjust-btn" onclick="adjustValue('refBuyContractPct', -1)">▼</button>
-          <input type="number" id="refBuyContractPct" value="12" step="1" min="1" max="30" oninput="calc()">
-          <button class="adjust-btn" onclick="adjustValue('refBuyContractPct', 1)">▲</button>
+    </div>
+
+    <!-- 매수 라인 -->
+    <div style="border:1px solid var(--border);border-left:3px solid #0891b2;border-radius:6px;padding:10px 12px;margin-bottom:8px;background:rgba(8,145,178,.04)">
+      <div style="font-size:11px;font-weight:700;color:#0e7490;margin-bottom:8px">📥 매수 — 신동아리버파크</div>
+      <div class="grid-3">
+        <div class="field">
+          <label>계약금 (만원) <span id="r_buyDepositPct" style="font-size:10px;color:var(--sub);font-weight:400"></span></label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('refBuyDeposit', -1000)">▼</button>
+            <input type="number" id="refBuyDeposit" value="20700" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('refBuyDeposit', 1000)">▲</button>
+          </div>
         </div>
-      </div>
-      <div class="field">
-        <label>매수 1차 중도금 (만원)</label>
-        <input type="number" id="buyInterim1" value="30000" oninput="calc()">
-      </div>
-      <div class="field">
-        <label>매수 2차 중도금 (만원)</label>
-        <input type="number" id="buyInterim2" value="10000" oninput="calc()">
+        <div class="field">
+          <label>1차 중도금 (만원)</label>
+          <input type="number" id="buyInterim1" value="30000" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>2차 중도금 (만원)</label>
+          <input type="number" id="buyInterim2" value="10000" oninput="calc()">
+        </div>
       </div>
     </div>
   </div>
@@ -912,8 +924,8 @@ function calc() {
   $('r_saleCostTotal').textContent = fmt(saleCost) + ' 만원';
   $('r_buyCostTotal').textContent  = fmt(buyCost)  + ' 만원';
 
-  const saleContractPct  = val('refSaleContractPct') / 100;
-  const buyContractPct   = val('refBuyContractPct')  / 100;
+  const sellContract     = val('refSaleDeposit');
+  const buyContractAmt   = val('refBuyDeposit');
   const ctSaleDeposit1   = val('ctSaleDeposit1');
   const ctSaleDeposit2   = val('ctSaleDeposit2');
   const ctDeposit1       = val('ctDeposit1');
@@ -926,12 +938,11 @@ function calc() {
   const buyInterim    = ctInterim;
 
   // ── 매도 ──
-  const sellContract = salePrice * saleContractPct;
   const sellBalance  = salePrice - sellContract - sellInterim;
   const sellNet      = salePrice - debt - saleCost + newLoan;
 
   // ── 매수 ──
-  const buyContract    = buyPrice * buyContractPct;
+  const buyContract    = buyContractAmt;
   const buyContractAdd = Math.max(0, buyContract - ctDeposit1);
 
   const buyBalance     = buyPrice - buyContract - buyInterim;
@@ -963,9 +974,13 @@ function calc() {
     diffEl.style.background = '#fef2f2'; diffEl.style.color = 'var(--red)';
   }
 
-  // 스텝 표시
-  $('t_sell_pct').textContent = val('refSaleContractPct');
-  $('t_buy_pct').textContent  = val('refBuyContractPct');
+  // 계약금 비율 표시 (라벨 및 자금흐름 표)
+  const salePctNum = salePrice > 0 ? (sellContract / salePrice * 100).toFixed(1) : '—';
+  const buyPctNum  = buyPrice  > 0 ? (buyContract  / buyPrice  * 100).toFixed(1) : '—';
+  $('r_saleDepositPct').textContent = `(${salePctNum}%)`;
+  $('r_buyDepositPct').textContent  = `(${buyPctNum}%)`;
+  $('t_sell_pct').textContent = salePctNum;
+  $('t_buy_pct').textContent  = buyPctNum;
 
   // ① 가계약
   const earnestNet = ctSaleDeposit1 - ctDeposit1;
