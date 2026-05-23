@@ -198,7 +198,7 @@
           </div>
         </div>
         <div class="field">
-          <label>취득가 (만원)</label>
+          <label>취득가 (만원) <small style="color:var(--sub);font-weight:400">취득세·중개보수 포함 실질 취득가액</small></label>
           <div class="field-adjust">
             <button class="adjust-btn" onclick="adjustValue('acquirePrice', -100)">▼</button>
             <input type="number" id="acquirePrice" value="98000" oninput="calc()">
@@ -252,14 +252,17 @@
       </div>
 
       <div class="result-box" id="saleResult">
-        <div class="result-row"><span>보유·거주기간 <small style="color:var(--sub)">(취득=입주)</small></span><span id="r_holdPeriod">-</span></div>
+        <div class="result-row"><span>보유·거주기간 <small style="color:var(--sub)">(취득=입주 가정)</small></span><span id="r_holdPeriod">-</span></div>
         <div class="result-row"><span>장기보유특별공제율 <small id="r_deductType" style="color:var(--sub)"></small></span><span id="r_longDeduct">-</span></div>
-        <div class="result-row"><span>양도차익</span><span id="r_gainTotal">-</span></div>
+        <div class="result-row"><span>전체 양도차익</span><span id="r_gainTotal">-</span></div>
+        <div class="result-row indent"><span>1주택 비과세(12억) 과세분 비율</span><span id="r_taxableRatio">-</span></div>
+        <div class="result-row indent"><span>과세 양도차익 (인당)</span><span id="r_taxableGainPP">-</span></div>
         <div class="result-row indent"><span>장특공제 후 과세차익 (인당)</span><span id="r_gainAfterDeduct">-</span></div>
         <div class="result-row indent"><span>기본공제 (인당 250만원)</span><span id="r_basicDeduct">-</span></div>
         <div class="result-row indent"><span>과세표준 (인당)</span><span id="r_taxBase">-</span></div>
-        <div class="result-row"><span>양도세 합계</span><span id="r_transferTax" class="color-red">-</span></div>
-        <div class="result-row"><span>지방소득세</span><span id="r_localTax">-</span></div>
+        <div class="result-row"><span>양도세 합계 <small style="color:var(--sub)">(2인)</small></span><span id="r_transferTax" class="color-red">-</span></div>
+        <div class="result-row"><span>지방소득세 <small style="color:var(--sub)">(양도세×10%)</small></span><span id="r_localTax">-</span></div>
+        <div class="result-row total"><span>양도세 + 지방소득세 합계</span><span id="r_transferTaxTotal" class="color-red">-</span></div>
         <div class="result-row"><span>매도 중개보수</span><span id="r_saleFee">-</span></div>
         <div class="result-row"><span>이사비</span><span id="r_moveCost">-</span></div>
         <div class="sep"></div>
@@ -1036,6 +1039,7 @@ let giftChart = null;
 let xrpPriceKRW = 0;
 let btcPriceKRW = 0;
 let loanManual = false;
+let _lastTransferTaxTotal = 0;
 
 function setLoanManual() {
   loanManual = true;
@@ -1086,6 +1090,7 @@ function saveInputs() {
   data._loanManual = loanManual;
   if (loanManual) data._newLoanManualVal = $('newLoan') ? $('newLoan').value : '';
   data._currentLoan = $('newLoan') ? $('newLoan').value : '';
+  data._currentTransferTax = Math.round(_lastTransferTaxTotal);
   data._savedAt = new Date().toLocaleString('ko-KR');
   localStorage.setItem(SAVE_KEY, JSON.stringify(data));
   const ind = $('saveIndicator');
@@ -1322,20 +1327,24 @@ function calc() {
   const transferTaxPP    = calcTransferTax(taxBasePerPerson);
   const localTaxPP       = transferTaxPP * 0.1;
   const transferTaxTotal = (transferTaxPP + localTaxPP) * persons;
+  _lastTransferTaxTotal = transferTaxTotal;
   const saleFee          = val('saleFeeInput');
 
   // 부채 차감 전 세후 수령예정액
   const saleGross = salePrice - transferTaxTotal - saleFee - moveCost;
 
-  $('r_holdPeriod').textContent     = `${holdYears}년 ${holdMonths}개월`;
-  $('r_longDeduct').textContent     = `${(longDeductRate*100).toFixed(0)}%`;
-  $('r_deductType').textContent     = `(${deductType})`;
-  $('r_gainTotal').textContent      = fmt(gain) + ' 만원';
-  $('r_gainAfterDeduct').textContent= fmt(gainAfterDeduct) + ' 만원';
-  $('r_basicDeduct').textContent    = `−${basicDeduction} 만원 × ${persons}인`;
-  $('r_taxBase').textContent        = fmt(taxBasePerPerson) + ' 만원';
-  $('r_transferTax').textContent    = fmt(transferTaxPP * persons) + ' 만원';
-  $('r_localTax').textContent       = fmt(localTaxPP * persons) + ' 만원';
+  $('r_holdPeriod').textContent      = `${holdYears}년 ${holdMonths}개월`;
+  $('r_longDeduct').textContent      = `${(longDeductRate*100).toFixed(0)}%`;
+  $('r_deductType').textContent      = `(${deductType})`;
+  $('r_gainTotal').textContent       = fmt(gain) + ' 만원';
+  $('r_taxableRatio').textContent    = salePrice > 120000 ? `(${salePrice}-12억)/${fmt(salePrice)} = ${(taxableRatio*100).toFixed(1)}%` : '12억 이하 전액 비과세 0%';
+  $('r_taxableGainPP').textContent   = fmt(taxableGainPP) + ' 만원';
+  $('r_gainAfterDeduct').textContent = fmt(gainAfterDeduct) + ' 만원';
+  $('r_basicDeduct').textContent     = `−${basicDeduction} 만원 × ${persons}인`;
+  $('r_taxBase').textContent         = fmt(taxBasePerPerson) + ' 만원';
+  $('r_transferTax').textContent     = fmt(transferTaxPP * persons) + ' 만원';
+  $('r_localTax').textContent        = fmt(localTaxPP * persons) + ' 만원';
+  $('r_transferTaxTotal').textContent= fmt(transferTaxTotal) + ' 만원';
   $('r_saleFee').textContent        = fmt(saleFee) + ' 만원';
   $('r_saleFeeMax').textContent     = fmt(calcBrokerageFee(salePrice));
   highlightFeeRef('feeRefSale', salePrice);
