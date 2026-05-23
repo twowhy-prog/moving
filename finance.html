@@ -432,7 +432,12 @@
       <div class="sep"></div>
 
       <!-- 영유비 포함 -->
-      <div style="margin-bottom:10px"><strong>영유비 포함액</strong> <small style="color:var(--sub)">— 주담대에 포함해 선납 후 파킹 운용</small></div>
+      <div style="margin-bottom:6px;display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none" onclick="toggleSub('daycare-body','daycare-icon')">
+        <strong>영유비 포함액</strong>
+        <small style="color:var(--sub)">— 주담대에 포함해 선납 후 파킹 운용</small>
+        <span id="daycare-icon" style="font-size:11px;color:var(--sub);margin-left:auto;transform:rotate(-90deg);display:inline-block;transition:transform .2s">▼</span>
+      </div>
+      <div id="daycare-body" style="display:none">
       <div class="grid-3">
         <div class="field">
           <label>영유비 포함 분기수 (0~11)</label>
@@ -459,6 +464,7 @@
           <input type="number" id="newLoanYears" value="30" oninput="calc()">
         </div>
       </div>
+      </div><!-- /daycare-body -->
 
       <div class="result-box">
         <div class="result-row"><span>세후 수령예정액 (S1)</span><span id="r_saleGrossRef">-</span></div>
@@ -1753,6 +1759,14 @@ function toggleSection(id) {
   icon.style.transform = isOpen ? 'rotate(-90deg)' : '';
 }
 
+function toggleSub(bodyId, iconId) {
+  const body = $(bodyId);
+  const icon = $(iconId);
+  const isOpen = body.style.display !== 'none';
+  body.style.display = isOpen ? 'none' : 'block';
+  if (icon) icon.style.transform = isOpen ? 'rotate(-90deg)' : '';
+}
+
 
 // ===== 다크모드 =====
 function toggleTheme() {
@@ -1766,6 +1780,9 @@ function toggleTheme() {
 loadInputs(); // 저장된 값 복원
 calc();
 fetchCryptoPrices();
+// 기본 접힘 섹션
+toggleSection('sec5');
+toggleSection('sec9');
 </script>
 </body>
 </html>
