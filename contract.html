@@ -1299,6 +1299,7 @@ function calc() {
   $('nr_buy_loan').textContent    = '+' + fmt(newLoan) + ' 만원';
   $('nr_crypto').textContent      = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? '+' + fmt(cryptoProceeds) : `+${fmt(ctEtcVal)} + α`) + ' 만원';
   $('final_buy_net').textContent  = fmt(buyEquityTotal) + ' 만원';
+  $('nr_crypto').textContent = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? '+' + fmt(cryptoProceeds) : `+${fmt(ctEtcVal)} + α`) + ' 만원';
   const remEl = $('final_remainder');
   remEl.textContent = fmt(remainder) + ' 만원';
   remEl.style.color = remainder >= 0 ? 'var(--green)' : 'var(--red)';
