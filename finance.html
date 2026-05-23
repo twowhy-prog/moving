@@ -334,8 +334,6 @@
         <div class="result-row"><span>취득세 합계</span><span id="r_taxTotal">-</span></div>
         <div class="result-row"><span>매수 중개보수</span><span id="r_buyFee">-</span></div>
         <div class="result-row"><span>등기비</span><span id="r_regFee">-</span></div>
-        <div class="result-row"><span>입주비용</span><span id="r_movein">-</span></div>
-        <div class="result-row"><span>수리비용</span><span id="r_renovationCost">-</span></div>
         <div class="sep"></div>
         <div class="result-row total"><span>🏠 매수 순수 비용 합계 <small style="font-weight:400;color:var(--sub)">(영유비·주담대 제외)</small></span><span id="r_buyCostBase">-</span></div>
       </div>
@@ -883,6 +881,71 @@
     </div>
   </div>
 
+  <!-- ===== 섹션 10: 크립토 잔여 자산 ===== -->
+  <div class="section" id="sec10">
+    <div class="section-header" onclick="toggleSection('sec10')">
+      <div class="section-num">10</div>
+      <h2>크립토 잔여 자산</h2>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="section-body">
+      <div style="margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <strong>총 보유량 입력</strong>
+        <small style="color:var(--sub)">— 이사 전 현재 총 보유수량 (S3 사용분과 별도)</small>
+        <button class="btn" style="font-size:11px;padding:3px 10px;margin-left:auto" onclick="fetchCryptoPrices()">🔄 업비트 시세 갱신</button>
+      </div>
+
+      <div class="debt-item">
+        <label style="min-width:60px">XRP 보유</label>
+        <span id="xrpPrice2" style="font-size:12px;color:var(--blue);font-weight:600;min-width:90px;text-align:right">-</span>
+        <button class="adjust-btn" onclick="adjustValue('xrpHold', -1000)">▼</button>
+        <input type="number" id="xrpHold" value="58000" oninput="calc()" style="width:90px">
+        <button class="adjust-btn" onclick="adjustValue('xrpHold', 1000)">▲</button>
+        <span style="flex-shrink:0">개 =</span>
+        <span class="amount color-green" id="xrpHoldValue">-</span>
+        <span style="flex-shrink:0">만원</span>
+      </div>
+      <div class="debt-item">
+        <label style="min-width:60px">BTC 보유</label>
+        <span id="btcPrice2" style="font-size:12px;color:var(--blue);font-weight:600;min-width:120px;text-align:right">-</span>
+        <button class="adjust-btn" onclick="adjustValue('btcHold', -0.1)">▼</button>
+        <input type="number" id="btcHold" value="0.89" step="0.01" oninput="calc()" style="width:70px">
+        <button class="adjust-btn" onclick="adjustValue('btcHold', 0.1)">▲</button>
+        <span style="flex-shrink:0">개 =</span>
+        <span class="amount color-green" id="btcHoldValue">-</span>
+        <span style="flex-shrink:0">만원</span>
+      </div>
+      <div class="debt-item">
+        <label style="min-width:60px">기타 보유</label>
+        <button class="adjust-btn" onclick="adjustValue('cryptoEtcHold', -100)">▼</button>
+        <input type="number" id="cryptoEtcHold" value="1000" oninput="calc()" style="width:100px">
+        <button class="adjust-btn" onclick="adjustValue('cryptoEtcHold', 100)">▲</button>
+        <span style="flex-shrink:0">만원</span>
+      </div>
+
+      <div class="result-box" style="margin-top:14px">
+        <div style="font-weight:600;margin-bottom:8px">📊 보유 → 사용 → 잔여</div>
+        <div class="result-row"><span>총 XRP 보유가치</span><span id="r_xrpHoldVal" class="color-green">-</span></div>
+        <div class="result-row"><span>총 BTC 보유가치</span><span id="r_btcHoldVal" class="color-green">-</span></div>
+        <div class="result-row"><span>기타 보유</span><span id="r_etcHoldVal" class="color-green">-</span></div>
+        <div class="result-row total"><span>총 보유 가치</span><span id="r_cryptoHoldTotal" class="color-green">-</span></div>
+        <div class="sep"></div>
+        <div class="result-row"><span>이사 사용 — XRP (S3)</span><span id="r_xrpUsed" style="color:var(--red)">-</span></div>
+        <div class="result-row"><span>이사 사용 — BTC (S3)</span><span id="r_btcUsed" style="color:var(--red)">-</span></div>
+        <div class="result-row"><span>이사 사용 — 기타 (S3)</span><span id="r_etcUsed" style="color:var(--red)">-</span></div>
+        <div class="result-row total"><span>이사 사용 합계</span><span id="r_cryptoUsedTotal" style="color:var(--red)">-</span></div>
+        <div class="sep"></div>
+        <div class="result-row"><span>잔여 XRP</span><span id="r_xrpRemainQty">-</span></div>
+        <div class="result-row indent"><span>잔여 XRP 가치</span><span id="r_xrpRemainVal" class="color-green">-</span></div>
+        <div class="result-row"><span>잔여 BTC</span><span id="r_btcRemainQty">-</span></div>
+        <div class="result-row indent"><span>잔여 BTC 가치</span><span id="r_btcRemainVal" class="color-green">-</span></div>
+        <div class="result-row"><span>잔여 기타</span><span id="r_etcRemainVal" class="color-green">-</span></div>
+        <div class="result-row total"><span>🪙 이사 후 잔여 크립토 총 가치</span><span id="r_cryptoRemainTotal" class="color-green">-</span></div>
+      </div>
+      <div class="info" style="margin-top:8px">* S3의 크립토 사용량이 총 보유량을 초과하면 빨간색으로 표시 &nbsp;|&nbsp; 시세는 업비트 기준 (기타 잔코인은 입력값 그대로 사용)</div>
+    </div>
+  </div>
+
 
 </div><!-- /container -->
 
@@ -910,6 +973,7 @@ const INPUT_IDS = [
   'debtEtc','debtEtcRate','debtCar','debtCarMonths',
   'daycareQuarters','daycarePerQ',
   'xrpQty','btcQty','cryptoEtc',
+  'xrpHold','btcHold','cryptoEtcHold',
   'newLoanRate','newLoanYears',
   'totalIncome','parkingRate',
   'totalPlannedQ','paidQ',
@@ -1110,6 +1174,10 @@ async function fetchCryptoPrices() {
     const btcEl = $('btcPrice');
     if (xrpEl) xrpEl.textContent = xrpPriceKRW.toLocaleString('ko-KR') + '원';
     if (btcEl) btcEl.textContent = btcPriceKRW.toLocaleString('ko-KR') + '원';
+    const xrpEl2 = $('xrpPrice2');
+    const btcEl2 = $('btcPrice2');
+    if (xrpEl2) xrpEl2.textContent = xrpPriceKRW.toLocaleString('ko-KR') + '원';
+    if (btcEl2) btcEl2.textContent = btcPriceKRW.toLocaleString('ko-KR') + '원';
     if (timeEl) timeEl.textContent = new Date().toLocaleTimeString('ko-KR') + ' 기준';
     calc();
   } catch(e) {
@@ -1184,8 +1252,6 @@ function calc() {
   $('r_buyFeeMax').textContent      = fmt(calcBrokerageFee(buyPrice));
   highlightFeeRef('feeRefBuy', buyPrice);
   $('r_regFee').textContent         = fmt(regFee) + ' 만원';
-  $('r_movein').textContent         = fmt(moveinCost) + ' 만원';
-  $('r_renovationCost').textContent = fmt(renovationCost) + ' 만원';
   $('r_buyCostBase').textContent    = fmt(buyCostBase) + ' 만원';
 
   // ─── 섹션 3: 주담대 필요액 산출 ───
@@ -1535,6 +1601,54 @@ function calc() {
   // S9 대시보드
 
   updateGiftChart(principal, totalReturn, giftYears, giftRate, giftLump, giftMo);
+
+  // --- 섹션 10: 크립토 잔여 자산 ---
+  const xrpHold      = val('xrpHold');
+  const btcHold      = val('btcHold');
+  const cryptoEtcHold = val('cryptoEtcHold');
+
+  const xrpHoldVal   = xrpPriceKRW > 0 ? Math.round(xrpHold * xrpPriceKRW / 10000) : 0;
+  const btcHoldVal   = btcPriceKRW > 0 ? Math.round(btcHold * btcPriceKRW / 10000) : 0;
+  const cryptoHoldTotal = xrpHoldVal + btcHoldVal + cryptoEtcHold;
+
+  const xrpUsedVal   = xrpPriceKRW > 0 ? Math.round(xrpQty * xrpPriceKRW / 10000) : 0;
+  const btcUsedVal   = btcPriceKRW > 0 ? Math.round(btcQty * btcPriceKRW / 10000) : 0;
+  const cryptoUsedTotal = xrpUsedVal + btcUsedVal + cryptoEtc;
+
+  const xrpRemain    = xrpHold - xrpQty;
+  const btcRemain    = btcHold - btcQty;
+  const etcRemain    = cryptoEtcHold - cryptoEtc;
+  const xrpRemainVal = xrpPriceKRW > 0 ? Math.round(xrpRemain * xrpPriceKRW / 10000) : 0;
+  const btcRemainVal = btcPriceKRW > 0 ? Math.round(btcRemain * btcPriceKRW / 10000) : 0;
+  const cryptoRemainTotal = xrpRemainVal + btcRemainVal + etcRemain;
+
+  $('r_xrpHoldVal').textContent   = fmt(xrpHoldVal) + ' 만원';
+  $('r_btcHoldVal').textContent   = fmt(btcHoldVal) + ' 만원';
+  $('r_etcHoldVal').textContent   = fmt(cryptoEtcHold) + ' 만원';
+  $('r_cryptoHoldTotal').textContent = fmt(cryptoHoldTotal) + ' 만원';
+
+  const xrpUsedEl = $('r_xrpUsed');
+  const btcUsedEl = $('r_btcUsed');
+  xrpUsedEl.textContent = `−${fmt(xrpUsedVal)} 만원 (${fmt(xrpQty)}개)`;
+  btcUsedEl.textContent = `−${fmt(btcUsedVal)} 만원 (${btcQty}개)`;
+  $('r_etcUsed').textContent = `−${fmt(cryptoEtc)} 만원`;
+  $('r_cryptoUsedTotal').textContent = `−${fmt(cryptoUsedTotal)} 만원`;
+
+  const xrpRemainQtyEl = $('r_xrpRemainQty');
+  const btcRemainQtyEl = $('r_btcRemainQty');
+  xrpRemainQtyEl.textContent = fmt(xrpRemain) + ' 개';
+  xrpRemainQtyEl.className   = xrpRemain < 0 ? 'color-red' : '';
+  btcRemainQtyEl.textContent = btcRemain.toFixed(2) + ' 개';
+  btcRemainQtyEl.className   = btcRemain < 0 ? 'color-red' : '';
+
+  $('r_xrpRemainVal').textContent = fmt(xrpRemainVal) + ' 만원';
+  $('r_xrpRemainVal').className   = xrpRemain < 0 ? 'color-red' : 'color-green';
+  $('r_btcRemainVal').textContent = fmt(btcRemainVal) + ' 만원';
+  $('r_btcRemainVal').className   = btcRemain < 0 ? 'color-red' : 'color-green';
+  $('r_etcRemainVal').textContent = fmt(etcRemain) + ' 만원';
+  $('r_etcRemainVal').className   = etcRemain < 0 ? 'color-red' : 'color-green';
+  $('r_cryptoRemainTotal').textContent = fmt(cryptoRemainTotal) + ' 만원';
+  $('r_cryptoRemainTotal').className   = cryptoRemainTotal < 0 ? 'color-red' : 'color-green';
 
   // 입력값 자동 저장
   saveInputs();

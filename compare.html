@@ -1245,7 +1245,7 @@ async function loadFacilityData() {
 let chartPrice = null;
 function recentMonths(n) {
   const list = [];
-  const now = new Date(2026, 3, 1);
+  const now = new Date();
   for (let i = n - 1; i >= 0; i--) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
     list.push(`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}`);
@@ -1315,18 +1315,21 @@ async function loadPriceData() {
       Promise.all(months.map(m => fetchMolitMonth(B.lawdCd, m).catch(() => null))),
     ]);
     const priceA  = xmlsA.map(x => x ? parseMolitXml(x, A.aptKw, 60,  75,  A.umdNm) : null);
+    const priceB  = xmlsB.map(x => x ? parseMolitXml(x, B.aptKw, 80,  95,  B.umdNm) : null);
     const priceB2 = xmlsB.map(x => x ? parseMolitXml(x, B.aptKw, 105, 140, B.umdNm) : null);
     const labels = months.map(m => `${m.slice(0,4)}.${m.slice(4)}`);
     chartPrice.data.labels = labels;
     chartPrice.data.datasets[0].data = priceA;
-    chartPrice.data.datasets[1].data = priceB2;
+    chartPrice.data.datasets[1].data = priceB;
+    chartPrice.data.datasets[2].data = priceB2;
     chartPrice.update();
     const cA  = priceA.filter(v=>v!==null).length;
+    const cB  = priceB.filter(v=>v!==null).length;
     const cB2 = priceB2.filter(v=>v!==null).length;
     document.getElementById('price-info').textContent =
-      `거래 확인 — A: ${cA}개월 / B-40평대: ${cB2}개월 (거래 없는 월은 공백)`;
-    setStatus('st-price', (cA+cB2)>0?'live':'error', `💰 실거래가 ${(cA+cB2)>0?'✅':'❌'}`);
-    setTag('tag-price', (cA+cB2)>0?'live':'sample', (cA+cB2)>0?'실데이터':'데이터 없음');
+      `거래 확인 — A: ${cA}개월 / B-30평대: ${cB}개월 / B-40평대: ${cB2}개월 (거래 없는 월은 공백)`;
+    setStatus('st-price', (cA+cB+cB2)>0?'live':'error', `💰 실거래가 ${(cA+cB+cB2)>0?'✅':'❌'}`);
+    setTag('tag-price', (cA+cB+cB2)>0?'live':'sample', (cA+cB+cB2)>0?'실데이터':'데이터 없음');
   } catch (e) {
     console.warn('[MOLIT]', e);
     setStatus('st-price', 'error', '💰 실거래가 ❌');
@@ -1431,8 +1434,10 @@ async function loadSindongaDetail() {
       statusEl.textContent = '국토부 API 연결 실패 — 프록시 차단. 하드코딩 데이터 표시 중.';
       if (tagEl) { tagEl.className = 'tag tag-sample'; tagEl.textContent = '하드코딩'; }
       // 차트에 샘플 데이터 표시
-      sindongaDetailChart.data.datasets[2].data = [null,null,null,null,null,null,null,null,null,12.95,null,14.8];
-      sindongaDetailChart.data.datasets[1].data = [null,null,null,null,null,null,null,null,null,null, null,14.1];
+      // 43평 2025.10 확인거래 14.8억 → index 4 (Jun~May 기준 2025.10=idx4)
+      // 33평 2025.10 KB추정 14.1억 → index 4
+      sindongaDetailChart.data.datasets[2].data = [null,null,null,null,14.8,null,null,null,null,null,null,null];
+      sindongaDetailChart.data.datasets[1].data = [null,null,null,null,14.1,null,null,null,null,null,null,null];
       sindongaDetailChart.update();
     }
   } catch(e) {
@@ -1530,14 +1535,17 @@ function initCharts() {
   const CA = '#2563eb', CB = '#16a34a', CB2 = '#0891b2';
   const months12 = recentMonths(12).map(m => `${m.slice(0,4)}.${m.slice(4)}`);
   const sampleA  = months12.map((_,i) => +(10.5 + i*0.08 + Math.sin(i*.5)*.4).toFixed(2));
-  const sampleB2 = months12.map((_,i) => +(15.5 + i*0.12 + Math.sin(i*.6)*.4).toFixed(2));
+  const sampleB  = months12.map((_,i) => +(13.5 + i*0.08 + Math.sin(i*.6)*.3).toFixed(2));
+  // 43평(114㎡): 2025.10 확인거래 14.8억 기준, 최근 12개월 샘플 (17억+ 거래 없음 확인)
+  const sampleB2 = months12.map((_,i) => +(13.8 + i*0.09 + Math.sin(i*.6)*.3).toFixed(2));
   chartPrice = new Chart(document.getElementById('priceChart'), {
     type: 'line',
     data: {
       labels: months12,
       datasets: [
-        { label:'A. 삼익그린2차 (억)',           data:sampleA,  borderColor:CA,  backgroundColor:'rgba(37,99,235,.1)', fill:true, tension:.4, pointRadius:3, spanGaps:true },
-        { label:'B. 신동아리버파크 40평대 (억)', data:sampleB2, borderColor:CB,  backgroundColor:'rgba(22,163,74,.1)', fill:true, tension:.4, pointRadius:3, spanGaps:true },
+        { label:'A. 삼익그린2차 (억)',             data:sampleA,  borderColor:CA,  backgroundColor:'rgba(37,99,235,.1)',  fill:true, tension:.4, pointRadius:3, spanGaps:true },
+        { label:'B. 신동아리버파크 30평대 (억)',   data:sampleB,  borderColor:CB,  backgroundColor:'rgba(22,163,74,.1)',  fill:true, tension:.4, pointRadius:3, spanGaps:true },
+        { label:'B. 신동아리버파크 40평대 (억)',   data:sampleB2, borderColor:CB2, backgroundColor:'rgba(8,145,178,.1)',  fill:true, tension:.4, pointRadius:3, spanGaps:true, borderDash:[5,3] },
       ],
     },
     options: {
