@@ -402,7 +402,7 @@
         <button class="btn" style="font-size:11px;padding:3px 10px;margin-left:auto" onclick="fetchCryptoPrices()">🔄 업비트 시세 갱신</button>
         <span id="cryptoPriceTime" style="font-size:11px;color:var(--sub)"></span>
       </div>
-      <div class="debt-item">
+      <div class="debt-item" style="flex-wrap:wrap;gap:4px 6px">
         <label>XRP</label>
         <span id="xrpPrice" style="font-size:12px;color:var(--blue);font-weight:600;min-width:90px;text-align:right">-</span>
         <button class="adjust-btn" onclick="adjustValue('xrpQty', -1000)">▼</button>
@@ -411,8 +411,13 @@
         <span style="flex-shrink:0">개 =</span>
         <span class="amount color-green" id="xrpValue">-</span>
         <span style="flex-shrink:0">만원</span>
+        <span style="display:flex;gap:3px;margin-left:4px">
+          <button class="adjust-btn" style="padding:2px 6px;font-size:11px" onclick="setCryptoRatio('xrpQty','xrpHold',1,0)">전량</button>
+          <button class="adjust-btn" style="padding:2px 6px;font-size:11px" onclick="setCryptoRatio('xrpQty','xrpHold',0.5,0)">50%</button>
+          <button class="adjust-btn" style="padding:2px 6px;font-size:11px" onclick="setCryptoRatio('xrpQty','xrpHold',0.3,0)">30%</button>
+        </span>
       </div>
-      <div class="debt-item">
+      <div class="debt-item" style="flex-wrap:wrap;gap:4px 6px">
         <label>BTC</label>
         <span id="btcPrice" style="font-size:12px;color:var(--blue);font-weight:600;min-width:120px;text-align:right">-</span>
         <button class="adjust-btn" onclick="adjustValue('btcQty', -0.1)">▼</button>
@@ -421,13 +426,23 @@
         <span style="flex-shrink:0">개 =</span>
         <span class="amount color-green" id="btcValue">-</span>
         <span style="flex-shrink:0">만원</span>
+        <span style="display:flex;gap:3px;margin-left:4px">
+          <button class="adjust-btn" style="padding:2px 6px;font-size:11px" onclick="setCryptoRatio('btcQty','btcHold',1,2)">전량</button>
+          <button class="adjust-btn" style="padding:2px 6px;font-size:11px" onclick="setCryptoRatio('btcQty','btcHold',0.5,2)">50%</button>
+          <button class="adjust-btn" style="padding:2px 6px;font-size:11px" onclick="setCryptoRatio('btcQty','btcHold',0.3,2)">30%</button>
+        </span>
       </div>
-      <div class="debt-item">
+      <div class="debt-item" style="flex-wrap:wrap;gap:4px 6px">
         <label>기타자산</label>
         <button class="adjust-btn" onclick="adjustValue('cryptoEtc', -100)">▼</button>
         <input type="number" id="cryptoEtc" value="1000" oninput="calc()" style="width:100px">
         <button class="adjust-btn" onclick="adjustValue('cryptoEtc', 100)">▲</button>
         <span style="flex-shrink:0">만원</span>
+        <span style="display:flex;gap:3px;margin-left:4px">
+          <button class="adjust-btn" style="padding:2px 6px;font-size:11px" onclick="setCryptoRatio('cryptoEtc','cryptoEtcHold',1,0)">전량</button>
+          <button class="adjust-btn" style="padding:2px 6px;font-size:11px" onclick="setCryptoRatio('cryptoEtc','cryptoEtcHold',0.5,0)">50%</button>
+          <button class="adjust-btn" style="padding:2px 6px;font-size:11px" onclick="setCryptoRatio('cryptoEtc','cryptoEtcHold',0.3,0)">30%</button>
+        </span>
       </div>
 
       <div class="sep"></div>
@@ -1117,6 +1132,13 @@ function adjustValue(fieldId, amount) {
     field.value = Number.isInteger(amount) ? newVal : parseFloat(newVal.toFixed(3));
     calc();
   }
+}
+
+function setCryptoRatio(inputId, holdId, ratio, decimals) {
+  const hold = parseFloat($(holdId)?.value) || 0;
+  const v = hold * ratio;
+  $(inputId).value = decimals > 0 ? parseFloat(v.toFixed(decimals)) : Math.round(v);
+  calc();
 }
 
 // 중개보수 계산 (2021.10 서울시 조례 기준, 부가세 포함)
