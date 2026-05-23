@@ -176,6 +176,7 @@
   <h1>📋 계약 일정 — 매도·매수 자금 흐름</h1>
   <div class="header-actions">
     <button class="btn" onclick="toggleTheme()">🌙 다크모드</button>
+    <button class="btn" onclick="syncFromFinance()" style="color:var(--green);border-color:var(--green)">↺ 재정계산기 동기화</button>
     <button class="btn" onclick="ctSaveInputs()" style="color:var(--blue);border-color:var(--blue)">💾 저장</button>
     <span id="ctSaveIndicator" style="font-size:11px;color:var(--sub);align-self:center"></span>
   </div>
@@ -703,7 +704,7 @@
       <!-- 단계별 순현금 카드 -->
       <div class="stage-cards">
         <div class="stage-card" style="border-left: 3px solid var(--green)">
-          <div class="sc-step">① 가계약 순현금</div>
+          <div class="sc-step">① 가계약+약정서 순현금</div>
           <div class="sc-net" id="sc_earnest">-</div>
           <div class="sc-note">만원</div>
           <div class="sc-cum-row"><span class="sc-cum-label">누계 잔여</span><span class="sc-cum-val" id="sc_cum1">-</span></div>
@@ -833,6 +834,38 @@ const CT_DATE_IDS = [
   'date_stage1','date_stageYak','date_stage2','date_stage3','date_stage5',
   'date_sell_interim1','date_sell_interim2','date_buy_interim1','date_buy_interim2',
 ];
+
+function syncFromFinance() {
+  const raw = localStorage.getItem('finance_inputs_v1');
+  if (!raw) {
+    alert('재정계산기에 저장된 데이터가 없습니다.\nfinance.html에서 💾 저장 버튼을 누른 후 다시 시도하세요.');
+    return;
+  }
+  try {
+    const d = JSON.parse(raw);
+    const map = {
+      salePrice:       'refSalePrice',
+      buyPrice:        'refBuyPrice',
+      saleFeeInput:    'refSaleFee',
+      moveCost:        'refMoveCost',
+      registrationFee: 'refRegFee',
+      buyFeeInput:     'refBuyFee',
+      moveinCost:      'refMoveinCost',
+      xrpQty:          'ctXrpQty',
+      btcQty:          'ctBtcQty',
+      cryptoEtc:       'ctCryptoEtc',
+    };
+    Object.entries(map).forEach(([from, to]) => {
+      if (d[from] !== undefined && $(to)) $(to).value = d[from];
+    });
+    // 주담대: 직접입력 모드면 그 값, 아니면 _currentLoan 사용
+    if (d._currentLoan && $('refNewLoan')) $('refNewLoan').value = d._currentLoan;
+    calc();
+    ctSaveInputs();
+    const ind = $('ctSaveIndicator');
+    if (ind) ind.textContent = '재정계산기에서 동기화됨 ' + new Date().toLocaleString('ko-KR');
+  } catch(e) { alert('동기화 오류: ' + e.message); }
+}
 
 function ctSaveInputs() {
   const data = {};
@@ -1104,8 +1137,8 @@ function calc() {
   $('t_sell_pct').textContent = salePctNum;
   $('t_buy_pct').textContent  = buyPctNum;
 
-  // ① 가계약
-  const earnestNet = ctSaleDeposit1 - ctDeposit1;
+  // ① 가계약 + 약정서: 두 수취분을 합산해 누계에 반영
+  const earnestNet = ctSaleDeposit1 + ctSaleDeposit2 - ctDeposit1;
   $('t_sell_earnest').textContent = '+' + fmt(ctSaleDeposit1) + ' 만원';
   const earnestNetEl = $('t_earnest_net');
   earnestNetEl.textContent = (earnestNet >= 0 ? '+' : '−') + fmt(Math.abs(earnestNet)) + ' 만원';
@@ -1253,14 +1286,15 @@ function calc() {
   const cum4 = cum3 + interimNet;
   setCumVal('sc_cum4', cum4);
 
-  const balanceDayNet = sellBalance - buyBalance + newLoan - debt - saleCost - buyCost;
+  const balanceDayNet = sellBalance - buyBalance + newLoan + cryptoProceeds - debt - saleCost - buyCost;
   const scBal = $('sc_balance');
   scBal.textContent = (balanceDayNet >= 0 ? '+' : '−') + fmt(Math.abs(balanceDayNet));
   scBal.style.color = balanceDayNet >= 0 ? 'var(--green)' : 'var(--red)';
-  const balIn  = sellBalance + newLoan;
+  const balIn  = sellBalance + newLoan + cryptoProceeds;
   const balOut = buyBalance + debt + saleCost + buyCost;
+  const cryptoNote = cryptoProceeds > 0 ? ` (+크립토 ${fmt(cryptoProceeds)})` : '';
   $('sc_balance_note').innerHTML =
-    `<span style="color:var(--green)">수취 +${fmt(balIn)}</span> / <span style="color:var(--red)">지출 −${fmt(balOut)}</span><br>` +
+    `<span style="color:var(--green)">수취 +${fmt(balIn)}${cryptoNote}</span> / <span style="color:var(--red)">지출 −${fmt(balOut)}</span><br>` +
     `<span style="color:var(--sub);font-size:10px">잔금일 마이너스는 ①~④ 수취분으로 상쇄됩니다</span>`;
   const cum5 = cum4 + balanceDayNet;
   setCumVal('sc_cum5', cum5);
