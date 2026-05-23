@@ -176,6 +176,8 @@
   <h1>📋 계약 일정 — 매도·매수 자금 흐름</h1>
   <div class="header-actions">
     <button class="btn" onclick="toggleTheme()">🌙 다크모드</button>
+    <button class="btn" onclick="ctSaveInputs()" style="color:var(--blue);border-color:var(--blue)">💾 저장</button>
+    <span id="ctSaveIndicator" style="font-size:11px;color:var(--sub);align-self:center"></span>
   </div>
 </header>
 
@@ -519,6 +521,10 @@
             <span>약정계약금 총 수취 (1차+2차)</span>
             <span class="amt-in" id="t_earnest_total">-</span>
           </div>
+          <div class="txn-subtotal" style="border-top:1px dashed var(--border);margin-top:4px;padding-top:4px">
+            <span>① 가계약+약정서 후 순현금</span>
+            <span id="t_earnest_net2">-</span>
+          </div>
         </div>
         <div class="txn-cell">
           <div class="txn-na">— 없음</div>
@@ -734,9 +740,7 @@
           <div class="net-row"><span style="color:var(--sub)">— 양도세+지방소득세</span><span id="nr_sell_transfertax" style="color:var(--red)">-</span></div>
           <div class="net-row"><span style="color:var(--sub)">— 매도 중개보수</span><span id="nr_sell_fee" style="color:var(--red)">-</span></div>
           <div class="net-row"><span style="color:var(--sub)">— 이사비</span><span id="nr_sell_move" style="color:var(--red)">-</span></div>
-          <div class="net-row"><span style="color:var(--sub)">+ 주담대 실행</span><span id="nr_buy_loan" style="color:var(--green)">-</span></div>
-          <div class="net-row"><span style="color:var(--sub)">+ 크립토 매도</span><span id="nr_crypto" style="color:var(--green)">-</span></div>
-          <div class="net-total"><span>매도+주담대+크립토</span><span id="nr_sell_net" style="color:var(--green)">-</span></div>
+          <div class="net-total"><span>매도 순수령</span><span id="nr_sell_net" style="color:var(--green)">-</span></div>
         </div>
         <div class="net-card">
           <div class="net-card-title">📤 매수 (신동아리버파크) 지급 내역</div>
@@ -756,15 +760,19 @@
       <div style="background:var(--input-bg);border-radius:8px;padding:14px;margin-top:12px">
         <div style="font-size:12px;font-weight:700;color:var(--sub);margin-bottom:10px">🏦 이사 후 최종 자금 정산</div>
         <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px">
-          <span style="color:var(--sub)">매도+주담대 수령</span>
+          <span style="color:var(--sub)">매도 순수령 (세후·부채·비용 차감)</span>
           <span id="final_sell_net" style="color:var(--green);font-weight:600">-</span>
         </div>
         <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px">
-          <span style="color:var(--sub)">🪙 크립토 매도 예상</span>
-          <span id="final_crypto" style="color:var(--green);font-weight:600">-</span>
+          <span style="color:var(--sub)">+ 주담대 실행</span>
+          <span id="nr_buy_loan" style="color:var(--green);font-weight:600">-</span>
         </div>
         <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px">
-          <span style="color:var(--sub)">매수 총 지출</span>
+          <span style="color:var(--sub)">+ 🪙 크립토 매도 예상</span>
+          <span id="nr_crypto" style="color:var(--green);font-weight:600">-</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px">
+          <span style="color:var(--sub)">— 매수 총 지출</span>
           <span id="final_buy_net" style="color:var(--red);font-weight:600">-</span>
         </div>
         <div style="display:flex;justify-content:space-between;padding:8px 0 2px;font-weight:700;font-size:15px;border-top:2px solid var(--border);margin-top:4px">
@@ -830,7 +838,12 @@ function ctSaveInputs() {
   const data = {};
   CT_INPUT_IDS.forEach(id => { const el = $(id); if (el) data[id] = el.value; });
   CT_DATE_IDS.forEach(id  => { const el = $(id); if (el) data[id] = el.value; });
-  try { localStorage.setItem(CT_SAVE_KEY, JSON.stringify(data)); } catch(e) {}
+  data._savedAt = new Date().toLocaleString('ko-KR');
+  try {
+    localStorage.setItem(CT_SAVE_KEY, JSON.stringify(data));
+    const ind = $('ctSaveIndicator');
+    if (ind) ind.textContent = '저장됨 ' + data._savedAt;
+  } catch(e) {}
 }
 
 function ctLoadInputs() {
@@ -1104,6 +1117,12 @@ function calc() {
   if (dep2El) dep2El.textContent = '+' + fmt(ctSaleDeposit2) + ' 만원';
   const totalEl = $('t_earnest_total');
   if (totalEl) totalEl.textContent = '+' + fmt(ctSaleDeposit1 + ctSaleDeposit2) + ' 만원';
+  const net2 = ctSaleDeposit1 + ctSaleDeposit2 - ctDeposit1;
+  const net2El = $('t_earnest_net2');
+  if (net2El) {
+    net2El.textContent = (net2 >= 0 ? '+' : '−') + fmt(Math.abs(net2)) + ' 만원';
+    net2El.className = net2 >= 0 ? 'amt-in' : 'amt-neg';
+  }
 
   // ③ 계약
   const totalSaleEarnest   = ctSaleDeposit1 + ctSaleDeposit2;
@@ -1257,9 +1276,10 @@ function calc() {
   $('nr_sell_transfertax').textContent = '−' + fmt(refTransferTax) + ' 만원';
   $('nr_sell_fee').textContent         = '−' + fmt(refSaleFee)     + ' 만원';
   $('nr_sell_move').textContent        = '−' + fmt(refMoveCost)    + ' 만원';
+  const sellOnlyNet = salePrice - debt - saleCost; // 주담대·크립토 제외 순수 매도 수령
   const nrSell = $('nr_sell_net');
-  nrSell.textContent = fmt(sellNet) + ' 만원';
-  nrSell.style.color = sellNet >= 0 ? 'var(--green)' : 'var(--red)';
+  nrSell.textContent = fmt(sellOnlyNet) + ' 만원';
+  nrSell.style.color = sellOnlyNet >= 0 ? 'var(--green)' : 'var(--red)';
 
   // 매수 내역
   $('nr_buy_earnest').textContent  = '−' + fmt(ctDeposit1)       + ' 만원';
@@ -1275,8 +1295,9 @@ function calc() {
   $('nr_buy_net').textContent = fmt(buyEquityTotal) + ' 만원';
 
   // 최종 정산
-  $('final_sell_net').textContent = fmt(sellNet - cryptoProceeds) + ' 만원';
-  $('final_crypto').textContent   = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? '+' + fmt(cryptoProceeds) : `+${fmt(ctEtcVal)} + α`) + ' 만원';
+  $('final_sell_net').textContent = fmt(sellOnlyNet) + ' 만원';
+  $('nr_buy_loan').textContent    = '+' + fmt(newLoan) + ' 만원';
+  $('nr_crypto').textContent      = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? '+' + fmt(cryptoProceeds) : `+${fmt(ctEtcVal)} + α`) + ' 만원';
   $('final_buy_net').textContent  = fmt(buyEquityTotal) + ' 만원';
   $('nr_crypto').textContent = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? '+' + fmt(cryptoProceeds) : `+${fmt(ctEtcVal)} + α`) + ' 만원';
   const remEl = $('final_remainder');

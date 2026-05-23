@@ -145,6 +145,7 @@
   <div class="header-actions">
     <button class="btn" onclick="toggleTheme()">🌙 다크모드</button>
     <button class="btn" onclick="resetToDefaults()" style="color:var(--sub)">↺ 초기화</button>
+    <button class="btn" onclick="saveInputs()" style="color:var(--blue);border-color:var(--blue)">💾 저장</button>
     <span id="saveIndicator" style="font-size:11px;color:var(--sub);align-self:center"></span>
     <button class="btn btn-primary" onclick="exportPDF()">📄 PDF 저장</button>
   </div>
@@ -451,6 +452,10 @@
             <button class="adjust-btn" onclick="adjustValue('daycarePerQ', 100)">▲</button>
           </div>
         </div>
+      </div>
+      </div><!-- /daycare-body -->
+
+      <div class="grid-3">
         <div class="field">
           <label style="display:flex;align-items:center;gap:6px;">
             주담대 확정액 (만원)
@@ -469,7 +474,6 @@
           <input type="number" id="newLoanYears" value="30" oninput="calc()">
         </div>
       </div>
-      </div><!-- /daycare-body -->
 
       <div class="result-box">
         <div class="result-row"><span>세후 수령예정액 (S1)</span><span id="r_saleGrossRef">-</span></div>
