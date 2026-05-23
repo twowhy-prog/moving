@@ -59,6 +59,10 @@
   [data-theme="dark"] .badge-yellow { background: #451a03; }
   [data-theme="dark"] .badge-green { background: #052e16; }
   [data-theme="dark"] .badge-blue { background: #1e3a5f; }
+  .stage-done-btn { margin-left:8px; padding:1px 8px; border-radius:10px; border:1px solid var(--border); background:var(--card); color:var(--sub); font-size:11px; cursor:pointer; font-weight:600; transition:all .15s; }
+  .stage-done-btn:hover { border-color:var(--green); color:var(--green); }
+  .stage-done-btn.is-done { background:#f0fdf4; color:var(--green); border-color:var(--green); }
+  .txn-stage-label.stage-done { background: rgba(16,185,129,.07); }
 
   .info { font-size: 11px; color: var(--sub); margin-top: 6px; }
   .sep { height: 1px; background: var(--border); margin: 14px 0; }
@@ -329,7 +333,7 @@
           <label>계약금 (만원) <span id="r_buyDepositPct" style="font-size:10px;color:var(--sub);font-weight:400"></span></label>
           <div class="field-adjust">
             <button class="adjust-btn" onclick="adjustValue('refBuyDeposit', -1000)">▼</button>
-            <input type="number" id="refBuyDeposit" value="20700" oninput="calc()">
+            <input type="number" id="refBuyDeposit" value="20000" oninput="calc()">
             <button class="adjust-btn" onclick="adjustValue('refBuyDeposit', 1000)">▲</button>
           </div>
         </div>
@@ -447,7 +451,7 @@
         <div class="txn-col-header buy">📤 매수 — 신동아리버파크 <small style="font-weight:400;opacity:.75">(내는 돈 ↑)</small></div>
 
         <!-- ① 가계약 -->
-        <div class="txn-stage-label" id="stage1" onclick="toggleStage('stage1')" style="cursor:pointer">① 가계약 <span id="stage1_date" class="stage-date-badge"></span><span class="stage-toggle-icon">▼</span><span class="badge badge-green" style="margin-left:8px">완료</span></div>
+        <div class="txn-stage-label" id="stage1" onclick="toggleStage('stage1')" style="cursor:pointer">① 가계약 <span id="stage1_date" class="stage-date-badge"></span><span class="stage-toggle-icon">▼</span><button class="stage-done-btn" id="cbtn_stage1" onclick="event.stopPropagation();toggleComplete('stage1')">□ 완료 처리</button><span class="badge badge-green" id="badge_stage1" style="margin-left:6px">완료</span></div>
         <div class="txn-cell sell">
           <div class="txn-row">
             <span class="lbl">약정계약금 1차 수취</span>
@@ -468,7 +472,7 @@
         </div>
 
         <!-- ① 약정서 작성 -->
-        <div class="txn-stage-label" id="stageYak" onclick="toggleStage('stageYak')" style="cursor:pointer">① 약정서 작성 <span id="stageYak_date" class="stage-date-badge">5/22</span><span class="stage-toggle-icon">▼</span><span class="badge badge-green" style="margin-left:8px">완료</span></div>
+        <div class="txn-stage-label" id="stageYak" onclick="toggleStage('stageYak')" style="cursor:pointer">① 약정서 작성 <span id="stageYak_date" class="stage-date-badge">5/22</span><span class="stage-toggle-icon">▼</span><button class="stage-done-btn" id="cbtn_stageYak" onclick="event.stopPropagation();toggleComplete('stageYak')">□ 완료 처리</button><span class="badge badge-green" id="badge_stageYak" style="margin-left:6px">완료</span></div>
         <div class="txn-cell sell">
           <div class="txn-row">
             <span class="lbl">약정계약금 2차 수취</span>
@@ -486,7 +490,7 @@
         </div>
 
         <!-- ② 토지거래허가 -->
-        <div class="txn-stage-label" id="stage2" onclick="toggleStage('stage2')" style="cursor:pointer">② 토지거래허가 <span id="stage2_date" class="stage-date-badge"></span><span class="stage-toggle-icon">▼</span><span class="badge badge-yellow" style="margin-left:8px">진행중</span></div>
+        <div class="txn-stage-label" id="stage2" onclick="toggleStage('stage2')" style="cursor:pointer">② 토지거래허가 <span id="stage2_date" class="stage-date-badge"></span><span class="stage-toggle-icon">▼</span><button class="stage-done-btn" id="cbtn_stage2" onclick="event.stopPropagation();toggleComplete('stage2')">□ 완료 처리</button><span class="badge badge-yellow" id="badge_stage2" style="margin-left:6px">진행중</span></div>
         <div class="txn-cell sell">
           <div class="txn-na">— 대기</div>
           <div class="txn-note">허가 기간 중 매수자 확정 후 삼익 매도 계약 준비.</div>
@@ -497,7 +501,7 @@
         </div>
 
         <!-- ③ 계약 -->
-        <div class="txn-stage-label" id="stage3" onclick="toggleStage('stage3')" style="cursor:pointer">③ 계약 — 토허가 후 실계약 <span id="stage3_date" class="stage-date-badge"></span><span class="stage-toggle-icon">▼</span><span class="badge badge-yellow" style="margin-left:8px">예정</span></div>
+        <div class="txn-stage-label" id="stage3" onclick="toggleStage('stage3')" style="cursor:pointer">③ 계약 — 토허가 후 실계약 <span id="stage3_date" class="stage-date-badge"></span><span class="stage-toggle-icon">▼</span><button class="stage-done-btn" id="cbtn_stage3" onclick="event.stopPropagation();toggleComplete('stage3')">□ 완료 처리</button><span class="badge badge-yellow" id="badge_stage3" style="margin-left:6px">예정</span></div>
         <div class="txn-cell sell">
           <div class="txn-row">
             <span class="lbl">계약금 합계 (<span id="t_sell_pct">10</span>%)</span>
@@ -536,7 +540,7 @@
         </div>
 
         <!-- ④ 중도금 / 세입자 전세보증금 -->
-        <div class="txn-stage-label" id="stage4" onclick="toggleStage('stage4')" style="cursor:pointer">④ 중도금 <span id="stage4_date" class="stage-date-badge"></span><span class="stage-toggle-icon">▼</span><span id="ct_interim_badge" class="badge badge-yellow" style="margin-left:8px">예정</span></div>
+        <div class="txn-stage-label" id="stage4" onclick="toggleStage('stage4')" style="cursor:pointer">④ 중도금 <span id="stage4_date" class="stage-date-badge"></span><span class="stage-toggle-icon">▼</span><button class="stage-done-btn" id="cbtn_stage4" onclick="event.stopPropagation();toggleComplete('stage4')">□ 완료 처리</button><span id="ct_interim_badge" class="badge badge-yellow" id="badge_stage4" style="margin-left:6px">예정</span></div>
         <div class="txn-cell sell" id="ct_sell_interim_cell">
           <div id="ct_sell_interim_content"><div class="txn-na">— 없음</div></div>
           <div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--border)">
@@ -564,7 +568,7 @@
         </div>
 
         <!-- ⑤ 잔금 -->
-        <div class="txn-stage-label" id="stage5" onclick="toggleStage('stage5')" style="cursor:pointer">⑤ 잔금 <span id="stage5_date" class="stage-date-badge"></span><span class="stage-toggle-icon">▼</span><span class="badge badge-yellow" style="margin-left:8px">예정</span></div>
+        <div class="txn-stage-label" id="stage5" onclick="toggleStage('stage5')" style="cursor:pointer">⑤ 잔금 <span id="stage5_date" class="stage-date-badge"></span><span class="stage-toggle-icon">▼</span><button class="stage-done-btn" id="cbtn_stage5" onclick="event.stopPropagation();toggleComplete('stage5')">□ 완료 처리</button><span class="badge badge-yellow" id="badge_stage5" style="margin-left:6px">예정</span></div>
         <div class="txn-cell sell">
           <div class="txn-row">
             <span class="lbl">잔금 수취</span>
@@ -587,7 +591,7 @@
         </div>
 
         <!-- ⑥ 잔금 후 처리 -->
-        <div class="txn-stage-label" id="stage6" onclick="toggleStage('stage6')" style="cursor:pointer">⑥ 잔금 후 처리 — 당일 자금 정산 <span id="stage6_date" class="stage-date-badge"></span><span class="stage-toggle-icon">▼</span><span class="badge badge-blue" style="margin-left:8px">예정</span></div>
+        <div class="txn-stage-label" id="stage6" onclick="toggleStage('stage6')" style="cursor:pointer">⑥ 잔금 후 처리 — 당일 자금 정산 <span id="stage6_date" class="stage-date-badge"></span><span class="stage-toggle-icon">▼</span><button class="stage-done-btn" id="cbtn_stage6" onclick="event.stopPropagation();toggleComplete('stage6')">□ 완료 처리</button><span class="badge badge-blue" id="badge_stage6" style="margin-left:6px">예정</span></div>
         <div class="txn-cell sell">
           <div class="txn-row">
             <span class="lbl">기존 부채 상환</span>
@@ -1178,6 +1182,62 @@ function calc() {
 
 calc();
 ['stage1','stage2','stage3','stage4','stage5'].forEach(updateStageDate);
+
+// ===== 단계 완료 체크 =====
+const COMPLETE_KEY = 'contract_complete_v1';
+const ALL_STAGES   = ['stage1','stageYak','stage2','stage3','stage4','stage5','stage6'];
+const STAGE_ORIG_BADGE = {
+  stage1:   { cls: 'badge-green',  text: '완료' },
+  stageYak: { cls: 'badge-green',  text: '완료' },
+  stage2:   { cls: 'badge-yellow', text: '진행중' },
+  stage3:   { cls: 'badge-yellow', text: '예정' },
+  stage4:   { cls: 'badge-yellow', text: '예정' },
+  stage5:   { cls: 'badge-yellow', text: '예정' },
+  stage6:   { cls: 'badge-blue',   text: '예정' },
+};
+
+function applyComplete(id, done, save) {
+  const btn   = $('cbtn_' + id);
+  const label = $(id);
+  // stage4는 ct_interim_badge가 별도 id라 badge_stage4가 없음 → 그냥 버튼/라벨만 처리
+  const badge = $('badge_' + id) || (id === 'stage4' ? $('ct_interim_badge') : null);
+  if (!btn) return;
+  if (done) {
+    btn.textContent = '✓ 완료됨';
+    btn.classList.add('is-done');
+    if (label) label.classList.add('stage-done');
+    if (badge) { badge.className = 'badge badge-green'; badge.textContent = '완료'; }
+  } else {
+    btn.textContent = '□ 완료 처리';
+    btn.classList.remove('is-done');
+    if (label) label.classList.remove('stage-done');
+    const orig = STAGE_ORIG_BADGE[id];
+    if (badge && orig) { badge.className = `badge ${orig.cls}`; badge.textContent = orig.text; }
+  }
+  if (save) {
+    try {
+      const state = JSON.parse(localStorage.getItem(COMPLETE_KEY) || '{}');
+      state[id] = done;
+      localStorage.setItem(COMPLETE_KEY, JSON.stringify(state));
+    } catch(e) {}
+  }
+}
+
+function toggleComplete(id) {
+  const btn = $('cbtn_' + id);
+  applyComplete(id, !btn?.classList.contains('is-done'), true);
+}
+
+// 초기 완료 상태 복원
+(function loadCompleteState() {
+  const saved = {};
+  try { Object.assign(saved, JSON.parse(localStorage.getItem(COMPLETE_KEY) || '{}')); } catch(e) {}
+  ALL_STAGES.forEach(id => {
+    const orig = STAGE_ORIG_BADGE[id];
+    const defaultDone = orig?.cls === 'badge-green'; // 기본 완료 단계
+    applyComplete(id, id in saved ? saved[id] : defaultDone, false);
+  });
+})();
 </script>
 </body>
 </html>
