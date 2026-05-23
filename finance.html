@@ -1085,6 +1085,7 @@ function saveInputs() {
   CHECKBOX_IDS.forEach(id => { const el = $(id); if (el) data[id] = el.checked; });
   data._loanManual = loanManual;
   if (loanManual) data._newLoanManualVal = $('newLoan') ? $('newLoan').value : '';
+  data._currentLoan = $('newLoan') ? $('newLoan').value : '';
   data._savedAt = new Date().toLocaleString('ko-KR');
   localStorage.setItem(SAVE_KEY, JSON.stringify(data));
   const ind = $('saveIndicator');
