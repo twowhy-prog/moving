@@ -266,7 +266,7 @@
     <div style="font-size:11px;font-weight:700;color:var(--blue);margin:10px 0 6px;letter-spacing:.3px">📤 매수 비용 (잔금 후 납부)</div>
     <div class="grid-4">
       <div class="field">
-        <label>취득세 합계 <small style="color:var(--sub)">(3.32% 자동)</small> <button type="button" style="font-size:10px;padding:1px 5px;border-radius:4px;border:1px solid var(--border);background:var(--bg);cursor:pointer;color:var(--sub)" onclick="autoAcqTax()">자동</button></label>
+        <label>취득세 합계 <small style="color:var(--sub)">(합산 3.5%)</small> <button type="button" style="font-size:10px;padding:1px 5px;border-radius:4px;border:1px solid var(--border);background:var(--bg);cursor:pointer;color:var(--sub)" onclick="autoAcqTax()">자동</button></label>
         <div class="field-adjust">
           <button class="adjust-btn" onclick="adjustValue('refAcqTax', -100)">▼</button>
           <input type="number" id="refAcqTax" value="6038" oninput="calc()">
@@ -303,6 +303,14 @@
           <button class="adjust-btn" onclick="adjustValue('refRenovationCost', -100)">▼</button>
           <input type="number" id="refRenovationCost" value="4000" oninput="calc()">
           <button class="adjust-btn" onclick="adjustValue('refRenovationCost', 100)">▲</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>채권매입비 (만원) <button type="button" style="font-size:10px;padding:1px 5px;border-radius:4px;border:1px solid var(--border);background:var(--bg);cursor:pointer;color:var(--sub)" onclick="autoBondFee()">자동</button> <small style="color:var(--sub)">국민주택채권</small></label>
+        <div class="field-adjust">
+          <button class="adjust-btn" onclick="adjustValue('refBondFee', -10)">▼</button>
+          <input type="number" id="refBondFee" value="179" oninput="calc()">
+          <button class="adjust-btn" onclick="adjustValue('refBondFee', 10)">▲</button>
         </div>
       </div>
       <div class="field" style="grid-column:1/-1">
@@ -671,8 +679,12 @@
         </div>
         <div class="txn-cell">
           <div class="txn-row">
-            <span class="lbl">취득세 합계</span>
+            <span class="lbl">취득세 합계 <small style="color:var(--sub)">(60일 이내)</small></span>
             <span class="amt amt-neg" id="t_buy_acqtax">-</span>
+          </div>
+          <div class="txn-row">
+            <span class="lbl">채권매입비</span>
+            <span class="amt amt-neg" id="t_buy_bondfee">-</span>
           </div>
           <div class="txn-row">
             <span class="lbl">매수 중개보수</span>
@@ -737,7 +749,9 @@
           <div class="sc-step">⑤+⑥ 잔금·정산 순현금</div>
           <div class="sc-net" id="sc_balance">-</div>
           <div class="sc-note" id="sc_balance_note" style="line-height:1.6">만원</div>
-          <div class="sc-cum-row" style="border-top:1px solid var(--border);margin-top:4px;padding-top:4px"><span class="sc-cum-label" style="font-weight:700;color:var(--text)">최종 잔여</span><span class="sc-cum-val" id="sc_cum5" style="font-weight:700">-</span></div>
+          <div class="sc-cum-row"><span class="sc-cum-label">누계 잔여 (잔금일)</span><span class="sc-cum-val" id="sc_cum5">-</span></div>
+          <div class="sc-cum-row" style="margin-top:4px"><span class="sc-cum-label" style="color:var(--red)">⑦ 취득세 납부 <small style="color:var(--sub)">(60일 이내)</small></span><span class="sc-cum-val" id="sc_acqtax_deferred" style="color:var(--red)">-</span></div>
+          <div class="sc-cum-row" style="border-top:1px solid var(--border);margin-top:4px;padding-top:4px"><span class="sc-cum-label" style="font-weight:700;color:var(--text)">최종 잔여</span><span class="sc-cum-val" id="sc_cum_final" style="font-weight:700">-</span></div>
         </div>
       </div>
 
@@ -761,7 +775,8 @@
           <div class="net-row"><span style="color:var(--sub)">추가 계약금</span><span id="nr_buy_add" style="color:var(--blue)">-</span></div>
           <div class="net-row" id="nr_buy_interim_row"><span style="color:var(--sub)">중도금</span><span id="nr_buy_interim" style="color:var(--blue)">-</span></div>
           <div class="net-row"><span style="color:var(--sub)">잔금</span><span id="nr_buy_balance" style="color:var(--blue)">-</span></div>
-          <div class="net-row"><span style="color:var(--sub)">— 취득세 합계</span><span id="nr_buy_acqtax" style="color:var(--red)">-</span></div>
+          <div class="net-row"><span style="color:var(--sub)">— 취득세 합계 <small>(60일 이내)</small></span><span id="nr_buy_acqtax" style="color:var(--red)">-</span></div>
+          <div class="net-row"><span style="color:var(--sub)">— 채권매입비</span><span id="nr_buy_bondfee" style="color:var(--red)">-</span></div>
           <div class="net-row"><span style="color:var(--sub)">— 매수 중개보수</span><span id="nr_buy_fee" style="color:var(--red)">-</span></div>
           <div class="net-row"><span style="color:var(--sub)">— 등기비</span><span id="nr_buy_reg" style="color:var(--red)">-</span></div>
           <div class="net-row"><span style="color:var(--sub)">— 입주비</span><span id="nr_buy_movein" style="color:var(--red)">-</span></div>
@@ -837,7 +852,7 @@ const CT_SAVE_KEY = 'contract_inputs_v1';
 const CT_INPUT_IDS = [
   'refSalePrice','refAcqCost','refBuyPrice','refDebt','refNewLoan',
   'refTransferTax','refSaleFee','refMoveCost',
-  'refAcqTax','refBuyFee','refRegFee','refMoveinCost','refRenovationCost',
+  'refAcqTax','refBuyFee','refRegFee','refMoveinCost','refRenovationCost','refBondFee',
   'refSaleDeposit','saleInterim1','saleInterim2',
   'refBuyDeposit','buyInterim1','buyInterim2',
   'ctSaleDeposit1','ctSaleDeposit2','ctDeposit1',
@@ -858,6 +873,7 @@ const FINANCE_SYNC_MAP = {
   buyFeeInput:     'refBuyFee',
   moveinCost:      'refMoveinCost',
   renovationCost:  'refRenovationCost',
+  bondFee:         'refBondFee',
   // 크립토: S3 가용분(xrpQty)보다 S10 보유량(xrpHold) 기준이 더 직관적
   xrpHold:         'ctXrpQty',
   btcHold:         'ctBtcQty',
@@ -1068,6 +1084,11 @@ function autoAcqTax() {
   calc();
 }
 
+function autoBondFee() {
+  $('refBondFee').value = Math.round(val('refBuyPrice') * 0.026 * 0.04);
+  calc();
+}
+
 function calc() {
   const salePrice        = val('refSalePrice');
   const buyPrice         = val('refBuyPrice');
@@ -1086,7 +1107,8 @@ function calc() {
   const refRegFee        = val('refRegFee');
   const refMoveinCost      = val('refMoveinCost');
   const refRenovationCost  = val('refRenovationCost');
-  const buyCost            = refAcqTax + refBuyFee + refRegFee + refMoveinCost + refRenovationCost;
+  const refBondFee         = val('refBondFee');
+  const buyCost            = refAcqTax + refBuyFee + refRegFee + refMoveinCost + refRenovationCost + refBondFee;
 
   // 합계 표시
   $('r_saleCostTotal').textContent = fmt(saleCost) + ' 만원';
@@ -1272,6 +1294,7 @@ function calc() {
 
   $('t_buy_loan').textContent    = '+' + fmt(newLoan)       + ' 만원';
   $('t_buy_acqtax').textContent  = '−' + fmt(refAcqTax)    + ' 만원';
+  $('t_buy_bondfee').textContent = '−' + fmt(refBondFee)   + ' 만원';
   $('t_buy_fee').textContent     = '−' + fmt(refBuyFee)    + ' 만원';
   $('t_buy_reg').textContent     = '−' + fmt(refRegFee)    + ' 만원';
   $('t_buy_movein').textContent      = '−' + fmt(refMoveinCost)      + ' 만원';
@@ -1310,18 +1333,23 @@ function calc() {
   const cum4 = cum3 + interimNet;
   setCumVal('sc_cum4', cum4);
 
-  const balanceDayNet = sellBalance - buyBalance + newLoan + cryptoProceeds - debt - saleCost - buyCost;
+  // 취득세는 잔금일로부터 60일 이내 납부 → 잔금일 즉시 지출에서 제외
+  const buyCostImmediate = buyCost - refAcqTax;
+  const balanceDayNet = sellBalance - buyBalance + newLoan + cryptoProceeds - debt - saleCost - buyCostImmediate;
   const scBal = $('sc_balance');
   scBal.textContent = (balanceDayNet >= 0 ? '+' : '−') + fmt(Math.abs(balanceDayNet));
   scBal.style.color = balanceDayNet >= 0 ? 'var(--green)' : 'var(--red)';
   const balIn  = sellBalance + newLoan + cryptoProceeds;
-  const balOut = buyBalance + debt + saleCost + buyCost;
+  const balOut = buyBalance + debt + saleCost + buyCostImmediate;
   const cryptoNote = cryptoProceeds > 0 ? ` (+크립토 ${fmt(cryptoProceeds)})` : '';
   $('sc_balance_note').innerHTML =
     `<span style="color:var(--green)">수취 +${fmt(balIn)}${cryptoNote}</span> / <span style="color:var(--red)">지출 −${fmt(balOut)}</span><br>` +
     `<span style="color:var(--sub);font-size:10px">잔금일 마이너스는 ①~④ 수취분으로 상쇄됩니다</span>`;
   const cum5 = cum4 + balanceDayNet;
   setCumVal('sc_cum5', cum5);
+  $('sc_acqtax_deferred').textContent = '−' + fmt(refAcqTax) + ' 만원';
+  const cumFinal = cum5 - refAcqTax;
+  setCumVal('sc_cum_final', cumFinal);
 
   // 매도 내역
   $('nr_sell_earnest').textContent  = '+' + fmt(ctSaleDeposit1) + ' 만원';
@@ -1347,6 +1375,7 @@ function calc() {
   $('nr_buy_balance').textContent  = '−' + fmt(buyBalance)       + ' 만원';
   $('nr_buy_loan').textContent    = '+' + fmt(newLoan)        + ' 만원';
   $('nr_buy_acqtax').textContent  = '−' + fmt(refAcqTax)     + ' 만원';
+  $('nr_buy_bondfee').textContent = '−' + fmt(refBondFee)    + ' 만원';
   $('nr_buy_fee').textContent     = '−' + fmt(refBuyFee)     + ' 만원';
   $('nr_buy_reg').textContent     = '−' + fmt(refRegFee)     + ' 만원';
   $('nr_buy_movein').textContent      = '−' + fmt(refMoveinCost)     + ' 만원';
