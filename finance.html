@@ -320,6 +320,14 @@
             <button class="adjust-btn" onclick="adjustValue('buyFeeInput', 10)">▲</button>
           </div>
         </div>
+        <div class="field">
+          <label>채권매입비 (만원) <button type="button" style="font-size:10px;padding:1px 6px;border-radius:4px;border:1px solid var(--border);background:var(--bg);cursor:pointer;color:var(--sub)" onclick="resetBondFee()">자동</button> <small style="color:var(--sub)">서울 85㎡초과 2.6%·즉시할인</small></label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('bondFee', -10)">▼</button>
+            <input type="number" id="bondFee" value="179" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('bondFee', 10)">▲</button>
+          </div>
+        </div>
       </div>
       <div class="info" style="margin-top:8px"><strong>서울시 표준 중개보수율 (매매, 부가세 별도)</strong> — 클릭하면 해당 요율로 계산 적용 | 법정 상한 <span id="r_buyFeeMax" style="font-weight:600">-</span> 만원</div>
       <div class="fee-ref" id="feeRefBuy">
@@ -332,12 +340,13 @@
       </div>
 
       <div class="result-box">
-        <div class="result-row"><span>취득세 (3%)</span><span id="r_acquisitionTax">-</span></div>
+        <div class="result-row"><span>취득세 (9억 초과 3%)</span><span id="r_acquisitionTax">-</span></div>
         <div class="result-row indent"><span>지방교육세 (취득세×10%)</span><span id="r_eduTax">-</span></div>
         <div class="result-row indent"><span>농어촌특별세 (0.2%)</span><span id="r_ruralTax">-</span></div>
-        <div class="result-row"><span>취득세 합계</span><span id="r_taxTotal">-</span></div>
+        <div class="result-row"><span>취득세 합계 <small style="color:var(--sub)">(합산 3.5%)</small></span><span id="r_taxTotal">-</span></div>
         <div class="result-row"><span>매수 중개보수</span><span id="r_buyFee">-</span></div>
         <div class="result-row"><span>등기비</span><span id="r_regFee">-</span></div>
+        <div class="result-row"><span>채권매입비 <small style="color:var(--sub)">(국민주택채권 즉시할인)</small></span><span id="r_bondFee">-</span></div>
         <div class="sep"></div>
         <div class="result-row total"><span>🏠 매수 순수 비용 합계 <small style="font-weight:400;color:var(--sub)">(영유비·주담대 제외)</small></span><span id="r_buyCostBase">-</span></div>
       </div>
@@ -1066,7 +1075,7 @@ const SAVE_KEY = 'finance_inputs_v1';
 const INPUT_IDS = [
   'salePrice','acquirePrice','moveCost','saleFeeInput',
   'acquireYear','acquireMonth','saleYear','saleMonth',
-  'buyPrice','moveinCost','renovationCost','registrationFee','buyFeeInput',
+  'buyPrice','moveinCost','renovationCost','registrationFee','buyFeeInput','bondFee',
   'debtMortgage','debtMortgageRate','debtMaton','debtMatonRate',
   'debtEtc','debtEtcRate','debtCar','debtCarMonths',
   'daycareQuarters','daycarePerQ',
@@ -1275,6 +1284,11 @@ function resetBuyFee() {
   calc();
 }
 
+function resetBondFee() {
+  $('bondFee').value = Math.round(val('buyPrice') * 0.026 * 0.04);
+  calc();
+}
+
 // ===== 업비트 실시간 시세 조회 =====
 async function fetchCryptoPrices() {
   const timeEl = $('cryptoPriceTime');
@@ -1361,14 +1375,16 @@ function calc() {
   const ruralTax      = buyPrice * 0.002;
   const taxTotal      = acqTax + eduTax + ruralTax;
   const buyFee        = val('buyFeeInput');
+  const bondFee       = val('bondFee');
   const renovationCost = val('renovationCost');
-  const buyCostBase = buyPrice + taxTotal + buyFee + regFee + moveinCost + renovationCost;
+  const buyCostBase = buyPrice + taxTotal + buyFee + bondFee + regFee + moveinCost + renovationCost;
 
   $('r_acquisitionTax').textContent = fmt(acqTax) + ' 만원';
   $('r_eduTax').textContent         = fmt(eduTax) + ' 만원';
   $('r_ruralTax').textContent       = fmt(ruralTax) + ' 만원';
   $('r_taxTotal').textContent       = fmt(taxTotal) + ' 만원';
   $('r_buyFee').textContent         = fmt(buyFee) + ' 만원';
+  $('r_bondFee').textContent        = fmt(bondFee) + ' 만원';
   $('r_buyFeeMax').textContent      = fmt(calcBrokerageFee(buyPrice));
   highlightFeeRef('feeRefBuy', buyPrice);
   $('r_regFee').textContent         = fmt(regFee) + ' 만원';
