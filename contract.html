@@ -327,18 +327,18 @@
       <div class="field">
         <label>XRP <span id="ct_xrpPriceLabel" style="font-size:10px;color:var(--blue);font-weight:600"></span></label>
         <div class="field-adjust">
-          <button class="adjust-btn" onclick="adjustValue('ct1XrpQty', -1000)">▼</button>
-          <input type="number" id="ct1XrpQty" value="0" oninput="calc()">
-          <button class="adjust-btn" onclick="adjustValue('ct1XrpQty', 1000)">▲</button>
+          <button class="adjust-btn" onclick="adjClamp('ct1XrpQty', -1000, 'xrp')">▼</button>
+          <input type="number" id="ct1XrpQty" value="0" oninput="clampCryptoQty('ct1XrpQty','xrp')">
+          <button class="adjust-btn" onclick="adjClamp('ct1XrpQty', 1000, 'xrp')">▲</button>
         </div>
         <div style="font-size:11px;color:var(--sub);margin-top:2px">개 ≈ <span id="ct1_xrpVal" style="color:var(--green);font-weight:600">-</span> 만원</div>
       </div>
       <div class="field">
         <label>BTC <span id="ct_btcPriceLabel" style="font-size:10px;color:var(--blue);font-weight:600"></span></label>
         <div class="field-adjust">
-          <button class="adjust-btn" onclick="adjustValue('ct1BtcQty', -0.1)">▼</button>
-          <input type="number" id="ct1BtcQty" value="0" step="0.01" oninput="calc()">
-          <button class="adjust-btn" onclick="adjustValue('ct1BtcQty', 0.1)">▲</button>
+          <button class="adjust-btn" onclick="adjClamp('ct1BtcQty', -0.1, 'btc')">▼</button>
+          <input type="number" id="ct1BtcQty" value="0" step="0.01" oninput="clampCryptoQty('ct1BtcQty','btc')">
+          <button class="adjust-btn" onclick="adjClamp('ct1BtcQty', 0.1, 'btc')">▲</button>
         </div>
         <div style="font-size:11px;color:var(--sub);margin-top:2px">개 ≈ <span id="ct1_btcVal" style="color:var(--green);font-weight:600">-</span> 만원</div>
       </div>
@@ -358,18 +358,18 @@
       <div class="field">
         <label>XRP</label>
         <div class="field-adjust">
-          <button class="adjust-btn" onclick="adjustValue('ct2XrpQty', -1000)">▼</button>
-          <input type="number" id="ct2XrpQty" value="0" oninput="calc()">
-          <button class="adjust-btn" onclick="adjustValue('ct2XrpQty', 1000)">▲</button>
+          <button class="adjust-btn" onclick="adjClamp('ct2XrpQty', -1000, 'xrp')">▼</button>
+          <input type="number" id="ct2XrpQty" value="0" oninput="clampCryptoQty('ct2XrpQty','xrp')">
+          <button class="adjust-btn" onclick="adjClamp('ct2XrpQty', 1000, 'xrp')">▲</button>
         </div>
         <div style="font-size:11px;color:var(--sub);margin-top:2px">개 ≈ <span id="ct2_xrpVal" style="color:var(--green);font-weight:600">-</span> 만원</div>
       </div>
       <div class="field">
         <label>BTC</label>
         <div class="field-adjust">
-          <button class="adjust-btn" onclick="adjustValue('ct2BtcQty', -0.1)">▼</button>
-          <input type="number" id="ct2BtcQty" value="0" step="0.01" oninput="calc()">
-          <button class="adjust-btn" onclick="adjustValue('ct2BtcQty', 0.1)">▲</button>
+          <button class="adjust-btn" onclick="adjClamp('ct2BtcQty', -0.1, 'btc')">▼</button>
+          <input type="number" id="ct2BtcQty" value="0" step="0.01" oninput="clampCryptoQty('ct2BtcQty','btc')">
+          <button class="adjust-btn" onclick="adjClamp('ct2BtcQty', 0.1, 'btc')">▲</button>
         </div>
         <div style="font-size:11px;color:var(--sub);margin-top:2px">개 ≈ <span id="ct2_btcVal" style="color:var(--green);font-weight:600">-</span> 만원</div>
       </div>
@@ -1106,6 +1106,28 @@ function updateStageDate(stageId) {
 function adjustValue(id, amount) {
   const el = $(id);
   if (el) { el.value = Math.max(0, (parseFloat(el.value) || 0) + amount); calc(); }
+}
+
+// 크립토 수량 입력 시 1차+2차 합이 보유량 초과하면 자동 클램핑
+function clampCryptoQty(changedId, coin) {
+  const holdings = getCryptoHoldings();
+  const maxHeld = coin === 'xrp' ? holdings.xrp : holdings.btc;
+  if (maxHeld > 0) {
+    const pairMap = { ct1XrpQty:'ct2XrpQty', ct2XrpQty:'ct1XrpQty', ct1BtcQty:'ct2BtcQty', ct2BtcQty:'ct1BtcQty' };
+    const otherId = pairMap[changedId];
+    const otherVal = parseFloat($(otherId)?.value) || 0;
+    const thisEl = $(changedId);
+    const thisVal = parseFloat(thisEl?.value) || 0;
+    const maxThis = Math.max(0, maxHeld - otherVal);
+    if (thisVal > maxThis) thisEl.value = coin === 'btc' ? maxThis.toFixed(4) : Math.floor(maxThis);
+  }
+  calc();
+}
+
+function adjClamp(id, delta, coin) {
+  const el = $(id);
+  if (el) el.value = Math.max(0, (parseFloat(el.value) || 0) + delta);
+  clampCryptoQty(id, coin);
 }
 
 function updateInterimDates() {
