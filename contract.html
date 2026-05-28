@@ -891,10 +891,10 @@ const FINANCE_SYNC_MAP = {
   moveinCost:      'refMoveinCost',
   renovationCost:  'refRenovationCost',
   bondFee:         'refBondFee',
-  // 크립토: S3 가용분(xrpQty)보다 S10 보유량(xrpHold) 기준이 더 직관적
-  xrpHold:         'ctXrpQty',
-  btcHold:         'ctBtcQty',
-  cryptoEtcHold:   'ctCryptoEtc',
+  // 크립토: S3 가용분 (주담대 계산에 사용하는 매도 예정 수량)
+  xrpQty:      'ctXrpQty',
+  btcQty:      'ctBtcQty',
+  cryptoEtc:   'ctCryptoEtc',
 };
 
 function _applyFinanceData(d, silent) {
@@ -903,6 +903,14 @@ function _applyFinanceData(d, silent) {
   });
   if (d._currentLoan && $('refNewLoan')) $('refNewLoan').value = d._currentLoan;
   if (d._currentTransferTax !== undefined && $('refTransferTax')) $('refTransferTax').value = d._currentTransferTax;
+  // 부채 합계 → refDebt (체크박스 상태 반영)
+  if ($('refDebt') && d.debtMortgage !== undefined) {
+    const _m  = parseFloat(d.debtMortgage) || 0;
+    const _ma = d.debt_maton !== false ? (parseFloat(d.debtMaton) || 0) : 0;
+    const _e  = d.debt_etc   !== false ? (parseFloat(d.debtEtc)   || 0) : 0;
+    const _c  = d.debt_car   !== false ? (parseFloat(d.debtCar)   || 0) : 0;
+    $('refDebt').value = _m + _ma + _e + _c;
+  }
   if (!silent) {
     calc();
     ctSaveInputs();
