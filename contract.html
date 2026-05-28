@@ -385,7 +385,7 @@
         <label style="font-weight:600">2차 합계</label>
         <div style="padding:7px 10px;background:var(--input-bg);border-radius:6px;border:1px solid var(--border);font-size:14px;font-weight:600;color:#8b5cf6" id="r_crypto2">-</div>
         <div style="font-size:11px;margin-top:4px;display:flex;justify-content:space-between;align-items:center">
-          <span style="color:var(--sub)">목표 8,500만원</span>
+          <span style="color:var(--sub)">목표 8,000만원</span>
           <span id="r_crypto2_diff" style="font-weight:600;font-size:11px"></span>
         </div>
       </div>
@@ -1277,7 +1277,7 @@ function calc() {
       d1El.style.color = diff1 >= 0 ? 'var(--green)' : 'var(--red)';
     } else { d1El.textContent = ''; }
   }
-  const diff2 = crypto2 - 8500;
+  const diff2 = crypto2 - 8000;
   const d2El = $('r_crypto2_diff');
   if (d2El) {
     if (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0) {
