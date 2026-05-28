@@ -685,6 +685,10 @@
             <span class="lbl">주담대 실행 (+)</span>
             <span class="amt amt-in" id="t_buy_loan">-</span>
           </div>
+          <div class="txn-row" id="t_sell_crypto_row">
+            <span class="lbl">🪙 크립토 매도 (+)</span>
+            <span class="amt amt-in" id="t_sell_crypto">-</span>
+          </div>
           <div class="txn-subtotal">
             <span>단계 소계</span>
             <span id="t_sell_net">-</span>
@@ -1308,12 +1312,15 @@ function calc() {
   $('t_sell_transfertax').textContent = '−' + fmt(refTransferTax)  + ' 만원';
   $('t_sell_fee').textContent         = '−' + fmt(refSaleFee)      + ' 만원';
   $('t_sell_move').textContent        = '−' + fmt(refMoveCost)     + ' 만원';
-  const stage6SellNet = newLoan - debt - saleCost;
+  const stage6SellNet = newLoan + cryptoProceeds - debt - saleCost;
   const sellNetEl = $('t_sell_net');
   sellNetEl.textContent = (stage6SellNet >= 0 ? '+' : '−') + fmt(Math.abs(stage6SellNet)) + ' 만원';
   sellNetEl.className   = stage6SellNet >= 0 ? 'amt-in' : 'amt-neg';
 
   $('t_buy_loan').textContent    = '+' + fmt(newLoan)       + ' 만원';
+  const cryptoEl = $('t_sell_crypto');
+  cryptoEl.textContent = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? '+' + fmt(cryptoProceeds) : `+${fmt(ctEtcVal)} + α`) + ' 만원';
+  $('t_sell_crypto_row').style.opacity = cryptoProceeds > 0 || ctEtcVal > 0 ? '1' : '0.4';
   $('t_buy_acqtax').textContent  = '−' + fmt(refAcqTax)    + ' 만원';
   $('t_buy_bondfee').textContent = '−' + fmt(refBondFee)   + ' 만원';
   $('t_buy_fee').textContent     = '−' + fmt(refBuyFee)    + ' 만원';
