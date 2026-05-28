@@ -170,6 +170,7 @@
   <a href="finance.html" style="display:inline-block;padding:10px 20px;color:#94a3b8;font-size:13px;font-weight:600;border-bottom:3px solid transparent;text-decoration:none" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'">💰 재정 계산기</a>
   <a href="compare.html" style="display:inline-block;padding:10px 20px;color:#94a3b8;font-size:13px;font-weight:600;border-bottom:3px solid transparent;text-decoration:none" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'">📊 입지 비교</a>
   <a href="contract.html" style="display:inline-block;padding:10px 20px;color:#fff;font-size:13px;font-weight:700;border-bottom:3px solid #3b82f6;text-decoration:none">📋 계약 일정</a>
+  <a href="tax_guide.html" style="display:inline-block;padding:10px 20px;color:#94a3b8;font-size:13px;font-weight:600;border-bottom:3px solid transparent;text-decoration:none" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'">🧾 세금 가이드</a>
 </div>
 
 <header>
@@ -318,35 +319,72 @@
         <div style="padding:7px 10px;background:var(--input-bg);border-radius:6px;border:1px solid var(--border);font-size:14px;font-weight:600;color:var(--red)" id="r_buyCostTotal">-</div>
       </div>
     </div>
-    <!-- 크립토 가용 자산 -->
-    <div style="font-size:11px;font-weight:700;color:var(--sub);margin:10px 0 6px;letter-spacing:.3px;display:flex;align-items:center;gap:8px">🪙 크립토 — 잔금 전 매도 예정 <button class="btn" style="font-size:11px;padding:2px 10px;margin-left:auto" onclick="fetchCtCryptoPrices()">🔄 시세 갱신</button><span id="ct_priceTime" style="font-size:11px;color:var(--sub)"></span></div>
+    <!-- 크립토 매도 계획 (2회 분할) -->
+    <div style="font-size:11px;font-weight:700;color:var(--sub);margin:10px 0 4px;letter-spacing:.3px;display:flex;align-items:center;gap:8px">🪙 크립토 매도 계획 <button class="btn" style="font-size:11px;padding:2px 10px;margin-left:auto" onclick="fetchCtCryptoPrices()">🔄 시세 갱신</button><span id="ct_priceTime" style="font-size:11px;color:var(--sub)"></span></div>
+
+    <div style="font-size:11px;font-weight:600;color:var(--green);margin:6px 0 3px">1차 — 실계약 시</div>
     <div class="grid-4">
       <div class="field">
         <label>XRP <span id="ct_xrpPriceLabel" style="font-size:10px;color:var(--blue);font-weight:600"></span></label>
         <div class="field-adjust">
-          <button class="adjust-btn" onclick="adjustValue('ctXrpQty', -1000)">▼</button>
-          <input type="number" id="ctXrpQty" value="58000" oninput="calc()">
-          <button class="adjust-btn" onclick="adjustValue('ctXrpQty', 1000)">▲</button>
+          <button class="adjust-btn" onclick="adjustValue('ct1XrpQty', -1000)">▼</button>
+          <input type="number" id="ct1XrpQty" value="0" oninput="calc()">
+          <button class="adjust-btn" onclick="adjustValue('ct1XrpQty', 1000)">▲</button>
         </div>
-        <div style="font-size:11px;color:var(--sub);margin-top:2px">개 ≈ <span id="ct_xrpVal" style="color:var(--green);font-weight:600">-</span> 만원</div>
+        <div style="font-size:11px;color:var(--sub);margin-top:2px">개 ≈ <span id="ct1_xrpVal" style="color:var(--green);font-weight:600">-</span> 만원</div>
       </div>
       <div class="field">
         <label>BTC <span id="ct_btcPriceLabel" style="font-size:10px;color:var(--blue);font-weight:600"></span></label>
         <div class="field-adjust">
-          <button class="adjust-btn" onclick="adjustValue('ctBtcQty', -0.1)">▼</button>
-          <input type="number" id="ctBtcQty" value="0.89" step="0.01" oninput="calc()">
-          <button class="adjust-btn" onclick="adjustValue('ctBtcQty', 0.1)">▲</button>
+          <button class="adjust-btn" onclick="adjustValue('ct1BtcQty', -0.1)">▼</button>
+          <input type="number" id="ct1BtcQty" value="0" step="0.01" oninput="calc()">
+          <button class="adjust-btn" onclick="adjustValue('ct1BtcQty', 0.1)">▲</button>
         </div>
-        <div style="font-size:11px;color:var(--sub);margin-top:2px">개 ≈ <span id="ct_btcVal" style="color:var(--green);font-weight:600">-</span> 만원</div>
+        <div style="font-size:11px;color:var(--sub);margin-top:2px">개 ≈ <span id="ct1_btcVal" style="color:var(--green);font-weight:600">-</span> 만원</div>
+      </div>
+      <div class="field"></div>
+      <div class="field">
+        <label style="font-weight:600">1차 합계</label>
+        <div style="padding:7px 10px;background:var(--input-bg);border-radius:6px;border:1px solid var(--border);font-size:14px;font-weight:600;color:var(--green)" id="r_crypto1">-</div>
+      </div>
+    </div>
+
+    <div style="font-size:11px;font-weight:600;color:#8b5cf6;margin:8px 0 3px">2차 — 3차 중도금 시</div>
+    <div class="grid-4">
+      <div class="field">
+        <label>XRP</label>
+        <div class="field-adjust">
+          <button class="adjust-btn" onclick="adjustValue('ct2XrpQty', -1000)">▼</button>
+          <input type="number" id="ct2XrpQty" value="0" oninput="calc()">
+          <button class="adjust-btn" onclick="adjustValue('ct2XrpQty', 1000)">▲</button>
+        </div>
+        <div style="font-size:11px;color:var(--sub);margin-top:2px">개 ≈ <span id="ct2_xrpVal" style="color:var(--green);font-weight:600">-</span> 만원</div>
       </div>
       <div class="field">
-        <label>기타 코인 (만원)</label>
+        <label>BTC</label>
+        <div class="field-adjust">
+          <button class="adjust-btn" onclick="adjustValue('ct2BtcQty', -0.1)">▼</button>
+          <input type="number" id="ct2BtcQty" value="0" step="0.01" oninput="calc()">
+          <button class="adjust-btn" onclick="adjustValue('ct2BtcQty', 0.1)">▲</button>
+        </div>
+        <div style="font-size:11px;color:var(--sub);margin-top:2px">개 ≈ <span id="ct2_btcVal" style="color:var(--green);font-weight:600">-</span> 만원</div>
+      </div>
+      <div class="field">
+        <label>기타 자산 (만원)</label>
         <div class="field-adjust">
           <button class="adjust-btn" onclick="adjustValue('ctCryptoEtc', -100)">▼</button>
-          <input type="number" id="ctCryptoEtc" value="1000" oninput="calc()">
+          <input type="number" id="ctCryptoEtc" value="0" oninput="calc()">
           <button class="adjust-btn" onclick="adjustValue('ctCryptoEtc', 100)">▲</button>
         </div>
       </div>
+      <div class="field">
+        <label style="font-weight:600">2차 합계</label>
+        <div style="padding:7px 10px;background:var(--input-bg);border-radius:6px;border:1px solid var(--border);font-size:14px;font-weight:600;color:#8b5cf6" id="r_crypto2">-</div>
+      </div>
+    </div>
+
+    <div class="grid-4" style="margin-top:4px">
+      <div class="field" style="grid-column:span 3"></div>
       <div class="field">
         <label style="font-weight:600">크립토 총 예상 매도액</label>
         <div style="padding:7px 10px;background:var(--input-bg);border-radius:6px;border:1px solid var(--border);font-size:14px;font-weight:600;color:var(--green)" id="r_cryptoProceeds">-</div>
@@ -579,6 +617,10 @@
             <span class="lbl">추가 수취</span>
             <span class="amt amt-in" id="t_sell_contract_add">-</span>
           </div>
+          <div class="txn-row" id="t_sell_crypto1_row">
+            <span class="lbl">🪙 크립토 1차 매도 (+)</span>
+            <span class="amt amt-in" id="t_sell_crypto1">-</span>
+          </div>
           <div class="txn-subtotal">
             <span>수령 누계</span>
             <span class="amt-in" id="t_sell_contract_cum">-</span>
@@ -607,6 +649,10 @@
         <div class="txn-stage-label" id="stage4" onclick="toggleStage('stage4')" style="cursor:pointer">④ 중도금 <span id="stage4_date" class="stage-date-badge"></span><span class="stage-toggle-icon">▼</span><button class="stage-done-btn" id="cbtn_stage4" onclick="event.stopPropagation();toggleComplete('stage4')">□ 완료 처리</button><span id="ct_interim_badge" class="badge badge-yellow" id="badge_stage4" style="margin-left:6px">예정</span></div>
         <div class="txn-cell sell" id="ct_sell_interim_cell">
           <div id="ct_sell_interim_content"><div class="txn-na">— 없음</div></div>
+          <div class="txn-row" id="t_sell_crypto2_row">
+            <span class="lbl">🪙 크립토 2차 매도 (+)</span>
+            <span class="amt amt-in" id="t_sell_crypto2">-</span>
+          </div>
           <div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--border)">
             <div class="txn-row">
               <span class="lbl" style="font-weight:600">①+③+④ 누계</span>
@@ -873,7 +919,7 @@ const CT_INPUT_IDS = [
   'refSaleDeposit','saleInterim1','saleInterim2',
   'refBuyDeposit','buyInterim1','buyInterim2','buyInterim3',
   'ctSaleDeposit1','ctSaleDeposit2','ctDeposit1',
-  'ctXrpQty','ctBtcQty','ctCryptoEtc',
+  'ct1XrpQty','ct1BtcQty','ct2XrpQty','ct2BtcQty','ctCryptoEtc',
 ];
 const CT_DATE_IDS = [
   'date_stage1','date_stageYak','date_stage2','date_stage3','date_stage5',
@@ -891,9 +937,9 @@ const FINANCE_SYNC_MAP = {
   moveinCost:      'refMoveinCost',
   renovationCost:  'refRenovationCost',
   bondFee:         'refBondFee',
-  // 크립토: S3 가용분 (주담대 계산에 사용하는 매도 예정 수량)
-  xrpQty:      'ctXrpQty',
-  btcQty:      'ctBtcQty',
+  // 크립토: S3 가용분을 1차 배분에 기본 반영 (사용자가 2차로 이동 조정)
+  xrpQty:      'ct1XrpQty',
+  btcQty:      'ct1BtcQty',
   cryptoEtc:   'ctCryptoEtc',
 };
 
@@ -1152,14 +1198,26 @@ function calc() {
   const ctInterim     = val('buyInterim1') + val('buyInterim2') + val('buyInterim3');   // 1차+2차+3차 합계
   const buyInterim    = ctInterim;
 
-  // ── 크립토 ──
-  const ctXrpVal  = ctXrpPriceKRW > 0 ? Math.round(val('ctXrpQty') * ctXrpPriceKRW / 10000) : 0;
-  const ctBtcVal  = ctBtcPriceKRW > 0 ? Math.round(val('ctBtcQty') * ctBtcPriceKRW / 10000) : 0;
-  const ctEtcVal  = val('ctCryptoEtc');
-  const cryptoProceeds = ctXrpVal + ctBtcVal + ctEtcVal;
+  // ── 크립토 (1차: 실계약 / 2차: 3차 중도금) ──
+  const ct1XrpVal = ctXrpPriceKRW > 0 ? Math.round(val('ct1XrpQty') * ctXrpPriceKRW / 10000) : 0;
+  const ct1BtcVal = ctBtcPriceKRW > 0 ? Math.round(val('ct1BtcQty') * ctBtcPriceKRW / 10000) : 0;
+  const crypto1   = ct1XrpVal + ct1BtcVal;
 
-  $('ct_xrpVal').textContent       = ctXrpPriceKRW > 0 ? fmt(ctXrpVal) : '(시세 미조회)';
-  $('ct_btcVal').textContent       = ctBtcPriceKRW > 0 ? fmt(ctBtcVal) : '(시세 미조회)';
+  const ct2XrpVal = ctXrpPriceKRW > 0 ? Math.round(val('ct2XrpQty') * ctXrpPriceKRW / 10000) : 0;
+  const ct2BtcVal = ctBtcPriceKRW > 0 ? Math.round(val('ct2BtcQty') * ctBtcPriceKRW / 10000) : 0;
+  const ctEtcVal  = val('ctCryptoEtc');
+  const crypto2   = ct2XrpVal + ct2BtcVal + ctEtcVal;
+
+  const cryptoProceeds = crypto1 + crypto2;
+
+  $('ct1_xrpVal').textContent = ctXrpPriceKRW > 0 ? fmt(ct1XrpVal) : '(시세 미조회)';
+  $('ct1_btcVal').textContent = ctBtcPriceKRW > 0 ? fmt(ct1BtcVal) : '(시세 미조회)';
+  $('r_crypto1').textContent  = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? fmt(crypto1) : '시세 미조회') + ' 만원';
+
+  $('ct2_xrpVal').textContent = ctXrpPriceKRW > 0 ? fmt(ct2XrpVal) : '(시세 미조회)';
+  $('ct2_btcVal').textContent = ctBtcPriceKRW > 0 ? fmt(ct2BtcVal) : '(시세 미조회)';
+  $('r_crypto2').textContent  = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? fmt(crypto2) : `${fmt(ctEtcVal)} + α`) + ' 만원';
+
   $('r_cryptoProceeds').textContent = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? fmt(cryptoProceeds) : `${fmt(ctEtcVal)} + α`) + ' 만원';
 
   // ── 매도 ──
@@ -1233,6 +1291,9 @@ function calc() {
   $('t_sell_contract').textContent     = fmt(sellContract) + ' 만원';
   $('t_sell_earnest2').textContent     = fmt(totalSaleEarnest) + ' 만원';
   $('t_sell_contract_add').textContent = '+' + fmt(sellContractAddAmt) + ' 만원';
+  // 크립토 1차
+  $('t_sell_crypto1').textContent = '+' + fmt(crypto1) + ' 만원';
+  $('t_sell_crypto1_row').style.opacity = crypto1 > 0 ? '1' : '0.3';
   $('t_sell_contract_cum').textContent = '+' + fmt(sellContract) + ' 만원';
   $('t_buy_contract').textContent      = fmt(buyContract) + ' 만원';
   $('t_buy_earnest2').textContent      = fmt(ctDeposit1) + ' 만원';
@@ -1296,7 +1357,11 @@ function calc() {
       `<div class="txn-na">— 없음</div><div class="txn-note">중도금 없이 잔금 직결.</div>`;
   }
 
-  $('ct_sell_interim_cell').style.opacity = hasInterim ? '1' : '0.4';
+  // 크립토 2차
+  $('t_sell_crypto2').textContent = '+' + fmt(crypto2) + ' 만원';
+  $('t_sell_crypto2_row').style.opacity = crypto2 > 0 ? '1' : '0.3';
+
+  $('ct_sell_interim_cell').style.opacity = (hasInterim || crypto2 > 0) ? '1' : '0.4';
   $('ct_buy_interim_cell').style.opacity  = hasInterim ? '1' : '0.4';
   $('sc_interim_card').style.opacity      = hasInterim ? '1' : '0.4';
 
@@ -1320,15 +1385,16 @@ function calc() {
   $('t_sell_transfertax').textContent = '−' + fmt(refTransferTax)  + ' 만원';
   $('t_sell_fee').textContent         = '−' + fmt(refSaleFee)      + ' 만원';
   $('t_sell_move').textContent        = '−' + fmt(refMoveCost)     + ' 만원';
-  const stage6SellNet = newLoan + cryptoProceeds - debt - saleCost;
+  const stage6SellNet = newLoan + ctEtcVal - debt - saleCost;
   const sellNetEl = $('t_sell_net');
   sellNetEl.textContent = (stage6SellNet >= 0 ? '+' : '−') + fmt(Math.abs(stage6SellNet)) + ' 만원';
   sellNetEl.className   = stage6SellNet >= 0 ? 'amt-in' : 'amt-neg';
 
   $('t_buy_loan').textContent    = '+' + fmt(newLoan)       + ' 만원';
+  // stage6 크립토: 1차·2차는 이미 stage3·4에서 처리 → 기타(ctEtcVal)만 표시
   const cryptoEl = $('t_sell_crypto');
-  cryptoEl.textContent = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? '+' + fmt(cryptoProceeds) : `+${fmt(ctEtcVal)} + α`) + ' 만원';
-  $('t_sell_crypto_row').style.opacity = cryptoProceeds > 0 || ctEtcVal > 0 ? '1' : '0.4';
+  cryptoEl.textContent = (ctEtcVal > 0 ? '+' + fmt(ctEtcVal) : (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? '+0' : '+α')) + ' 만원';
+  $('t_sell_crypto_row').style.opacity = ctEtcVal > 0 ? '1' : '0.25';
   $('t_buy_acqtax').textContent  = '−' + fmt(refAcqTax)    + ' 만원';
   $('t_buy_bondfee').textContent = '−' + fmt(refBondFee)   + ' 만원';
   $('t_buy_fee').textContent     = '−' + fmt(refBuyFee)    + ' 만원';
@@ -1352,7 +1418,7 @@ function calc() {
   const cum1 = earnestNet;
   setCumVal('sc_cum1', cum1);
 
-  const contractNet = sellContractAddAmt - buyContractAdd;
+  const contractNet = sellContractAddAmt + crypto1 - buyContractAdd;
   const scCon = $('sc_contract');
   scCon.textContent = (contractNet >= 0 ? '+' : '−') + fmt(Math.abs(contractNet));
   scCon.style.color = contractNet >= 0 ? 'var(--green)' : 'var(--red)';
@@ -1361,7 +1427,7 @@ function calc() {
   setCumVal('sc_cum3', cum3);
 
   // 중도금 순현금 = 매도 수취 − 매수 지급
-  const interimNet = ctSaleInterim - ctInterim;
+  const interimNet = ctSaleInterim + crypto2 - ctInterim;
   const scInt = $('sc_interim');
   scInt.textContent = hasInterim ? ((interimNet >= 0 ? '+' : '−') + fmt(Math.abs(interimNet))) : '—';
   scInt.style.color = interimNet >= 0 ? 'var(--green)' : 'var(--red)';
@@ -1371,13 +1437,13 @@ function calc() {
 
   // 취득세는 잔금일로부터 60일 이내 납부 → 잔금일 즉시 지출에서 제외
   const buyCostImmediate = buyCost - refAcqTax;
-  const balanceDayNet = sellBalance - buyBalance + newLoan + cryptoProceeds - debt - saleCost - buyCostImmediate;
+  const balanceDayNet = sellBalance - buyBalance + newLoan + ctEtcVal - debt - saleCost - buyCostImmediate;
   const scBal = $('sc_balance');
   scBal.textContent = (balanceDayNet >= 0 ? '+' : '−') + fmt(Math.abs(balanceDayNet));
   scBal.style.color = balanceDayNet >= 0 ? 'var(--green)' : 'var(--red)';
-  const balIn  = sellBalance + newLoan + cryptoProceeds;
+  const balIn  = sellBalance + newLoan + ctEtcVal;
   const balOut = buyBalance + debt + saleCost + buyCostImmediate;
-  const cryptoNote = cryptoProceeds > 0 ? ` (+크립토 ${fmt(cryptoProceeds)})` : '';
+  const cryptoNote = ctEtcVal > 0 ? ` (+기타자산 ${fmt(ctEtcVal)})` : '';
   $('sc_balance_note').innerHTML =
     `<span style="color:var(--green)">수취 +${fmt(balIn)}${cryptoNote}</span> / <span style="color:var(--red)">지출 −${fmt(balOut)}</span><br>` +
     `<span style="color:var(--sub);font-size:10px">잔금일 마이너스는 ①~④ 수취분으로 상쇄됩니다</span>`;
@@ -1423,7 +1489,6 @@ function calc() {
   $('nr_buy_loan').textContent    = '+' + fmt(newLoan) + ' 만원';
   $('nr_crypto').textContent      = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? '+' + fmt(cryptoProceeds) : `+${fmt(ctEtcVal)} + α`) + ' 만원';
   $('final_buy_net').textContent  = fmt(buyEquityTotal) + ' 만원';
-  $('nr_crypto').textContent = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? '+' + fmt(cryptoProceeds) : `+${fmt(ctEtcVal)} + α`) + ' 만원';
   const remEl = $('final_remainder');
   remEl.textContent = fmt(remainder) + ' 만원';
   remEl.style.color = remainder >= 0 ? 'var(--green)' : 'var(--red)';
