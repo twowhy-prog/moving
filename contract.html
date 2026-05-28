@@ -645,8 +645,16 @@
         </div>
         <div class="txn-cell">
           <div class="txn-row">
-            <span class="lbl">잔금 지급</span>
+            <span class="lbl">잔금 합계</span>
             <span class="amt amt-out" id="t_buy_balance">-</span>
+          </div>
+          <div class="txn-row" style="padding-left:10px">
+            <span class="lbl">└ 은행 직접 입금 <small style="color:var(--sub)">(주담대)</small></span>
+            <span class="amt amt-neu" id="t_buy_balance_loan">-</span>
+          </div>
+          <div class="txn-row" style="padding-left:10px">
+            <span class="lbl">└ 본인 이체</span>
+            <span class="amt amt-out" id="t_buy_balance_self">-</span>
           </div>
           <div class="txn-subtotal">
             <span>지급 누계 (가계약~잔금)</span>
@@ -676,6 +684,10 @@
           <div class="txn-row">
             <span class="lbl">주담대 실행 (+)</span>
             <span class="amt amt-in" id="t_buy_loan">-</span>
+          </div>
+          <div class="txn-row" id="t_sell_crypto_row">
+            <span class="lbl">🪙 크립토 매도 (+)</span>
+            <span class="amt amt-in" id="t_sell_crypto">-</span>
           </div>
           <div class="txn-subtotal">
             <span>단계 소계</span>
@@ -1283,9 +1295,16 @@ function calc() {
   // ⑤ 잔금
   const sellTotalCum = sellContract + sellInterim + sellBalance;
   const buyTotalCum  = buyContract + buyInterim + buyBalance;
+  // 잔금 주담대/본인 이체 분리
+  const buyBalanceLoan = Math.min(newLoan, buyBalance);
+  const buyBalanceSelf = Math.max(0, buyBalance - newLoan);
+
   $('t_sell_balance').textContent    = '+' + fmt(sellBalance) + ' 만원';
   $('t_sell_total_cum').textContent  = '+' + fmt(sellTotalCum) + ' 만원';
   $('t_buy_balance').textContent     = '−' + fmt(buyBalance) + ' 만원';
+  $('t_buy_balance_loan').textContent = '−' + fmt(buyBalanceLoan) + ' 만원';
+  $('t_buy_balance_self').textContent = buyBalanceSelf > 0 ? '−' + fmt(buyBalanceSelf) + ' 만원' : '0 만원';
+  $('t_buy_balance_self').className   = buyBalanceSelf > 0 ? 'amt amt-out' : 'amt amt-neu';
   $('t_buy_total_cum').textContent   = '−' + fmt(buyTotalCum) + ' 만원';
 
   // ⑥ 잔금 후 처리
@@ -1293,12 +1312,15 @@ function calc() {
   $('t_sell_transfertax').textContent = '−' + fmt(refTransferTax)  + ' 만원';
   $('t_sell_fee').textContent         = '−' + fmt(refSaleFee)      + ' 만원';
   $('t_sell_move').textContent        = '−' + fmt(refMoveCost)     + ' 만원';
-  const stage6SellNet = newLoan - debt - saleCost;
+  const stage6SellNet = newLoan + cryptoProceeds - debt - saleCost;
   const sellNetEl = $('t_sell_net');
   sellNetEl.textContent = (stage6SellNet >= 0 ? '+' : '−') + fmt(Math.abs(stage6SellNet)) + ' 만원';
   sellNetEl.className   = stage6SellNet >= 0 ? 'amt-in' : 'amt-neg';
 
   $('t_buy_loan').textContent    = '+' + fmt(newLoan)       + ' 만원';
+  const cryptoEl = $('t_sell_crypto');
+  cryptoEl.textContent = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? '+' + fmt(cryptoProceeds) : `+${fmt(ctEtcVal)} + α`) + ' 만원';
+  $('t_sell_crypto_row').style.opacity = cryptoProceeds > 0 || ctEtcVal > 0 ? '1' : '0.4';
   $('t_buy_acqtax').textContent  = '−' + fmt(refAcqTax)    + ' 만원';
   $('t_buy_bondfee').textContent = '−' + fmt(refBondFee)   + ' 만원';
   $('t_buy_fee').textContent     = '−' + fmt(refBuyFee)    + ' 만원';
