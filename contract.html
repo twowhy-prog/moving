@@ -645,8 +645,16 @@
         </div>
         <div class="txn-cell">
           <div class="txn-row">
-            <span class="lbl">잔금 지급</span>
+            <span class="lbl">잔금 합계</span>
             <span class="amt amt-out" id="t_buy_balance">-</span>
+          </div>
+          <div class="txn-row" style="padding-left:10px">
+            <span class="lbl">└ 은행 직접 입금 <small style="color:var(--sub)">(주담대)</small></span>
+            <span class="amt amt-neu" id="t_buy_balance_loan">-</span>
+          </div>
+          <div class="txn-row" style="padding-left:10px">
+            <span class="lbl">└ 본인 이체</span>
+            <span class="amt amt-out" id="t_buy_balance_self">-</span>
           </div>
           <div class="txn-subtotal">
             <span>지급 누계 (가계약~잔금)</span>
@@ -1283,9 +1291,16 @@ function calc() {
   // ⑤ 잔금
   const sellTotalCum = sellContract + sellInterim + sellBalance;
   const buyTotalCum  = buyContract + buyInterim + buyBalance;
+  // 잔금 주담대/본인 이체 분리
+  const buyBalanceLoan = Math.min(newLoan, buyBalance);
+  const buyBalanceSelf = Math.max(0, buyBalance - newLoan);
+
   $('t_sell_balance').textContent    = '+' + fmt(sellBalance) + ' 만원';
   $('t_sell_total_cum').textContent  = '+' + fmt(sellTotalCum) + ' 만원';
   $('t_buy_balance').textContent     = '−' + fmt(buyBalance) + ' 만원';
+  $('t_buy_balance_loan').textContent = '−' + fmt(buyBalanceLoan) + ' 만원';
+  $('t_buy_balance_self').textContent = buyBalanceSelf > 0 ? '−' + fmt(buyBalanceSelf) + ' 만원' : '0 만원';
+  $('t_buy_balance_self').className   = buyBalanceSelf > 0 ? 'amt amt-out' : 'amt amt-neu';
   $('t_buy_total_cum').textContent   = '−' + fmt(buyTotalCum) + ' 만원';
 
   // ⑥ 잔금 후 처리
