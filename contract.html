@@ -373,6 +373,37 @@
         </div>
         <div style="font-size:11px;color:var(--sub);margin-top:2px">개 ≈ <span id="ct2_btcVal" style="color:var(--green);font-weight:600">-</span> 만원</div>
       </div>
+      <div class="field"></div>
+      <div class="field">
+        <label style="font-weight:600">2차 합계</label>
+        <div style="padding:7px 10px;background:var(--input-bg);border-radius:6px;border:1px solid var(--border);font-size:14px;font-weight:600;color:#8b5cf6" id="r_crypto2">-</div>
+        <div style="font-size:11px;margin-top:4px;display:flex;justify-content:space-between;align-items:center">
+          <span style="color:var(--sub)">목표 8,000만원</span>
+          <span id="r_crypto2_diff" style="font-weight:600;font-size:11px"></span>
+        </div>
+      </div>
+    </div>
+
+    <div style="font-size:11px;font-weight:600;color:var(--orange);margin:8px 0 3px">3차 — 이사 후</div>
+    <div class="grid-4">
+      <div class="field">
+        <label>XRP</label>
+        <div class="field-adjust">
+          <button class="adjust-btn" onclick="adjClamp('ct3XrpQty', -1000, 'xrp')">▼</button>
+          <input type="number" id="ct3XrpQty" value="0" oninput="clampCryptoQty('ct3XrpQty','xrp')">
+          <button class="adjust-btn" onclick="adjClamp('ct3XrpQty', 1000, 'xrp')">▲</button>
+        </div>
+        <div style="font-size:11px;color:var(--sub);margin-top:2px">개 ≈ <span id="ct3_xrpVal" style="color:var(--green);font-weight:600">-</span> 만원</div>
+      </div>
+      <div class="field">
+        <label>BTC</label>
+        <div class="field-adjust">
+          <button class="adjust-btn" onclick="adjClamp('ct3BtcQty', -0.1, 'btc')">▼</button>
+          <input type="number" id="ct3BtcQty" value="0" step="0.01" oninput="clampCryptoQty('ct3BtcQty','btc')">
+          <button class="adjust-btn" onclick="adjClamp('ct3BtcQty', 0.1, 'btc')">▲</button>
+        </div>
+        <div style="font-size:11px;color:var(--sub);margin-top:2px">개 ≈ <span id="ct3_btcVal" style="color:var(--green);font-weight:600">-</span> 만원</div>
+      </div>
       <div class="field">
         <label>기타 자산 (만원)</label>
         <div class="field-adjust">
@@ -382,11 +413,11 @@
         </div>
       </div>
       <div class="field">
-        <label style="font-weight:600">2차 합계</label>
-        <div style="padding:7px 10px;background:var(--input-bg);border-radius:6px;border:1px solid var(--border);font-size:14px;font-weight:600;color:#8b5cf6" id="r_crypto2">-</div>
+        <label style="font-weight:600">3차 합계</label>
+        <div style="padding:7px 10px;background:var(--input-bg);border-radius:6px;border:1px solid var(--border);font-size:14px;font-weight:600;color:var(--orange)" id="r_crypto3">-</div>
         <div style="font-size:11px;margin-top:4px;display:flex;justify-content:space-between;align-items:center">
-          <span style="color:var(--sub)">목표 8,000만원</span>
-          <span id="r_crypto2_diff" style="font-weight:600;font-size:11px"></span>
+          <span style="color:var(--sub)">목표: 잔여현금 0</span>
+          <span id="r_crypto3_diff" style="font-weight:600;font-size:11px"></span>
         </div>
       </div>
     </div>
@@ -938,7 +969,7 @@ const CT_INPUT_IDS = [
   'refSaleDeposit','saleInterim1','saleInterim2',
   'refBuyDeposit','buyInterim1','buyInterim2','buyInterim3',
   'ctSaleDeposit1','ctSaleDeposit2','ctDeposit1',
-  'ct1XrpQty','ct1BtcQty','ct2XrpQty','ct2BtcQty','ctCryptoEtc',
+  'ct1XrpQty','ct1BtcQty','ct2XrpQty','ct2BtcQty','ct3XrpQty','ct3BtcQty','ctCryptoEtc',
 ];
 const CT_DATE_IDS = [
   'date_stage1','date_stageYak','date_stage2','date_stage3','date_stage5',
@@ -1108,17 +1139,20 @@ function adjustValue(id, amount) {
   if (el) { el.value = Math.max(0, (parseFloat(el.value) || 0) + amount); calc(); }
 }
 
-// 크립토 수량 입력 시 1차+2차 합이 보유량 초과하면 자동 클램핑
+// 크립토 수량 입력 시 1+2+3차 합이 보유량 초과하면 자동 클램핑
 function clampCryptoQty(changedId, coin) {
   const holdings = getCryptoHoldings();
   const maxHeld = coin === 'xrp' ? holdings.xrp : holdings.btc;
   if (maxHeld > 0) {
-    const pairMap = { ct1XrpQty:'ct2XrpQty', ct2XrpQty:'ct1XrpQty', ct1BtcQty:'ct2BtcQty', ct2BtcQty:'ct1BtcQty' };
-    const otherId = pairMap[changedId];
-    const otherVal = parseFloat($(otherId)?.value) || 0;
+    const othersMap = {
+      ct1XrpQty: ['ct2XrpQty','ct3XrpQty'], ct2XrpQty: ['ct1XrpQty','ct3XrpQty'], ct3XrpQty: ['ct1XrpQty','ct2XrpQty'],
+      ct1BtcQty: ['ct2BtcQty','ct3BtcQty'], ct2BtcQty: ['ct1BtcQty','ct3BtcQty'], ct3BtcQty: ['ct1BtcQty','ct2BtcQty'],
+    };
+    const others = othersMap[changedId] || [];
+    const othersSum = others.reduce((s, id) => s + (parseFloat($(id)?.value) || 0), 0);
     const thisEl = $(changedId);
     const thisVal = parseFloat(thisEl?.value) || 0;
-    const maxThis = Math.max(0, maxHeld - otherVal);
+    const maxThis = Math.max(0, maxHeld - othersSum);
     if (thisVal > maxThis) thisEl.value = coin === 'btc' ? maxThis.toFixed(4) : Math.floor(maxThis);
   }
   calc();
@@ -1253,10 +1287,14 @@ function calc() {
 
   const ct2XrpVal = ctXrpPriceKRW > 0 ? Math.round(val('ct2XrpQty') * ctXrpPriceKRW / 10000) : 0;
   const ct2BtcVal = ctBtcPriceKRW > 0 ? Math.round(val('ct2BtcQty') * ctBtcPriceKRW / 10000) : 0;
-  const ctEtcVal  = val('ctCryptoEtc');
-  const crypto2   = ct2XrpVal + ct2BtcVal + ctEtcVal;
+  const crypto2   = ct2XrpVal + ct2BtcVal;
 
-  const cryptoProceeds = crypto1 + crypto2;
+  const ct3XrpVal = ctXrpPriceKRW > 0 ? Math.round(val('ct3XrpQty') * ctXrpPriceKRW / 10000) : 0;
+  const ct3BtcVal = ctBtcPriceKRW > 0 ? Math.round(val('ct3BtcQty') * ctBtcPriceKRW / 10000) : 0;
+  const ctEtcVal  = val('ctCryptoEtc');
+  const crypto3   = ct3XrpVal + ct3BtcVal + ctEtcVal;
+
+  const cryptoProceeds = crypto1 + crypto2 + crypto3;
 
   $('ct1_xrpVal').textContent = ctXrpPriceKRW > 0 ? fmt(ct1XrpVal) : '(시세 미조회)';
   $('ct1_btcVal').textContent = ctBtcPriceKRW > 0 ? fmt(ct1BtcVal) : '(시세 미조회)';
@@ -1264,7 +1302,11 @@ function calc() {
 
   $('ct2_xrpVal').textContent = ctXrpPriceKRW > 0 ? fmt(ct2XrpVal) : '(시세 미조회)';
   $('ct2_btcVal').textContent = ctBtcPriceKRW > 0 ? fmt(ct2BtcVal) : '(시세 미조회)';
-  $('r_crypto2').textContent  = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? fmt(crypto2) : `${fmt(ctEtcVal)} + α`) + ' 만원';
+  $('r_crypto2').textContent  = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? fmt(crypto2) : '시세 미조회') + ' 만원';
+
+  $('ct3_xrpVal').textContent = ctXrpPriceKRW > 0 ? fmt(ct3XrpVal) : '(시세 미조회)';
+  $('ct3_btcVal').textContent = ctBtcPriceKRW > 0 ? fmt(ct3BtcVal) : '(시세 미조회)';
+  $('r_crypto3').textContent  = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? fmt(crypto3) : `${fmt(ctEtcVal)} + α`) + ' 만원';
 
   $('r_cryptoProceeds').textContent = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? fmt(cryptoProceeds) : `${fmt(ctEtcVal)} + α`) + ' 만원';
 
@@ -1288,8 +1330,8 @@ function calc() {
 
   // ── 보유 수량 초과 검증 ──
   const holdings = getCryptoHoldings();
-  const totalXrpSell = val('ct1XrpQty') + val('ct2XrpQty');
-  const totalBtcSell = val('ct1BtcQty') + val('ct2BtcQty');
+  const totalXrpSell = val('ct1XrpQty') + val('ct2XrpQty') + val('ct3XrpQty');
+  const totalBtcSell = val('ct1BtcQty') + val('ct2BtcQty') + val('ct3BtcQty');
   const xrpExcess = holdings.xrp > 0 && totalXrpSell > holdings.xrp;
   const btcExcess = holdings.btc > 0 && totalBtcSell > holdings.btc;
   const xrpRemain = holdings.xrp - totalXrpSell;
@@ -1423,7 +1465,7 @@ function calc() {
   }
 
   // ④ 중도금 — 매도 누계 (크립토 포함)
-  const cryptoTotal12 = crypto1 + crypto2;
+  const cryptoTotal12 = crypto1 + crypto2;  // 3차는 이사 후이므로 4단계 누계에서 제외
   const sellCumTotal3 = sellContract + ctSaleInterim + cryptoTotal12;
   $('t_sell_interim_cum').textContent = '+' + fmt(sellCumTotal3) + ' 만원';
   const cumNote4El = $('t_sell_interim_cum_note');
@@ -1524,7 +1566,7 @@ function calc() {
   $('t_sell_transfertax').textContent = '−' + fmt(refTransferTax)  + ' 만원';
   $('t_sell_fee').textContent         = '−' + fmt(refSaleFee)      + ' 만원';
   $('t_sell_move').textContent        = '−' + fmt(refMoveCost)     + ' 만원';
-  const stage6SellNet = newLoan + ctEtcVal - debt - saleCost;
+  const stage6SellNet = newLoan + crypto3 - debt - saleCost;
   const sellNetEl = $('t_sell_net');
   sellNetEl.textContent = (stage6SellNet >= 0 ? '+' : '−') + fmt(Math.abs(stage6SellNet)) + ' 만원';
   sellNetEl.className   = stage6SellNet >= 0 ? 'amt-in' : 'amt-neg';
@@ -1532,8 +1574,8 @@ function calc() {
   $('t_buy_loan').textContent    = '+' + fmt(newLoan)       + ' 만원';
   // stage6 크립토: 1차·2차는 이미 stage3·4에서 처리 → 기타(ctEtcVal)만 표시
   const cryptoEl = $('t_sell_crypto');
-  cryptoEl.textContent = (ctEtcVal > 0 ? '+' + fmt(ctEtcVal) : (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? '+0' : '+α')) + ' 만원';
-  $('t_sell_crypto_row').style.opacity = ctEtcVal > 0 ? '1' : '0.25';
+  cryptoEl.textContent = (crypto3 > 0 ? '+' + fmt(crypto3) : (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? '+0' : '+α')) + ' 만원';
+  $('t_sell_crypto_row').style.opacity = crypto3 > 0 ? '1' : '0.25';
   $('t_buy_acqtax').textContent  = '−' + fmt(refAcqTax)    + ' 만원';
   $('t_buy_bondfee').textContent = '−' + fmt(refBondFee)   + ' 만원';
   $('t_buy_fee').textContent     = '−' + fmt(refBuyFee)    + ' 만원';
@@ -1566,7 +1608,7 @@ function calc() {
   setCumVal('sc_cum3', cum3);
 
   // 중도금 순현금 = 매도 수취 − 매수 지급
-  const interimNet = ctSaleInterim + crypto2 - ctInterim;
+  const interimNet = ctSaleInterim + crypto2 - ctInterim;  // 2차: crypto2만 (ctEtcVal은 3차)
   const scInt = $('sc_interim');
   scInt.textContent = hasInterim ? ((interimNet >= 0 ? '+' : '−') + fmt(Math.abs(interimNet))) : '—';
   scInt.style.color = interimNet >= 0 ? 'var(--green)' : 'var(--red)';
@@ -1576,13 +1618,13 @@ function calc() {
 
   // 취득세는 잔금일로부터 60일 이내 납부 → 잔금일 즉시 지출에서 제외
   const buyCostImmediate = buyCost - refAcqTax;
-  const balanceDayNet = sellBalance - buyBalance + newLoan + ctEtcVal - debt - saleCost - buyCostImmediate;
+  const balanceDayNet = sellBalance - buyBalance + newLoan + crypto3 - debt - saleCost - buyCostImmediate;
   const scBal = $('sc_balance');
   scBal.textContent = (balanceDayNet >= 0 ? '+' : '−') + fmt(Math.abs(balanceDayNet));
   scBal.style.color = balanceDayNet >= 0 ? 'var(--green)' : 'var(--red)';
-  const balIn  = sellBalance + newLoan + ctEtcVal;
+  const balIn  = sellBalance + newLoan + crypto3;
   const balOut = buyBalance + debt + saleCost + buyCostImmediate;
-  const cryptoNote = ctEtcVal > 0 ? ` (+기타자산 ${fmt(ctEtcVal)})` : '';
+  const cryptoNote = crypto3 > 0 ? ` (+3차크립토 ${fmt(crypto3)})` : '';
   $('sc_balance_note').innerHTML =
     `<span style="color:var(--green)">수취 +${fmt(balIn)}${cryptoNote}</span> / <span style="color:var(--red)">지출 −${fmt(balOut)}</span><br>` +
     `<span style="color:var(--sub);font-size:10px">잔금일 마이너스는 ①~④ 수취분으로 상쇄됩니다</span>`;
@@ -1626,7 +1668,7 @@ function calc() {
   // 최종 정산
   $('final_sell_net').textContent = fmt(sellOnlyNet) + ' 만원';
   $('nr_buy_loan').textContent    = '+' + fmt(newLoan) + ' 만원';
-  $('nr_crypto').textContent      = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? '+' + fmt(cryptoProceeds) : `+${fmt(ctEtcVal)} + α`) + ' 만원';
+  $('nr_crypto').textContent      = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? '+' + fmt(cryptoProceeds) : `+${fmt(ctEtcVal)} + α`) + ' 만원 (1+2+3차)';
   $('final_buy_net').textContent  = fmt(buyEquityTotal) + ' 만원';
   const remEl = $('final_remainder');
   remEl.textContent = fmt(remainder) + ' 만원';
@@ -1634,6 +1676,15 @@ function calc() {
   $('final_note').textContent = remainder >= 0
     ? `✅ 이사 후 여유 현금 ${fmt(remainder)}만원. 영유비·비상금으로 활용 가능.`
     : `⚠️ 현금 ${fmt(-remainder)}만원 부족. 추가 자금 계획 필요.`;
+
+  // 3차 달성 힌트: remainder = 0 기준
+  const d3El = $('r_crypto3_diff');
+  if (d3El) {
+    if (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0) {
+      d3El.textContent = (remainder >= 0 ? '✅ +' : '⚠️ ') + fmt(Math.abs(remainder)) + '만';
+      d3El.style.color = remainder >= 0 ? 'var(--green)' : 'var(--red)';
+    } else { d3El.textContent = ''; }
+  }
   ctSaveInputs();
 }
 
