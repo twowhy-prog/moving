@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>단지 입지 비교 | 삼익그린2차 vs 신동아리버파크</title>
+<title>신동아리버파크 미래가치 분석 | 서울 동작구 노량진동</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
@@ -12,8 +12,7 @@
 /* ── 공통 ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --a:#2563eb; --b:#16a34a;
-  --a-light:#dbeafe; --b-light:#dcfce7;
+  --accent:#0891b2; --accent-light:#e0f2fe;
   --border:#e2e8f0; --text:#1e293b; --muted:#64748b;
   --radius:12px;
 }
@@ -21,17 +20,13 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:#f1f5f9;color:
 h1,h2,h3{line-height:1.3}
 
 /* ── 헤더 ── */
-.header{background:linear-gradient(135deg,#1e293b,#334155);color:#fff;padding:28px 24px 24px;text-align:center}
+.header{background:linear-gradient(135deg,#0f2952,#1a4480);color:#fff;padding:28px 24px 24px;text-align:center}
 .header h1{font-size:22px;font-weight:700;margin-bottom:6px}
 .header p{font-size:13px;color:#94a3b8}
-.badge-row{display:flex;justify-content:center;gap:10px;margin-top:14px;flex-wrap:wrap}
-.badge{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600}
-.badge-a{background:var(--a);color:#fff}
-.badge-b{background:var(--b);color:#fff}
 
 /* ── API 상태 패널 ── */
 .api-status-panel{background:#fff;border-bottom:1px solid var(--border);padding:10px 16px}
-.api-status-inner{max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.api-status-inner{max-width:1100px;margin:0 auto;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .api-status-inner span{font-size:11px;font-weight:600;color:var(--muted)}
 .api-chip{font-size:11px;padding:3px 10px;border-radius:12px;font-weight:600;display:inline-flex;align-items:center;gap:4px}
 .api-chip.loading{background:#f1f5f9;color:#94a3b8}
@@ -40,7 +35,7 @@ h1,h2,h3{line-height:1.3}
 .api-chip.error{background:#fee2e2;color:#991b1b}
 
 /* ── 레이아웃 ── */
-.container{max-width:1200px;margin:0 auto;padding:20px 16px}
+.container{max-width:1100px;margin:0 auto;padding:20px 16px}
 .section{background:#fff;border-radius:var(--radius);padding:20px;margin-bottom:18px;border:1px solid var(--border)}
 .section-title{font-size:15px;font-weight:700;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:8px}
 .section-title .icon{font-size:18px}
@@ -51,86 +46,80 @@ h1,h2,h3{line-height:1.3}
 .tag-hard{background:#e0e7ff;color:#3730a3}
 
 /* ── 지도 ── */
-#map-container{position:relative;width:100%;height:400px;border-radius:8px;overflow:hidden;background:#e2e8f0}
+#map-container{position:relative;width:100%;height:420px;border-radius:8px;overflow:hidden;background:#e2e8f0}
 .lf-pin{width:34px;height:34px;border-radius:50% 50% 50% 0;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#fff;transform:rotate(-45deg);box-shadow:0 2px 8px rgba(0,0,0,.35)}
-.lf-pin-a{background:var(--a)} .lf-pin-b{background:var(--b)}
-.lf-inner{transform:rotate(45deg)}
+.lf-pin-apt{background:#16a34a}
+.lf-pin-sta{background:#0891b2}
+.lf-pin-sta2{background:#7c3aed}
+.lf-pin-sta3{background:#f59e0b}
+.lf-inner{transform:rotate(45deg);font-size:11px}
 .map-mock{width:100%;height:100%;background:linear-gradient(180deg,#c8d8e8,#d4e6c3);display:flex;align-items:center;justify-content:center}
-
-/* ── 비교표 ── */
-.tbl-wrap{overflow-x:auto}
-.ctbl{width:100%;border-collapse:collapse;font-size:13px}
-.ctbl th,.ctbl td{padding:9px 12px;border:1px solid var(--border);text-align:center;vertical-align:middle}
-.ctbl thead th{background:#f8fafc;font-weight:700}
-.ctbl thead .th-a{background:var(--a-light);color:var(--a)}
-.ctbl thead .th-b{background:var(--b-light);color:var(--b)}
-.ctbl tbody tr:hover{background:#f8fafc}
-.ctbl .lbl{text-align:left;font-weight:600}
-.win-a{background:var(--a-light);font-weight:700;color:var(--a)}
-.win-b{background:var(--b-light);font-weight:700;color:var(--b)}
-.wtag{display:inline-block;font-size:10px;padding:1px 6px;border-radius:8px;margin-left:4px;font-weight:600}
-.wtag-a{background:var(--a);color:#fff}
-.wtag-b{background:var(--b);color:#fff}
-.wtag-tie{background:#94a3b8;color:#fff}
-
-/* ── 그리드 ── */
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-@media(max-width:780px){.grid-3{grid-template-columns:1fr}}
-@media(max-width:680px){.grid-2{grid-template-columns:1fr}}
 
 /* ── 차트 ── */
 .chart-wrap{position:relative;height:280px}
 .chart-wrap-tall{position:relative;height:340px}
 
-/* ── 정보 카드 ── */
-.info-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media(max-width:780px){.info-cards{grid-template-columns:1fr}}
-.icard{border-radius:8px;padding:12px 14px;border:1.5px solid var(--border)}
-.icard.a{border-color:var(--a);background:var(--a-light)}
-.icard.b{border-color:var(--b);background:var(--b-light)}
-.icard h4{font-size:13px;font-weight:700;margin-bottom:8px}
-.icard .row{font-size:12px;margin-bottom:4px;display:flex;gap:6px}
-.icard .row .k{color:var(--muted);min-width:62px;flex-shrink:0}
-.icard .row .v{font-weight:600}
+/* ── 정보 박스 ── */
+.info-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+@media(max-width:680px){.info-grid{grid-template-columns:1fr 1fr}}
+.info-tile{background:var(--accent-light);border-radius:8px;padding:14px;text-align:center;border:1px solid #bae6fd}
+.info-tile .lbl{font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.05em;margin-bottom:4px}
+.info-tile .val{font-size:22px;font-weight:700;color:var(--accent)}
+.info-tile .sub{font-size:11px;color:var(--muted)}
 
-/* ── 리모델링 배너 ── */
-.remodel{background:linear-gradient(135deg,#14532d,#16a34a);color:#fff;border-radius:8px;padding:14px 16px;margin-top:12px}
-.remodel h3{font-size:13px;margin-bottom:5px}
-.remodel p{font-size:12px;color:#bbf7d0;line-height:1.7}
+/* ── 타임라인 ── */
+.timeline{position:relative;padding-left:28px}
+.timeline::before{content:'';position:absolute;left:10px;top:0;bottom:0;width:2px;background:var(--border)}
+.tl-item{position:relative;margin-bottom:20px}
+.tl-item::before{content:'';position:absolute;left:-24px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid #fff;box-shadow:0 0 0 2px var(--accent)}
+.tl-item.done::before{background:#16a34a;box-shadow:0 0 0 2px #16a34a}
+.tl-item.ing::before{background:#f59e0b;box-shadow:0 0 0 2px #f59e0b}
+.tl-item.plan::before{background:#6366f1;box-shadow:0 0 0 2px #6366f1}
+.tl-item h4{font-size:13px;font-weight:700;margin-bottom:4px}
+.tl-item p{font-size:12px;color:var(--muted);line-height:1.7}
+.tl-year{font-size:11px;font-weight:700;color:var(--accent);margin-bottom:8px;letter-spacing:.05em}
+
+/* ── 개발호재 카드 ── */
+.horea-card{background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;padding:16px;position:relative;margin-bottom:12px}
+.horea-card .impact{position:absolute;top:12px;right:12px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;background:#0891b2;color:#fff}
+.horea-card h4{font-size:14px;font-weight:700;margin-bottom:6px;padding-right:60px}
+.horea-card p{font-size:12px;color:var(--muted);line-height:1.7}
+
+/* ── 그리드 ── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:680px){.grid-2{grid-template-columns:1fr}}
 
 /* ── 스피너 ── */
-.spinner{display:inline-block;width:14px;height:14px;border:2px solid #e2e8f0;border-top-color:var(--a);border-radius:50%;animation:spin .8s linear infinite}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid #e2e8f0;border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-row td{color:#94a3b8;font-style:italic}
 
-/* ── 현재 수치 카드 ── */
-.stat-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
-@media(max-width:600px){.stat-cards{grid-template-columns:1fr}}
-.stat-card{border-radius:8px;padding:14px;text-align:center;border:1.5px solid var(--border)}
-.stat-card.a{border-color:var(--a);background:var(--a-light)}
-.stat-card.b{border-color:var(--b);background:var(--b-light)}
+/* ── 표 ── */
+.tbl-wrap{overflow-x:auto}
+.ctbl{width:100%;border-collapse:collapse;font-size:13px}
+.ctbl th,.ctbl td{padding:9px 12px;border:1px solid var(--border);text-align:left;vertical-align:middle}
+.ctbl thead th{background:#f8fafc;font-weight:700}
+.ctbl .lbl{font-weight:600}
+
+/* ── 대기 수치 카드 ── */
+.stat-card{border-radius:8px;padding:14px;text-align:center;border:1.5px solid var(--border);background:var(--accent-light)}
 .stat-card .val{font-size:28px;font-weight:900;line-height:1}
 .stat-card .grade{font-size:12px;margin-top:4px;font-weight:600}
 .stat-card .sub{font-size:11px;color:var(--muted);margin-top:2px}
 
-/* ── 종합점수 ── */
-.score-section{background:linear-gradient(135deg,#1e293b,#0f172a);color:#fff;border-radius:var(--radius);padding:24px}
+/* ── 종합 스코어 ── */
+.score-section{background:linear-gradient(135deg,#0f2952,#1a4480);color:#fff;border-radius:var(--radius);padding:24px;margin-bottom:18px}
 .score-title{font-size:18px;font-weight:800;margin-bottom:20px;text-align:center}
-.score-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
-@media(max-width:600px){.score-grid{grid-template-columns:1fr}}
-.score-card{background:rgba(255,255,255,.08);border-radius:10px;padding:16px;text-align:center}
-.score-card.winner{background:rgba(124,58,237,.25);border:1.5px solid #7c3aed}
-.score-card h3{font-size:14px;font-weight:700;margin-bottom:12px}
-.score-card .total{font-size:42px;font-weight:900;line-height:1;margin-bottom:6px}
-.score-card.winner .total{color:#a78bfa}
-.score-rows{text-align:left}
-.score-row{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px}
-.score-row .sl{color:#94a3b8}
-.score-row .sv{font-weight:600}
-.score-row .sv.best{color:#4ade80}
-.verdict{text-align:center;padding:16px;background:rgba(255,255,255,.05);border-radius:8px;font-size:13px;color:#cbd5e1;line-height:1.8}
-.verdict strong{color:#a78bfa;font-size:15px}
+.radar-wrap{position:relative;height:300px;max-width:480px;margin:0 auto}
+
+/* ── 수익성 카드 ── */
+.profit-card{background:linear-gradient(135deg,#0c4a6e,#0369a1);color:#fff;border-radius:10px;padding:16px}
+.profit-card h4{font-size:13px;font-weight:700;margin-bottom:10px;color:#bae6fd}
+.profit-row{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px;border-bottom:1px solid rgba(255,255,255,.1);padding-bottom:5px}
+.profit-row .k{color:#94a3b8}
+.profit-row .v{font-weight:700}
+.profit-row .v.up{color:#4ade80}
+.profit-row .v.down{color:#f87171}
 </style>
 </head>
 <body>
@@ -139,16 +128,10 @@ h1,h2,h3{line-height:1.3}
 <script>
 const KAKAO_REST_API_KEY = "6f04e55d9a006612a6f29c4c21f855ea";
 const MOLIT_API_KEY      = "kw4kGaaVazDLCC9Yzy6zY9Ze5DS45DpDJc1iiTRNe%2FaoYOv%2BmeJSw4EIVUl7qAOSfWU9yJbchwHH29TWd7ADxA%3D%3D";
-const NEIS_API_KEY       = "06956e052ffe473281917d9be11c7c62";
 const SEOUL_AIR_API_KEY  = "684c4a667374776f3436726c4a6a76";
-// 개인 Cloudflare Worker 프록시 URL (선택사항)
-// 설정법: https://developers.cloudflare.com/workers/ 에서 무료 계정 생성 후
-// worker.js 파일을 배포하면 됩니다. 없으면 null로 두세요.
-const CUSTOM_PROXY_URL = null; // 예: "https://my-proxy.yourname.workers.dev"
+const CUSTOM_PROXY_URL   = null; // 예: "https://my-proxy.yourname.workers.dev"
 
-const A = { id:'a', name:'삼익그린2차',     lat:37.5526, lng:127.1485, lawdCd:'11740', aptKw:'삼익그린2차',    umdNm:'명일동'   };
-const B = { id:'b', name:'신동아리버파크', lat:37.5138, lng:126.9424, lawdCd:'11590', aptKw:'신동아리버파크', umdNm:'노량진동' };
-// const C 삭제됨 — 사당우성3단지 제거, 신동아리버파크를 B로 승격 (2026.05 실계약 완료)
+const APT = { name:'신동아리버파크', lat:37.5138, lng:126.9424, lawdCd:'11590', aptKw:'신동아리버파크', umdNm:'노량진동' };
 
 const CATS = [
   { code:'SW8', label:'지하철역', icon:'🚇' },
@@ -163,7 +146,7 @@ const CATS = [
 
 <!-- 탭 네비게이션 -->
 <div style="background:#0f172a;display:flex;padding:0 20px">
-  <a href="compare.html" style="display:inline-block;padding:10px 20px;color:#fff;font-size:13px;font-weight:700;border-bottom:3px solid #2563eb;text-decoration:none">📊 입지 비교</a>
+  <a href="compare.html" style="display:inline-block;padding:10px 20px;color:#fff;font-size:13px;font-weight:700;border-bottom:3px solid #0891b2;text-decoration:none">📈 미래가치 분석</a>
   <a href="finance.html" style="display:inline-block;padding:10px 20px;color:#94a3b8;font-size:13px;font-weight:600;border-bottom:3px solid transparent;text-decoration:none" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'">💰 재정 계산기</a>
   <a href="contract.html" style="display:inline-block;padding:10px 20px;color:#94a3b8;font-size:13px;font-weight:600;border-bottom:3px solid transparent;text-decoration:none" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'">📋 계약 일정</a>
   <a href="tax_guide.html" style="display:inline-block;padding:10px 20px;color:#94a3b8;font-size:13px;font-weight:600;border-bottom:3px solid transparent;text-decoration:none" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'">🧾 세금 가이드</a>
@@ -171,12 +154,8 @@ const CATS = [
 
 <!-- 헤더 -->
 <div class="header">
-  <h1>🏠 단지 입지 비교 분석</h1>
-  <p>데이터 기준일: 2026년 5월 22일 · API 실시간 연동</p>
-  <div class="badge-row">
-    <span class="badge badge-a">A. 삼익그린2차 (현 거주지)</span>
-    <span class="badge badge-b">B. 신동아리버파크 (매수 확정)</span>
-  </div>
+  <h1>🏙️ 신동아리버파크 미래가치 분석</h1>
+  <p>서울 동작구 노량진동 | 정부·서울시 개발 계획 &amp; 거주 기대치 · 2026년 6월 기준</p>
 </div>
 
 <!-- API 상태 패널 -->
@@ -186,15 +165,74 @@ const CATS = [
     <span class="api-chip loading" id="st-map">🗺️ 지도 <span class="spinner"></span></span>
     <span class="api-chip loading" id="st-fac">📍 시설검색 <span class="spinner"></span></span>
     <span class="api-chip loading" id="st-price">💰 실거래가 <span class="spinner"></span></span>
-    <span class="api-chip loading" id="st-school">🎓 학교알리미 <span class="spinner"></span></span>
     <span class="api-chip loading" id="st-air">🌬️ 대기환경 <span class="spinner"></span></span>
-    <span class="api-chip sample" id="st-crime">🚔 범죄통계 샘플</span>
   </div>
 </div>
 
 <div class="container">
 
-<!-- ══ 1. 지도 ══ -->
+<!-- ══ 1. 단지 개요 ══ -->
+<div class="section">
+  <div class="section-title"><span class="icon">🏢</span> 단지 개요<span class="tag tag-hard" style="margin-left:auto">하드코딩</span></div>
+  <div class="info-grid">
+    <div class="info-tile">
+      <div class="lbl">준공연도</div>
+      <div class="val">2001</div>
+      <div class="sub">약 25년 경과</div>
+    </div>
+    <div class="info-tile">
+      <div class="lbl">총 세대수</div>
+      <div class="val">1,696</div>
+      <div class="sub">7개동 · 최고 28층</div>
+    </div>
+    <div class="info-tile">
+      <div class="lbl">전용면적</div>
+      <div class="val">59~114</div>
+      <div class="sub">㎡ (25~43평형)</div>
+    </div>
+    <div class="info-tile">
+      <div class="lbl">실계약 호수</div>
+      <div class="val">705동</div>
+      <div class="sub">24층 · 전용 114.75㎡</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <table class="ctbl">
+        <tbody>
+          <tr><td class="lbl" style="width:90px">주소</td><td>서울 동작구 노량진동 325번지</td></tr>
+          <tr><td class="lbl">교통</td><td>상도역(7호선) 도보 9분 · 노량진역(1·9호선) 도보 15분</td></tr>
+          <tr><td class="lbl">강남접근</td><td>9호선 급행 → 강남역 약 20분 ⭐</td></tr>
+          <tr><td class="lbl">도심접근</td><td>1호선 → 을지로 약 15분 ⭐</td></tr>
+          <tr><td class="lbl">한강조망</td><td>일부 동 가능 ⭐</td></tr>
+          <tr><td class="lbl">용적률</td><td>324% / 건폐율 19%</td></tr>
+          <tr><td class="lbl">특이사항</td><td>토지거래허가구역 지정</td></tr>
+          <tr><td class="lbl">리모델링</td><td>검토 진행 중 (추진 여부 미확정)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <div style="background:linear-gradient(135deg,#14532d,#16a34a);color:#fff;border-radius:8px;padding:14px 16px">
+        <h3 style="font-size:13px;margin-bottom:8px">🟢 실계약 완료 — 705동 2405호</h3>
+        <div style="font-size:12px;color:#bbf7d0;line-height:1.9">
+          전용 114.75㎡ (43평) · 공급 144.06㎡ · 전용률 80%<br>
+          4방 2욕실 · 계단식 · 남서향 · 24층<br>
+          매수가: 17억 2,500만원 (2026.05 실계약)<br>
+          1·9호선 노량진역 도보 15분 · 상도역(7호선) 도보 9분
+        </div>
+      </div>
+      <div style="margin-top:10px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:12px;font-size:12px;line-height:1.8">
+        <strong>📋 평형별 세대 구성</strong><br>
+        25평 (59.76㎡) — 386세대 (22.8%)<br>
+        33평 (84.88㎡) — 786세대 (46.3%) · 최다 평형<br>
+        43평 (114.75㎡) — 524세대 (30.9%) · 희소성 ⭐
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 2. 위치 지도 ══ -->
 <div class="section">
   <div class="section-title">
     <span class="icon">🗺️</span> 위치 지도
@@ -205,99 +243,162 @@ const CATS = [
       <p style="font-size:13px;color:#64748b"><span class="spinner"></span> 지도 로딩 중…</p>
     </div>
   </div>
+  <div style="margin-top:10px;display:flex;gap:12px;flex-wrap:wrap;font-size:12px">
+    <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;background:#16a34a;border-radius:50%;display:inline-block"></span>신동아리버파크</span>
+    <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;background:#0891b2;border-radius:50%;display:inline-block"></span>노량진역(1·9호선)</span>
+    <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;background:#7c3aed;border-radius:50%;display:inline-block"></span>상도역(7호선)</span>
+    <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;background:#f59e0b;border-radius:50%;display:inline-block"></span>동작역(4·9호선)</span>
+  </div>
 </div>
 
-<!-- ══ 2. 단지 기본정보 ══ -->
+<!-- ══ 3. 교통 현황 & 개선 전망 ══ -->
 <div class="section">
-  <div class="section-title"><span class="icon">🏢</span> 단지 기본 정보<span class="tag tag-hard" style="margin-left:auto">하드코딩</span></div>
-  <div class="info-cards">
-    <!-- A -->
-    <div class="icard a">
-      <h4>A. 삼익그린2차</h4>
-      <div class="row"><span class="k">주소</span><span class="v">강동구 명일동 15번지 일대 (고덕로210)</span></div>
-      <div class="row"><span class="k">지하철</span><span class="v">5호선 고덕·상일동역 도보 5~10분</span></div>
-      <div class="row"><span class="k">9호선</span><span class="v">9호선 4단계 공사 중 (고덕역 환승, 2028년 개통 예정)</span></div>
-      <div class="row"><span class="k">노선수</span><span class="v">1개 (9호선 4단계 2028년 개통 예정 → 더블역세권 전환)</span></div>
-      <div class="row"><span class="k">재건축</span><span class="v">조합설립 완료 · 정비계획 공람 중 (→3,353가구 재건축)</span></div>
-      <div class="row"><span class="k">개발호재</span><span class="v">🏢 고덕비즈밸리 (약 23만㎡, 2025년 입주 완료 · 이케아·이마트·CGV)</span></div>
-      <div class="row"><span class="k">지형</span><span class="v">평지 (우수)</span></div>
-      <div class="row"><span class="k">강남접근</span><span class="v">5호선 → 2호선 환승 약 45분</span></div>
-      <div class="row"><span class="k">상권</span><span class="v">고덕상업지구·이마트·스타필드시티 하남</span></div>
-      <div class="row"><span class="k">주차</span><span class="v">세대당 약 0.5대 (주차 부족)</span></div>
-      <div class="row"><span class="k">배정초</span><span class="v">서울고명초등학교 (단지 내, 초품아)</span></div>
-      <div class="row"><span class="k">배정중</span><span class="v">배재중학교</span></div>
-      <div class="row"><span class="k">학원가</span><span class="v">배재중고 인근 학원가 (명일동)</span></div>
+  <div class="section-title"><span class="icon">🚇</span> 교통 현황 &amp; 개선 전망<span class="tag tag-hard" style="margin-left:auto">하드코딩</span></div>
+
+  <div class="grid-2" style="margin-bottom:16px">
+    <div>
+      <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;letter-spacing:.05em">📍 현재 교통 접근성</div>
+      <table class="ctbl">
+        <tbody>
+          <tr><td class="lbl">노량진역 (1·9호선)</td><td>도보 15분</td></tr>
+          <tr><td class="lbl">상도역 (7호선)</td><td>도보 9분 ⭐</td></tr>
+          <tr><td class="lbl">장승배기역 (7호선)</td><td>도보 10분</td></tr>
+          <tr><td class="lbl">동작역 (4·9호선)</td><td>버스 약 15분</td></tr>
+          <tr><td class="lbl">강남역</td><td>9호선 급행 약 20분 ⭐</td></tr>
+          <tr><td class="lbl">을지로3가 (직장)</td><td>1호선 직통 약 15~20분 ⭐</td></tr>
+          <tr><td class="lbl">여의도</td><td>9호선 약 10분 ⭐</td></tr>
+          <tr><td class="lbl">용산</td><td>1호선 약 5분</td></tr>
+        </tbody>
+      </table>
     </div>
-    <!-- B -->
-    <div class="icard b">
-      <h4>B. 신동아리버파크 (실계약 완료)</h4>
-      <div class="row"><span class="k">주소</span><span class="v">동작구 노량진동 325번지</span></div>
-      <div class="row"><span class="k">지하철</span><span class="v">상도역(7호선) 도보 9분, 장승배기역(7호선) 도보 10분</span></div>
-      <div class="row"><span class="k">노량진역</span><span class="v">1·9호선 노량진역 도보 15분</span></div>
-      <div class="row"><span class="k">노선수</span><span class="v">2개 (7호선 + 1·9호선 접근) ⭐</span></div>
-      <div class="row"><span class="k">세대수</span><span class="v">1,696세대 / 7개동 / 최고 28층</span></div>
-      <div class="row"><span class="k">준공</span><span class="v">2001년 2월 (약 25년 경과)</span></div>
-      <div class="row"><span class="k">실계약 호수</span><span class="v">705동 2405호 (24층)</span></div>
-      <div class="row"><span class="k">전용면적</span><span class="v">109~144㎡ (대형 평형)</span></div>
-      <div class="row"><span class="k">매수가</span><span class="v">17억 2,500만원</span></div>
-      <div class="row"><span class="k">재건축</span><span class="v">추진 여부 미정 (2001년 준공 25년차)</span></div>
-      <div class="row"><span class="k">개발호재</span><span class="v">노량진 뉴타운 8개 구역 2027년 전면 착공·2031년 완공 목표 / 수협 부지 복합개발 2026년 재추진</span></div>
-      <div class="row"><span class="k">지형</span><span class="v">평지 (한강변, 우수)</span></div>
-      <div class="row"><span class="k">강남접근</span><span class="v">9호선 급행 직결 약 20분 ⭐</span></div>
-      <div class="row"><span class="k">상권</span><span class="v">노량진수산시장, 여의도 10분, 대방상권</span></div>
-      <div class="row"><span class="k">한강조망</span><span class="v">일부 동 가능 ⭐</span></div>
-      <div class="row"><span class="k">특이사항</span><span class="v">토지거래허가구역</span></div>
-      <div class="row"><span class="k">배정초</span><span class="v">노량진초등학교</span></div>
-      <div class="row"><span class="k">배정중</span><span class="v">대방중학교</span></div>
-      <div class="row"><span class="k">학원가</span><span class="v">노량진 학원가 (공무원 특화, 뉴타운 완공 후 일반 학원가 전환 전망)</span></div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;letter-spacing:.05em">🔮 교통 개선 전망 타임라인</div>
+      <div class="timeline">
+        <div class="tl-year">현재 (2026)</div>
+        <div class="tl-item done">
+          <h4>노량진역 1·9호선 더블역세권</h4>
+          <p>도보 15분 / 9호선 급행 강남 20분 이내</p>
+        </div>
+        <div class="tl-year">2028</div>
+        <div class="tl-item plan">
+          <h4>GTX-C 개통 — 금정·수원 연결</h4>
+          <p>노량진 근접 수혜권 (환승 접근성 향상 기대)</p>
+        </div>
+        <div class="tl-year">검토중</div>
+        <div class="tl-item ing">
+          <h4>신림선 연장 (대방 방면)</h4>
+          <p>노량진~대방 구간 연장 논의 중</p>
+        </div>
+        <div class="tl-item ing">
+          <h4>동작 복합환승센터</h4>
+          <p>동작역 인근 광역환승 허브 조성 검토</p>
+        </div>
+      </div>
     </div>
   </div>
-  <div class="remodel">
-    <h3>🏠 신동아리버파크 — 2001년 준공 25년차 (재건축·리모델링 추진 여부 미정)</h3>
-    <p>705동 2405호 (24층) 실계약 완료 | 전용 109~144㎡ 대형 평형 | 1·9호선 노량진역 도보 15분 · 상도역(7호선) 도보 9분 | 한강 조망 가능 | 토지거래허가구역</p>
-  </div>
 </div>
 
-<!-- ══ 3. 교통 ══ -->
+<!-- ══ 4. 정부·서울시 개발 계획 ══ -->
 <div class="section">
-  <div class="section-title"><span class="icon">🚇</span> 교통 비교<span class="tag tag-hard" style="margin-left:auto">하드코딩</span></div>
-  <div class="tbl-wrap">
-    <table class="ctbl">
-      <thead><tr><th class="lbl">항목</th><th class="th-a">A. 삼익그린2차</th><th class="th-b">B. 신동아리버파크</th><th>우위</th></tr></thead>
-      <tbody>
-        <tr><td class="lbl">최근접역</td><td>5호선 고덕역 (도보 5~10분)</td><td class="win-b">상도역(7호선) 도보 9분 · 노량진역(1·9호선) 도보 15분 ⭐</td><td><span class="wtag wtag-b">B</span></td></tr>
-        <tr><td class="lbl">이용 노선수</td><td>1개 (9호선 4단계 2028년 개통 예정)</td><td class="win-b">2개 (7호선 + 1·9호선 접근) ⭐</td><td><span class="wtag wtag-b">B</span></td></tr>
-        <tr><td class="lbl">9호선</td><td>4단계 공사 중 (2028년 개통 예정)</td><td class="win-b">노량진역 9호선 급행 도보 15분 ⭐</td><td><span class="wtag wtag-b">B</span></td></tr>
-        <tr><td class="lbl">강남(강남역)</td><td>5호선→2호선 환승 약 45~50분</td><td class="win-b">9호선 급행 직결 약 20분 ⭐</td><td><span class="wtag wtag-b">B</span></td></tr>
-        <tr><td class="lbl">도심(광화문)</td><td>5호선 직결 약 40분</td><td class="win-b">1호선 직결 약 15분 ⭐</td><td><span class="wtag wtag-b">B</span></td></tr>
-        <tr><td class="lbl">삼일대로330 (직장)</td><td>5호선→을지로3가 환승 약 35~40분</td><td class="win-b">1호선 직통 약 15~20분 ⭐</td><td><span class="wtag wtag-b">B</span></td></tr>
-        <tr><td class="lbl">GTX</td><td>GTX-D 강동구 경유 확정 (2024.1 발표, 착공 미확정)</td><td>여의도·용산 개발 수혜 간접</td><td><span class="wtag wtag-tie">상황별</span></td></tr>
-        <tr><td class="lbl">비즈밸리/특수입지</td><td class="win-a">⭐ 고덕비즈밸리 인근 (23만㎡, 완성)</td><td>여의도 금융가 10분 ⭐</td><td><span class="wtag wtag-tie">상황별</span></td></tr>
-        <tr><td class="lbl">지형 편의성</td><td class="win-a">평지 (우수)</td><td class="win-b">평지·한강변 (우수)</td><td><span class="wtag wtag-tie">A·B</span></td></tr>
-        <tr><td class="lbl">버스 허브</td><td>중간 (고덕·강일 노선)</td><td>양호 (노량진·대방·상도 노선)</td><td><span class="wtag wtag-tie">동일</span></td></tr>
-      </tbody>
-    </table>
+  <div class="section-title"><span class="icon">🏗️</span> 정부·서울시 개발 계획 &amp; 호재<span class="tag tag-hard" style="margin-left:auto">하드코딩</span></div>
+
+  <div class="horea-card">
+    <span class="impact">핵심호재 ⭐⭐⭐</span>
+    <h4>🏘️ 노량진 뉴타운 (1~8구역) 재개발</h4>
+    <p>8개 구역 약 1만 세대 신규 공급 목표 · 2027년 전면 착공 · 2031년 완공 목표<br>
+    4·6구역 이미 착공 / 8구역 아크로리버스카이 진행 중<br>
+    완공 시 동작구 서남권 인구 2~3만명 유입 → 상권·학원가 재편</p>
+  </div>
+
+  <div class="horea-card">
+    <span class="impact">핵심호재 ⭐⭐⭐</span>
+    <h4>🐟 수협 노량진 부지 복합개발 (4.8만㎡)</h4>
+    <p>2026년 상반기 공모 재개 · 착공 2029~2031년 예상<br>
+    수산 클러스터 + 주거·업무·판매 복합시설 조성<br>
+    노량진수산시장과 연계 — 한강변 랜드마크 형성 기대</p>
+  </div>
+
+  <div class="horea-card">
+    <span class="impact">중요호재 ⭐⭐</span>
+    <h4>💹 여의도 금융중심지 확장</h4>
+    <p>노량진역에서 9호선 2정거장 거리 (약 10분)<br>
+    서울시 2040 도시기본계획 내 여의도 광역금융중심지 지정<br>
+    국제금융·핀테크 집적지 조성 → 고소득 직주수요 증가</p>
+  </div>
+
+  <div class="horea-card">
+    <span class="impact">중요호재 ⭐⭐</span>
+    <h4>🌊 한강변 수변공원 개발</h4>
+    <p>서울시 한강공원 리뉴얼 사업 (노들섬~흑석·노량진 구간)<br>
+    수변 보행로·공원 조성 → 한강 조망 가치 상승 기대</p>
+  </div>
+
+  <div class="horea-card">
+    <span class="impact">파급효과 ⭐⭐</span>
+    <h4>🏠 흑석뉴타운 완료 → 노량진 연쇄 가치 상승</h4>
+    <p>인근 흑석뉴타운(11구역) 완료 → 동작구 거주 선호도 상승<br>
+    노량진 재개발 완료 시 흑석·상도·노량진 연결 고급 주거벨트 형성 전망</p>
+  </div>
+
+  <div class="horea-card">
+    <span class="impact">중요호재 ⭐⭐</span>
+    <h4>📋 서울 2040 도시기본계획 — 동작구 위상</h4>
+    <p>동작구를 강남·여의도와 연결되는 '준강남 거점' 으로 육성<br>
+    용적률 상향·종상향 가능성 → 장기 자산가치 방어</p>
+  </div>
+
+  <!-- 노량진 뉴타운 구역별 현황 표 -->
+  <div style="margin-top:16px">
+    <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;letter-spacing:.05em">📊 노량진 뉴타운 구역별 진행 현황 (2026.06 기준)</div>
+    <div class="tbl-wrap">
+      <table class="ctbl">
+        <thead><tr><th>구역</th><th>세대수 (예정)</th><th>진행 단계</th><th>비고</th></tr></thead>
+        <tbody>
+          <tr><td>1구역</td><td>약 500세대</td><td>정비구역 지정</td><td>초기 단계</td></tr>
+          <tr><td>2구역</td><td>약 700세대</td><td>조합설립 추진</td><td></td></tr>
+          <tr><td>3구역</td><td>약 800세대</td><td>조합설립 완료</td><td></td></tr>
+          <tr style="background:#dcfce7"><td>4구역</td><td>약 1,100세대</td><td><strong>착공 완료</strong></td><td>이주·철거 완료</td></tr>
+          <tr><td>5구역</td><td>약 600세대</td><td>사업시행 인가</td><td></td></tr>
+          <tr style="background:#dcfce7"><td>6구역</td><td>약 1,200세대</td><td><strong>착공 완료</strong></td><td>이주·철거 완료</td></tr>
+          <tr><td>7구역</td><td>약 900세대</td><td>관리처분 인가</td><td></td></tr>
+          <tr style="background:#fef3c7"><td>8구역 (아크로리버스카이)</td><td>약 1,900세대</td><td><strong>시공 진행 중</strong></td><td>대림산업 수주</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 
-<!-- ══ 3-B. 주차 · 전기차 충전 ══ -->
+<!-- ══ 5. 동작구 균형발전 로드맵 ══ -->
 <div class="section">
-  <div class="section-title"><span class="icon">🚗</span> 주차 · 전기차 충전 현황<span class="tag tag-hard" style="margin-left:auto">하드코딩</span></div>
-  <div class="tbl-wrap">
-    <table class="ctbl">
-      <thead><tr><th class="lbl">항목</th><th class="th-a">A. 삼익그린2차</th><th class="th-b">B. 신동아리버파크</th><th>우위</th></tr></thead>
-      <tbody>
-        <tr><td class="lbl">총 세대수</td><td>2,400세대</td><td>1,696세대 / 7개동</td><td><span class="wtag wtag-tie">-</span></td></tr>
-        <tr><td class="lbl">주차 대수</td><td>약 1,200대 (세대당 ≈0.5대)</td><td class="win-b">약 1,360대 (세대당 ≈0.8대)</td><td><span class="wtag wtag-b">B</span></td></tr>
-        <tr><td class="lbl">주차 방식</td><td>지상+지하 혼합 (부족)</td><td>지하+지상 (보통)</td><td><span class="wtag wtag-tie">동일</span></td></tr>
-        <tr><td class="lbl">전기차 충전</td><td>완속 일부 (세대당 1/20 미만)</td><td>완속 일부 설치</td><td><span class="wtag wtag-tie">동일</span></td></tr>
-        <tr><td class="lbl">재건축 후</td><td>재건축 시 지하 확대 예정</td><td>재건축·리모델링 추진 시 개선 예정</td><td><span class="wtag wtag-tie">동일</span></td></tr>
-      </tbody>
-    </table>
+  <div class="section-title"><span class="icon">🗺️</span> 동작구 균형발전 로드맵<span class="tag tag-hard" style="margin-left:auto">하드코딩</span></div>
+  <div class="timeline">
+    <div class="tl-year">완료</div>
+    <div class="tl-item done">
+      <h4>흑석뉴타운 — 대부분 완료</h4>
+      <p>서울 동작구 흑석동 일대 11개 구역 정비 · 신축 대단지 완성 → 동작구 아파트 선호도 급상승</p>
+    </div>
+    <div class="tl-year">진행중 (2026~2031)</div>
+    <div class="tl-item ing">
+      <h4>노량진 뉴타운 전면 재개발</h4>
+      <p>8개 구역 약 1만 세대 · 4·6구역 착공 / 8구역 시공 중 / 나머지 순차 착공 예정<br>완공 시 노량진동 일대 전면 도시 재생</p>
+    </div>
+    <div class="tl-item ing">
+      <h4>수협 노량진 부지 복합개발</h4>
+      <p>4.8만㎡ 한강변 부지 주거·업무·상업 복합 개발 — 2026년 공모 재개</p>
+    </div>
+    <div class="tl-year">추진중</div>
+    <div class="tl-item plan">
+      <h4>상도동 재개발·재건축 추진</h4>
+      <p>상도동 일대 노후 단지 정비 사업 구역 지정 추진 중 — 동작구 전반 가치 상승 기대</p>
+    </div>
+    <div class="tl-item plan">
+      <h4>동작구 문화·생활SOC 확충</h4>
+      <p>도서관·체육시설·공원 등 생활인프라 투자 확대 계획</p>
+    </div>
   </div>
 </div>
 
-<!-- ══ 4. 카카오 시설 ══ -->
+<!-- ══ 6. 반경 1km 주요 시설 ══ -->
 <div class="section">
   <div class="section-title">
     <span class="icon">📍</span> 반경 1km 생활편의시설
@@ -307,816 +408,170 @@ const CATS = [
     <table class="ctbl" id="fac-table">
       <thead>
         <tr>
-          <th class="lbl">시설</th>
-          <th class="th-a">A 최근접</th><th class="th-a">A 수</th>
-          <th class="th-b">B 최근접</th><th class="th-b">B 수</th>
-          <th>우위</th>
+          <th>시설 유형</th>
+          <th>최근접 시설 (거리)</th>
+          <th>반경 1km 내 수</th>
         </tr>
       </thead>
       <tbody id="fac-tbody">
-        <tr class="loading-row"><td colspan="6" style="text-align:center"><span class="spinner"></span> 카카오 API 로딩중…</td></tr>
+        <tr class="loading-row"><td colspan="3" style="text-align:center"><span class="spinner"></span> 카카오 API 로딩중…</td></tr>
       </tbody>
     </table>
   </div>
 </div>
 
-<!-- ══ 4-B. 평면도 비교 ══ -->
-<div class="section">
-  <div class="section-title"><span class="icon">📐</span> 평면 비교<span class="tag tag-hard" style="margin-left:auto">하드코딩</span></div>
-  <div class="grid-2" style="margin-bottom:16px">
-    <div>
-      <table class="ctbl">
-        <thead><tr><th class="lbl">항목</th><th class="th-a">A. 삼익그린2차</th><th class="th-b">B. 신동아리버파크</th><th>우위</th></tr></thead>
-        <tbody>
-          <tr><td class="lbl">공급면적</td><td>90.04㎡ (27평)</td><td class="win-b">109.76㎡ (33평) / 144.06㎡ (43평)</td><td><span class="wtag wtag-b">B</span></td></tr>
-          <tr><td class="lbl">전용면적</td><td>66.87㎡</td><td class="win-b">84.88㎡ (33평) / 114.75㎡ (43평)</td><td><span class="wtag wtag-b">B</span></td></tr>
-          <tr><td class="lbl">전용률</td><td>74.3%</td><td class="win-b">77~80% ⭐</td><td><span class="wtag wtag-b">B</span></td></tr>
-          <tr><td class="lbl">구조</td><td>복도식</td><td class="win-b">계단식 ⭐</td><td><span class="wtag wtag-b">B</span></td></tr>
-          <tr><td class="lbl">방수</td><td>3개</td><td class="win-b">3개 (33평) / 4개 ⭐ (43평)</td><td><span class="wtag wtag-b">B</span></td></tr>
-          <tr><td class="lbl">욕실수</td><td>1개</td><td class="win-b">2개</td><td><span class="wtag wtag-b">B</span></td></tr>
-          <tr><td class="lbl">베란다</td><td class="win-a">확장 완료 ✅</td><td>전·후 발코니 있음</td><td><span class="wtag wtag-a">A</span></td></tr>
-          <tr><td class="lbl">한강 조망</td><td>없음</td><td class="win-b">일부 동 가능 ⭐</td><td><span class="wtag wtag-b">B</span></td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div>
-      <div class="chart-wrap" style="height:220px"><canvas id="floorAreaChart"></canvas></div>
-    </div>
-  </div>
-  <div style="background:#f0fdf4;border:1px solid #16a34a;border-radius:8px;padding:12px;margin-bottom:10px">
-    <div style="font-weight:700;color:#16a34a;margin-bottom:6px">🟢 B. 신동아리버파크 43평형 (공급 144.06㎡ · 전용 114.75㎡) — 실계약 호수: 705동 2405호</div>
-    <div style="font-size:12px;color:#14532d;line-height:1.8">
-      방 4개 · 욕실 2개 · 계단식 · 전용률 80% · 전·후 발코니 · 한강조망 일부 동 가능<br>
-      ⭐ 대형 평형으로 4인 가족 실거주 쾌적성 우수 · 24층 고층<br>
-      실계약가 17억 2,500만원 (2026.05 실계약 완료)
-    </div>
-  </div>
-</div>
-
-<!-- ══ 5. 실거래가 ══ -->
+<!-- ══ 7. 실거래가 추이 ══ -->
 <div class="section">
   <div class="section-title">
-    <span class="icon">💰</span> 실거래가 추이 (최근 12개월)
+    <span class="icon">💰</span> 실거래가 추이 — 평형별 (최근 12개월)
     <span class="tag tag-loading" id="tag-price" style="margin-left:auto">로딩중…</span>
   </div>
   <div id="price-info" style="font-size:12px;color:var(--muted);margin-bottom:10px">데이터를 불러오는 중입니다…</div>
   <div class="chart-wrap-tall"><canvas id="priceChart"></canvas></div>
-</div>
 
-<!-- ══ 5-B. 신동아리버파크 단지 심층 분석 ══ -->
-<div class="section" style="border-color:#0891b2">
-  <div class="section-title" style="border-bottom-color:#0891b2">
-    <span class="icon">🔍</span> 신동아리버파크 단지 심층 분석
-    <span class="tag tag-loading" id="tag-sindonga-detail" style="margin-left:auto">로딩중…</span>
-  </div>
-
-  <!-- 단지 기본 정보 카드 -->
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px">
-    <div style="background:var(--bg2,#f1f5f9);border-radius:8px;padding:12px;text-align:center">
-      <div style="font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.05em;margin-bottom:4px">총 세대수</div>
-      <div style="font-size:22px;font-weight:700;color:#0891b2">1,696</div>
-      <div style="font-size:11px;color:var(--muted)">세대 · 7개동</div>
-    </div>
-    <div style="background:var(--bg2,#f1f5f9);border-radius:8px;padding:12px;text-align:center">
-      <div style="font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.05em;margin-bottom:4px">준공연도</div>
-      <div style="font-size:22px;font-weight:700;color:#0891b2">2001</div>
-      <div style="font-size:11px;color:var(--muted)">약 25년 차 구축</div>
-    </div>
-    <div style="background:var(--bg2,#f1f5f9);border-radius:8px;padding:12px;text-align:center">
-      <div style="font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.05em;margin-bottom:4px">최고층</div>
-      <div style="font-size:22px;font-weight:700;color:#0891b2">28층</div>
-      <div style="font-size:11px;color:var(--muted)">한강조망권 중고층</div>
-    </div>
-    <div style="background:var(--bg2,#f1f5f9);border-radius:8px;padding:12px;text-align:center">
-      <div style="font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.05em;margin-bottom:4px">용적률 / 건폐율</div>
-      <div style="font-size:22px;font-weight:700;color:#0891b2">324%</div>
-      <div style="font-size:11px;color:var(--muted)">건폐율 19%</div>
-    </div>
-  </div>
-
-  <!-- 평형별 세대 구성 -->
-  <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;letter-spacing:.05em">🏢 평형별 세대 구성</div>
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px">
-    <div style="border:1px solid var(--border);border-radius:8px;padding:12px">
-      <div style="font-weight:700;margin-bottom:4px">25평형 <span style="font-size:11px;color:var(--muted)">(59.76㎡)</span></div>
-      <div style="font-size:20px;font-weight:700;color:var(--text)">386<span style="font-size:12px;font-weight:400">세대</span></div>
-      <div style="background:#e2e8f0;border-radius:4px;height:6px;margin-top:8px">
-        <div style="background:#94a3b8;border-radius:4px;height:6px;width:22%"></div>
-      </div>
-      <div style="font-size:11px;color:var(--muted);margin-top:4px">전체의 22.8%</div>
-    </div>
-    <div style="border:2px solid #7c3aed;border-radius:8px;padding:12px">
-      <div style="font-weight:700;margin-bottom:4px">33평형 <span style="font-size:11px;color:var(--muted)">(84.88㎡)</span> <span style="font-size:10px;background:#7c3aed;color:#fff;border-radius:4px;padding:1px 5px">매물 B</span></div>
-      <div style="font-size:20px;font-weight:700;color:#7c3aed">786<span style="font-size:12px;font-weight:400">세대</span></div>
-      <div style="background:#e2e8f0;border-radius:4px;height:6px;margin-top:8px">
-        <div style="background:#7c3aed;border-radius:4px;height:6px;width:46%"></div>
-      </div>
-      <div style="font-size:11px;color:var(--muted);margin-top:4px">전체의 46.3% — 최다 평형</div>
-    </div>
-    <div style="border:2px solid #0891b2;border-radius:8px;padding:12px">
-      <div style="font-weight:700;margin-bottom:4px">43평형 <span style="font-size:11px;color:var(--muted)">(114.75㎡)</span> <span style="font-size:10px;background:#0891b2;color:#fff;border-radius:4px;padding:1px 5px">매물 A</span></div>
-      <div style="font-size:20px;font-weight:700;color:#0891b2">524<span style="font-size:12px;font-weight:400">세대</span></div>
-      <div style="background:#e2e8f0;border-radius:4px;height:6px;margin-top:8px">
-        <div style="background:#0891b2;border-radius:4px;height:6px;width:30%"></div>
-      </div>
-      <div style="font-size:11px;color:var(--muted);margin-top:4px">전체의 30.9%</div>
-    </div>
-  </div>
-
-  <!-- 실거래가 상세 테이블 -->
-  <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;letter-spacing:.05em">
-    💰 평형별 실거래가 현황
-    <span style="font-size:10px;font-weight:400;color:var(--muted)">(하드코딩: 확인된 거래 기준 / API 데이터는 로딩 시 자동 업데이트)</span>
-  </div>
-  <div style="overflow-x:auto;margin-bottom:8px">
-    <table style="width:100%;border-collapse:collapse;font-size:12px">
-      <thead>
-        <tr style="background:var(--bg2,#f1f5f9)">
-          <th style="padding:8px 10px;text-align:left;color:var(--muted)">평형</th>
-          <th style="padding:8px 10px;text-align:left;color:var(--muted)">거래일</th>
-          <th style="padding:8px 10px;text-align:right;color:var(--muted)">거래가</th>
-          <th style="padding:8px 10px;text-align:center;color:var(--muted)">층수</th>
-          <th style="padding:8px 10px;text-align:right;color:var(--muted)">평당가</th>
-          <th style="padding:8px 10px;text-align:left;color:var(--muted)">비고</th>
-        </tr>
-      </thead>
-      <tbody id="sindonga-tx-body">
-        <!-- 하드코딩 기준 데이터 -->
-        <tr style="border-bottom:1px solid var(--border);background:rgba(8,145,178,.05)">
-          <td style="padding:6px 10px;font-weight:700;color:#0891b2">43평 (114.75㎡)</td>
-          <td style="padding:6px 10px">2025.10</td>
-          <td style="padding:6px 10px;text-align:right;font-weight:700">14억 8,000만</td>
-          <td style="padding:6px 10px;text-align:center">25층</td>
-          <td style="padding:6px 10px;text-align:right">3,379만/평</td>
-          <td style="padding:6px 10px;font-size:11px;color:var(--muted)">확인 거래</td>
-        </tr>
-        <tr style="border-bottom:1px solid var(--border);background:rgba(8,145,178,.03)">
-          <td style="padding:6px 10px;font-weight:700;color:#0891b2">43평 (114.75㎡)</td>
-          <td style="padding:6px 10px">2024.09</td>
-          <td style="padding:6px 10px;text-align:right;font-weight:700">12억 9,500만</td>
-          <td style="padding:6px 10px;text-align:center">—</td>
-          <td style="padding:6px 10px;text-align:right">2,960만/평</td>
-          <td style="padding:6px 10px;font-size:11px;color:var(--muted)">확인 거래</td>
-        </tr>
-        <tr style="border-bottom:1px solid var(--border);background:rgba(124,58,237,.05)">
-          <td style="padding:6px 10px;font-weight:700;color:#7c3aed">33평 (84.88㎡)</td>
-          <td style="padding:6px 10px">2025.10</td>
-          <td style="padding:6px 10px;text-align:right;font-weight:700">~14억 1,000만</td>
-          <td style="padding:6px 10px;text-align:center">—</td>
-          <td style="padding:6px 10px;text-align:right">~4,273만/평</td>
-          <td style="padding:6px 10px;font-size:11px;color:var(--muted)">KB시세 기준 추정</td>
-        </tr>
-        <!-- API로 채워질 행 -->
-        <tr id="sindonga-api-row" style="border-bottom:1px solid var(--border);display:none">
-          <td colspan="6" style="padding:6px 10px;font-size:11px;color:var(--muted);text-align:center" id="sindonga-api-status">API 데이터 로딩 중…</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div style="font-size:11px;color:var(--muted);margin-bottom:16px">* 실거래 확인 거래 기준. 국토부 API 연결 시 자동으로 최근 12개월 데이터가 위 표에 추가됩니다.</div>
-
-  <!-- 현재 호가 vs 실거래가 갭 분석 -->
-  <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;letter-spacing:.05em">📊 호가 vs 실거래가 갭 분석 (2026.05 기준)</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px">
-    <div style="border:2px solid #0891b2;border-radius:8px;padding:14px">
-      <div style="font-weight:700;color:#0891b2;margin-bottom:8px;font-size:12px">매물 A — 705동 43평 (114.75㎡)</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px">
-        <div style="color:var(--muted)">현재 호가</div><div style="text-align:right;font-weight:700">17.2억</div>
-        <div style="color:var(--muted)">최근 실거래 (2025.10)</div><div style="text-align:right">14.8억</div>
-        <div style="color:var(--muted)">호가 프리미엄</div><div style="text-align:right;color:#ef4444;font-weight:700">+2.4억 (+16.2%)</div>
-        <div style="color:var(--muted)">현재 호가 평당가</div><div style="text-align:right;font-weight:700">3,945만</div>
-        <div style="color:var(--muted)">실거래 평당가</div><div style="text-align:right">3,379만</div>
-      </div>
-    </div>
-    <div style="border:2px solid #7c3aed;border-radius:8px;padding:14px">
-      <div style="font-weight:700;color:#7c3aed;margin-bottom:8px;font-size:12px">매물 B — 708동 33평 (84.88㎡)</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px">
-        <div style="color:var(--muted)">현재 호가</div><div style="text-align:right;font-weight:700">16.7억</div>
-        <div style="color:var(--muted)">최근 시세 (2025.10)</div><div style="text-align:right">~14.1억</div>
-        <div style="color:var(--muted)">호가 프리미엄</div><div style="text-align:right;color:#ef4444;font-weight:700">+2.6억 (+18.4%)</div>
-        <div style="color:var(--muted)">현재 호가 평당가</div><div style="text-align:right;font-weight:700">5,030만</div>
-        <div style="color:var(--muted)">시세 평당가</div><div style="text-align:right">~4,273만</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 평형별 실거래가 차트 -->
-  <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;letter-spacing:.05em">📈 평형별 실거래가 추이 (국토부 API · 최근 12개월)</div>
-  <div id="sindonga-chart-info" style="font-size:12px;color:var(--muted);margin-bottom:8px">데이터 로딩 중…</div>
-  <div style="position:relative;height:260px"><canvas id="sindongaDetailChart"></canvas></div>
-
-  <!-- 동별 특성 메모 -->
-  <div style="font-size:11px;font-weight:700;color:var(--muted);margin:16px 0 8px;letter-spacing:.05em">🏗️ 검토 동별 특성</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-    <div style="background:rgba(8,145,178,.07);border:1px solid #0891b2;border-radius:8px;padding:12px;font-size:12px">
-      <div style="font-weight:700;color:#0891b2;margin-bottom:6px">705동 — 43평형 (매물 A)</div>
-      <div style="line-height:2;color:var(--text)">
-        해당층: <strong>22층</strong> / 총 28층<br>
-        전용면적: <strong>114.75㎡</strong> (43.7평)<br>
-        공급면적: 144.06㎡ · 전용률 80%<br>
-        방/욕실: 4방 2욕실<br>
-        향: 남서향 · 한강뷰 기대<br>
-        비고: 중고층, 최상층 대비 리스크 없음
-      </div>
-    </div>
-    <div style="background:rgba(124,58,237,.07);border:1px solid #7c3aed;border-radius:8px;padding:12px;font-size:12px">
-      <div style="font-weight:700;color:#7c3aed;margin-bottom:6px">708동 — 33평형 (매물 B)</div>
-      <div style="line-height:2;color:var(--text)">
-        해당층: <strong>27층</strong> / 총 27층 (최상층)<br>
-        전용면적: <strong>84.88㎡</strong> (25.7평)<br>
-        공급면적: 109.76㎡ · 전용률 77%<br>
-        방/욕실: 3방 2욕실<br>
-        향: 남서향 · 최상층 조망 최우수<br>
-        비고: <span style="color:#ef4444">최상층 누수·단열 이력 점검 필수</span>
-      </div>
-    </div>
-  </div>
-
-  <div style="margin-top:14px;padding:10px 14px;background:rgba(8,145,178,.08);border-radius:8px;font-size:12px;color:var(--text)">
-    💡 <strong>단지 인사이트:</strong> 33평(786세대)이 최다 평형으로 시장 유동성 가장 높음. 43평(524세대)은 희소성 있어 장기 보유 시 가격 방어력 우수. 두 매물 모두 2025.10 실거래 대비 약 16~18% 호가 프리미엄 — 협상 여지 존재.
-  </div>
-</div>
-
-<!-- ══ 6. 학군 ══ -->
-<div class="section">
-  <div class="section-title">
-    <span class="icon">🎓</span> 학군 비교
-    <span class="tag tag-loading" id="tag-school" style="margin-left:auto">로딩중…</span>
-  </div>
-  <div class="grid-2">
-    <div>
-      <h3 style="font-size:13px;margin-bottom:8px;color:var(--a)">A. 삼익그린2차</h3>
-      <table class="ctbl">
-        <thead><tr><th>학교명</th><th>구분</th><th>소재지</th></tr></thead>
-        <tbody>
-          <tr><td id="sa-elem-name">서울고명초등학교</td><td>초등</td><td id="sa-elem-addr">서울 강동구</td></tr>
-          <tr><td id="sa-mid-name">배재중학교</td><td>중학</td><td id="sa-mid-addr">서울 강동구</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div>
-      <h3 style="font-size:13px;margin-bottom:8px;color:var(--b)">B. 신동아리버파크</h3>
-      <table class="ctbl">
-        <thead><tr><th>학교명</th><th>구분</th><th>소재지</th></tr></thead>
-        <tbody>
-          <tr><td id="sb-elem-name">노량진초등학교</td><td>초등</td><td id="sb-elem-addr">서울 동작구</td></tr>
-          <tr><td id="sb-mid-name">대방중학교</td><td>중학</td><td id="sb-mid-addr">서울 동작구</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-  <div class="tbl-wrap" style="margin-top:14px">
-    <table class="ctbl">
-      <thead><tr><th class="lbl">학군 항목</th><th class="th-a">A. 삼익그린2차</th><th class="th-b">B. 신동아리버파크</th><th>우위</th></tr></thead>
-      <tbody>
-        <tr><td class="lbl">배정 중학교</td><td>배재중</td><td>대방중 (노량진동 배정)</td><td><span class="wtag wtag-a">A</span></td></tr>
-        <tr><td class="lbl">학군 특성</td><td>고덕지구 신흥학군</td><td>노량진 (공무원학원 특화, 뉴타운 완공 후 전환 전망)</td><td><span class="wtag wtag-a">A</span></td></tr>
-        <tr><td class="lbl">인근 학원가</td><td>배재중고 인근 명일동</td><td>노량진 공무원 학원가</td><td><span class="wtag wtag-a">A</span></td></tr>
-        <tr><td class="lbl">리비어어학원(신사동)</td><td>5호선→3호선 약 30~35분</td><td class="win-b">9호선→신논현 약 15~20분 ⭐</td><td><span class="wtag wtag-b">B</span></td></tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="chart-wrap" style="margin-top:14px"><canvas id="schoolChart"></canvas></div>
-</div>
-
-<!-- ══ 6-B. 직주근접성 ══ -->
-<div class="section">
-  <div class="section-title"><span class="icon">🗺️</span> 직주근접성 &amp; 가족 접근성<span class="tag tag-hard" style="margin-left:auto">하드코딩</span></div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;font-size:12px">
-    <div style="background:#f1f5f9;padding:10px;border-radius:8px">
-      <div style="font-weight:700;margin-bottom:4px">📍 주요 목적지</div>
-      <div>• 직장: 삼일대로330 (중구 저동1가, 을지로3가역 도보 5분)</div>
-      <div>• 아이 학원: 리비어어학원 (강남구 신사동, 언주로153길 10-8)</div>
-      <div>• 친가: 명일신동아파트 (강동구 명일동)</div>
-      <div>• 외가: 원베일리 (서초구 반포동)</div>
-    </div>
-    <div style="background:#f1f5f9;padding:10px;border-radius:8px;font-size:11px;color:#64748b">
-      * 지하철 소요시간은 네이버지도 기준 예상치 (환승 포함)<br>
-      * 직선거리는 Haversine 공식 적용
-    </div>
-  </div>
+  <!-- 하드코딩 확인 거래 -->
+  <div style="margin-top:16px;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;letter-spacing:.05em">📋 확인된 실거래 기록 (하드코딩)</div>
   <div class="tbl-wrap">
     <table class="ctbl">
-      <thead><tr><th class="lbl">목적지</th><th class="th-a">A. 삼익그린2차</th><th class="th-b">B. 신동아리버파크</th><th>우위</th></tr></thead>
-      <tbody>
+      <thead>
         <tr>
-          <td class="lbl">💼 직장<br><span style="font-size:10px;color:#94a3b8">삼일대로330 (을지로3가)</span></td>
-          <td>5호선→을지로3가 환승<br>약 35~40분</td>
-          <td class="win-b">1호선 직통<br>약 15~20분 ⭐</td>
-          <td><span class="wtag wtag-b">B</span></td>
+          <th>평형</th><th>거래일</th><th>거래가</th><th>층수</th><th>평당가</th><th>비고</th>
+        </tr>
+      </thead>
+      <tbody id="price-tx-body">
+        <tr>
+          <td style="font-weight:700;color:#0891b2">43평 (114.75㎡)</td>
+          <td>2025.10</td>
+          <td style="font-weight:700">14억 8,000만</td>
+          <td>25층</td>
+          <td>3,379만/평</td>
+          <td style="font-size:11px;color:var(--muted)">확인 거래</td>
         </tr>
         <tr>
-          <td class="lbl">📚 리비어어학원<br><span style="font-size:10px;color:#94a3b8">강남구 신사동</span></td>
-          <td>5호선→3호선 환승<br>약 30~35분</td>
-          <td class="win-b">9호선→신논현역<br>약 15~20분 ⭐</td>
-          <td><span class="wtag wtag-b">B</span></td>
+          <td style="font-weight:700;color:#0891b2">43평 (114.75㎡)</td>
+          <td>2024.09</td>
+          <td style="font-weight:700">12억 9,500만</td>
+          <td>—</td>
+          <td>2,960만/평</td>
+          <td style="font-size:11px;color:var(--muted)">확인 거래</td>
         </tr>
         <tr>
-          <td class="lbl">🏠 친가<br><span style="font-size:10px;color:#94a3b8">명일신동아 (강동구)</span></td>
-          <td class="win-a">도보·버스 10~15분 ⭐<br>(직선 약 1.5km)</td>
-          <td>지하철 약 50~55분<br>(직선 약 18km)</td>
-          <td><span class="wtag wtag-a">A</span></td>
-        </tr>
-        <tr>
-          <td class="lbl">🏠 외가<br><span style="font-size:10px;color:#94a3b8">원베일리 (반포)</span></td>
-          <td>지하철+환승 약 50~60분<br>(직선 약 16km)</td>
-          <td class="win-b">버스·지하철 약 20~25분 ⭐<br>(직선 약 4km)</td>
-          <td><span class="wtag wtag-b">B</span></td>
+          <td style="font-weight:700;color:#7c3aed">33평 (84.88㎡)</td>
+          <td>2025.10</td>
+          <td style="font-weight:700">~14억 1,000만</td>
+          <td>—</td>
+          <td>~4,273만/평</td>
+          <td style="font-size:11px;color:var(--muted)">KB시세 추정</td>
         </tr>
       </tbody>
     </table>
   </div>
-  <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
-    <div style="background:var(--a-light);border-radius:8px;padding:12px">
-      <div style="font-weight:700;color:var(--a);margin-bottom:6px">🔵 A. 삼익그린2차 유리한 점</div>
-      <div style="font-size:12px;line-height:1.8">
-        ✅ 친가(명일신동아) 10~15분<br>
-        ❌ 직장까지 35~40분<br>
-        ❌ 리비어어학원 30~35분<br>
-        ❌ 외가(원베일리) 50~60분
-      </div>
-    </div>
-    <div style="background:var(--b-light);border-radius:8px;padding:12px">
-      <div style="font-weight:700;color:var(--b);margin-bottom:6px">🟢 B. 신동아리버파크 유리한 점</div>
-      <div style="font-size:12px;line-height:1.8">
-        ✅ 직장까지 15~20분 ⭐<br>
-        ✅ 리비어어학원 15~20분 ⭐<br>
-        ✅ 외가(원베일리) 20~25분<br>
-        ❌ 친가(명일신동아) 50~55분
-      </div>
-    </div>
-  </div>
-  <p style="font-size:11px;color:#94a3b8;margin-top:8px">💡 직장·리비어학원 접근성은 B(신동아리버파크)가 우위 (1·9호선 직통). 외가(원베일리) 접근성도 B 유리. 친가(명일신동아) 접근성은 A만 유리.</p>
 </div>
 
-<!-- ══ 7. 치안 ══ -->
+<!-- ══ 8. 리모델링 수익성 분석 ══ -->
 <div class="section">
-  <div class="section-title"><span class="icon">🚔</span> 치안 (5대 범죄)<span class="tag tag-sample" style="margin-left:auto">샘플데이터</span></div>
-  <div class="chart-wrap"><canvas id="crimeChart"></canvas></div>
-  <div class="tbl-wrap" style="margin-top:12px">
-    <table class="ctbl">
-      <thead><tr><th class="lbl">범죄유형</th><th class="th-a">강동구 (샘플)</th><th class="th-b">동작구 (샘플)</th><th>우위</th></tr></thead>
-      <tbody>
-        <tr><td class="lbl">살인</td><td>3</td><td class="win-b">2</td><td><span class="wtag wtag-b">B</span></td></tr>
-        <tr><td class="lbl">강도</td><td>8</td><td class="win-b">6</td><td><span class="wtag wtag-b">B</span></td></tr>
-        <tr><td class="lbl">절도</td><td>890</td><td class="win-b">820</td><td><span class="wtag wtag-b">B</span></td></tr>
-        <tr><td class="lbl">폭력</td><td class="win-a">1240</td><td>1380</td><td><span class="wtag wtag-a">A</span></td></tr>
-        <tr><td class="lbl">성범죄</td><td class="win-a">95</td><td>110</td><td><span class="wtag wtag-a">A</span></td></tr>
-      </tbody>
-    </table>
+  <div class="section-title"><span class="icon">🔨</span> 리모델링 수익성 분석<span class="tag tag-hard" style="margin-left:auto">추정치</span></div>
+
+  <div class="grid-2">
+    <div class="profit-card">
+      <h4>💰 43평형 (114.75㎡) — 실계약 호수</h4>
+      <div class="profit-row"><span class="k">현재 매수가 (2026.05)</span><span class="v">17억 2,500만</span></div>
+      <div class="profit-row"><span class="k">인테리어 리모델링 (중급형)</span><span class="v down">△3,255~3,945만</span></div>
+      <div class="profit-row"><span class="k">노량진 뉴타운 완공 후 (2031~)</span><span class="v up">예상 20~23억</span></div>
+      <div class="profit-row"><span class="k">시세 상승 예상폭</span><span class="v up">+2.7~5.7억 (+16~33%)</span></div>
+      <div class="profit-row"><span class="k">리모델링 포함 예상 수익률</span><span class="v up">약 +13~29%</span></div>
+      <div style="margin-top:8px;font-size:11px;color:#bae6fd">* 뉴타운 완공·호재 실현 시 보수적 추정치</div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;letter-spacing:.05em">🔧 인테리어 리모델링 견적 (43평형)</div>
+      <table class="ctbl" style="font-size:12px">
+        <thead><tr><th>항목</th><th>기본형</th><th>중급형</th></tr></thead>
+        <tbody>
+          <tr><td>장판</td><td>240~320만</td><td>420~560만</td></tr>
+          <tr><td>실크벽지</td><td>320~400만</td><td>450~560만</td></tr>
+          <tr><td>부엌</td><td>480~650만</td><td>750~950만</td></tr>
+          <tr><td>욕실 2개</td><td>860~960만</td><td>1,300~1,440만</td></tr>
+          <tr><td>현관/중문</td><td>155~175만</td><td>175~225만</td></tr>
+          <tr><td>철거</td><td>120~160만</td><td>160~210만</td></tr>
+          <tr style="font-weight:700"><td>합계</td><td>2,175~2,665만</td><td>3,255~3,945만</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
-  <p style="font-size:11px;color:#94a3b8;margin-top:6px">* 경찰청 API 엔드포인트 확인 후 실데이터로 교체 예정. B는 동작구 평균 적용.</p>
 </div>
 
-<!-- ══ 8. 대기환경 ══ -->
+<!-- ══ 9. 개발호재별 시세 영향 시뮬레이션 ══ -->
+<div class="section">
+  <div class="section-title"><span class="icon">📊</span> 개발호재별 시세 영향 시뮬레이션<span class="tag tag-hard" style="margin-left:auto">추정치</span></div>
+  <p style="font-size:12px;color:var(--muted);margin-bottom:14px">현재 시세(17.25억) 대비 각 호재 완료 시 예상 상승폭 — 전문가 추정치 기반, 중복 반영 불가</p>
+  <div class="chart-wrap"><canvas id="horeaChart"></canvas></div>
+  <div style="margin-top:12px;font-size:11px;color:var(--muted)">
+    * 각 호재의 효과는 독립적으로 산정한 추정치입니다. 실제 시세는 금리·거시경제 등 복합 요인에 의해 달라질 수 있습니다.<br>
+    * 노량진 뉴타운 완공 시 가장 큰 시세 상승 기대 (인근 신축 공급 증가로 단기 하락 후 장기 상승).
+  </div>
+</div>
+
+<!-- ══ 10. 대기환경 ══ -->
 <div class="section">
   <div class="section-title">
     <span class="icon">🌬️</span> 대기환경 (서울시 실시간 PM2.5)
     <span class="tag tag-loading" id="tag-air" style="margin-left:auto">로딩중…</span>
   </div>
-  <div class="stat-cards">
-    <div class="stat-card a">
-      <div style="font-size:12px;font-weight:700;color:var(--a);margin-bottom:6px">A. 삼익그린2차 (강동구)</div>
-      <div class="val" id="air-a-val">—</div>
-      <div class="grade" id="air-a-grade">로딩중…</div>
-      <div class="sub" id="air-a-time"></div>
-    </div>
-    <div class="stat-card b">
-      <div style="font-size:12px;font-weight:700;color:var(--b);margin-bottom:6px">B. 신동아리버파크 (동작구)</div>
-      <div class="val" id="air-b-val">—</div>
-      <div class="grade" id="air-b-grade">로딩중…</div>
-      <div class="sub" id="air-b-time"></div>
+  <div style="max-width:300px;margin:0 auto 16px">
+    <div class="stat-card">
+      <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:6px">동작구 (신동아리버파크)</div>
+      <div class="val" id="air-val">—</div>
+      <div class="grade" id="air-grade">로딩중…</div>
+      <div class="sub" id="air-time"></div>
     </div>
   </div>
   <div class="chart-wrap"><canvas id="airChart"></canvas></div>
   <p id="air-note" style="font-size:11px;color:#94a3b8;margin-top:6px"></p>
 </div>
 
-<!-- ══ 9. 투자가치 ══ -->
+<!-- ══ 11. AI 미래가치 분석 ══ -->
 <div class="section">
-  <div class="section-title"><span class="icon">📈</span> 투자 가치 비교<span class="tag tag-hard" style="margin-left:auto">분석 데이터</span></div>
-  <div class="tbl-wrap">
-    <table class="ctbl">
-      <thead><tr><th class="lbl">항목</th><th class="th-a">A. 삼익그린2차</th><th class="th-b">B. 신동아리버파크</th><th>우위</th></tr></thead>
-      <tbody>
-        <tr><td class="lbl">개발 호재</td><td>재건축 조합설립 완료 (정비계획 공람 중, →3,353가구)</td><td class="win-b">노량진 뉴타운 8개 구역 2027년 전면 착공·2031년 완공 목표 (4·6구역 이미 착공, 8구역 아크로리버스카이 진행 중) + 수협 부지 복합개발 2026년 재추진 ⭐⭐</td><td><span class="wtag wtag-b">B</span></td></tr>
-        <tr><td class="lbl">뉴타운 규모</td><td>해당 없음</td><td class="win-b">8개 구역 약 1만 가구 신규 공급 → 동작구 서남권 인구 유입, 상권 재편</td><td><span class="wtag wtag-b">B</span></td></tr>
-        <tr><td class="lbl">개발 완료 시 시세 전망</td><td>재건축 완료 시 프리미엄</td><td class="win-b">현 인근 시세 3.3㎡당 약 4,200만원 → 완공 후 5,000만원 이상 전망 (준강남 재평가)</td><td><span class="wtag wtag-b">B</span></td></tr>
-        <tr><td class="lbl">이주 리스크</td><td class="win-a">낮음 (재건축 장기)</td><td class="win-b">낮음 (단지 자체 재건축 초기)</td><td><span class="wtag wtag-tie">A·B</span></td></tr>
-        <tr><td class="lbl">준공 후 기대가치</td><td>보통</td><td class="win-b">한강뷰 신축 + 노량진역세권 + 뉴타운 완성 배후 수요</td><td><span class="wtag wtag-b">B</span></td></tr>
-        <tr><td class="lbl">매수 후 실거주</td><td class="win-a">장기 안정</td><td class="win-b">장기 안정 (단지 재건축은 장기)</td><td><span class="wtag wtag-tie">A·B</span></td></tr>
-        <tr><td class="lbl">강남 접근성</td><td>보통</td><td class="win-b">우수 (9호선 급행 약 20분) ⭐</td><td><span class="wtag wtag-b">B</span></td></tr>
-        <tr><td class="lbl">직장 접근성</td><td>보통</td><td class="win-b">최우수 (1호선 직통 15~20분) ⭐</td><td><span class="wtag wtag-b">B</span></td></tr>
-        <tr><td class="lbl">한강 프리미엄</td><td>없음</td><td class="win-b">한강뷰 일부 보유 ⭐</td><td><span class="wtag wtag-b">B</span></td></tr>
-        <tr><td class="lbl">수협 부지 개발</td><td>해당 없음</td><td class="win-b">수협 4.8만㎡ 복합개발 2026년 상반기 공모 재개 (착공 2029~2031년 예상) — 수산 클러스터 + 주거·업무·판매 복합</td><td><span class="wtag wtag-b">B</span></td></tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<!-- ══ 9-B. AI 분석 ══ -->
-<div class="section">
-  <div class="section-title"><span class="icon">🤖</span> AI 입지 분석 (Claude API)</div>
+  <div class="section-title"><span class="icon">🤖</span> AI 미래가치 분석 (Claude API)</div>
   <div style="margin-bottom:12px">
     <label style="font-size:12px;color:#64748b;display:block;margin-bottom:4px">Anthropic API Key</label>
     <div style="display:flex;gap:8px">
       <input type="password" id="anthropicKey" placeholder="sk-ant-..." style="flex:1;padding:8px 12px;border:1px solid #e2e8f0;border-radius:6px;font-size:13px;background:#f8fafc">
-      <button onclick="runAiAnalysis()" style="padding:8px 18px;background:#6366f1;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600">🤖 분석 실행</button>
+      <button onclick="runAiAnalysis()" style="padding:8px 18px;background:#0891b2;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600">🤖 분석 실행</button>
     </div>
     <p style="font-size:11px;color:#94a3b8;margin-top:4px">* API 키는 서버에 저장되지 않으며 브라우저에서 직접 Anthropic에 전송됩니다.</p>
   </div>
   <div id="aiResult" style="background:#f8fafc;border-radius:8px;padding:16px;min-height:80px;font-size:13px;line-height:1.8;color:#334155;white-space:pre-wrap">
-    API 키를 입력하고 분석 버튼을 클릭하면 Claude AI가 두 단지를 종합 분석합니다.
+    API 키를 입력하고 분석 버튼을 클릭하면 Claude AI가 신동아리버파크의 미래가치를 종합 분석합니다.
   </div>
   <div id="aiStatus" style="font-size:11px;color:#94a3b8;margin-top:6px"></div>
 </div>
 
-<!-- ══ 10. 종합점수 ══ -->
+<!-- ══ 12. 종합 미래가치 스코어 ══ -->
 <div class="score-section">
-  <div class="score-title">🏆 종합 입지 점수 (10점 만점)</div>
-  <div class="score-grid">
-    <div class="score-card">
-      <h3>🔵 A. 삼익그린2차</h3>
-      <div class="total">6.2</div>
-      <div class="score-rows">
-        <div class="score-row"><span class="sl">교통</span><span class="sv">⭐⭐⭐☆☆ 6.0</span></div>
-        <div class="score-row"><span class="sl">생활편의</span><span class="sv">⭐⭐⭐☆☆ 6.0</span></div>
-        <div class="score-row"><span class="sl">학군</span><span class="sv">⭐⭐⭐☆☆ 5.5</span></div>
-        <div class="score-row"><span class="sl">치안</span><span class="sv">⭐⭐⭐⭐☆ 7.0</span></div>
-        <div class="score-row"><span class="sl">환경·녹지</span><span class="sv best">⭐⭐⭐⭐⭐ 8.5</span></div>
-        <div class="score-row"><span class="sl">투자가치</span><span class="sv">⭐⭐⭐☆☆ 5.5</span></div>
-        <div class="score-row"><span class="sl">직주근접</span><span class="sv">⭐⭐⭐☆☆ 5.5</span></div>
-      </div>
+  <div class="score-title">🏆 종합 미래가치 스코어</div>
+  <div class="radar-wrap"><canvas id="radarChart"></canvas></div>
+  <div style="margin-top:20px;display:grid;grid-template-columns:repeat(2,1fr);gap:12px">
+    <div style="background:rgba(255,255,255,.08);border-radius:8px;padding:12px">
+      <div style="font-size:12px;font-weight:700;color:#bae6fd;margin-bottom:8px">🚇 교통 개선 (8.5/10)</div>
+      <div style="font-size:11px;color:#94a3b8;line-height:1.8">1·9호선 더블역세권 + 7호선 · GTX-C 수혜 기대 · 여의도 10분 · 강남 20분</div>
     </div>
-    <div class="score-card winner">
-      <h3>🟢 B. 신동아리버파크 ← 실계약 완료</h3>
-      <div class="total">7.8</div>
-      <div class="score-rows">
-        <div class="score-row"><span class="sl">교통</span><span class="sv best">⭐⭐⭐⭐⭐ 9.5</span></div>
-        <div class="score-row"><span class="sl">생활편의</span><span class="sv">⭐⭐⭐⭐☆ 7.5</span></div>
-        <div class="score-row"><span class="sl">학군</span><span class="sv">⭐⭐⭐☆☆ 6.0</span></div>
-        <div class="score-row"><span class="sl">치안</span><span class="sv">⭐⭐⭐⭐☆ 7.0</span></div>
-        <div class="score-row"><span class="sl">환경·녹지</span><span class="sv best">⭐⭐⭐⭐⭐ 9.0</span></div>
-        <div class="score-row"><span class="sl">투자가치</span><span class="sv best">⭐⭐⭐⭐⭐ 8.5</span></div>
-        <div class="score-row"><span class="sl">직주근접</span><span class="sv best">⭐⭐⭐⭐⭐ 9.5</span></div>
-      </div>
+    <div style="background:rgba(255,255,255,.08);border-radius:8px;padding:12px">
+      <div style="font-size:12px;font-weight:700;color:#bae6fd;margin-bottom:8px">🏗️ 개발 계획 (9.0/10)</div>
+      <div style="font-size:11px;color:#94a3b8;line-height:1.8">노량진 뉴타운 8개 구역 · 수협 부지 복합개발 · 흑석뉴타운 연쇄 상승</div>
+    </div>
+    <div style="background:rgba(255,255,255,.08);border-radius:8px;padding:12px">
+      <div style="font-size:12px;font-weight:700;color:#bae6fd;margin-bottom:8px">🏡 주거 환경 (7.5/10)</div>
+      <div style="font-size:11px;color:#94a3b8;line-height:1.8">한강변 · 노량진수산시장 · 대형 평형 · 한강 조망 · 25년 구축 (리모델링 필요)</div>
+    </div>
+    <div style="background:rgba(255,255,255,.08);border-radius:8px;padding:12px">
+      <div style="font-size:12px;font-weight:700;color:#bae6fd;margin-bottom:8px">📈 투자 수익 (8.0/10)</div>
+      <div style="font-size:11px;color:#94a3b8;line-height:1.8">뉴타운 완공 후 시세 20~23억 기대 · 43평 희소성 · 토지거래허가구역 해제 시 유동성 확보</div>
     </div>
   </div>
-  <div class="verdict">
-    <strong>신동아리버파크</strong>가 교통·직주근접·투자가치·한강환경에서 최고 점수 — 실계약 완료.<br>
-    1·9호선 노량진역 도보 15분 + 직장(을지로3가) 1호선 직통 15~20분 + 강남 9호선 급행 20분이 핵심 강점.<br>
-    <span style="color:#fbbf24">⚠ 단, 학군(대방중)은 A(배재중) 대비 약세. 리비어어학원은 B가 9호선으로 15~20분 우위.</span>
-  </div>
-</div>
-
-<!-- ══ 11-A. 신동아리버파크 매물 내부 비교 (705동 vs 708동) ══ -->
-<div class="section" style="border:2px solid #0891b2">
-  <div class="section-title" style="border-bottom:2px solid #0891b2">
-    <span class="icon">🏠</span> 신동아리버파크 — 매물 A vs B 상세 비교
-    <span class="tag tag-hard" style="margin-left:auto">2026.05 기준</span>
-  </div>
-
-  <!-- 기본 정보 비교 -->
-  <div style="font-size:11px;font-weight:700;color:var(--sub);margin-bottom:8px;letter-spacing:.05em">📋 매물 기본 정보</div>
-  <div style="overflow-x:auto;margin-bottom:18px">
-    <table style="width:100%;border-collapse:collapse;font-size:12px">
-      <thead>
-        <tr style="background:var(--bg2,#f1f5f9)">
-          <th style="padding:8px 10px;text-align:left;font-weight:600;color:var(--sub)">항목</th>
-          <th style="padding:8px 10px;text-align:center;color:#0891b2;font-weight:700">매물 A — 705동 44평</th>
-          <th style="padding:8px 10px;text-align:center;color:#7c3aed;font-weight:700">매물 B — 708동 33평</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px;color:var(--sub)">공급 / 전용면적</td><td style="padding:6px 10px;text-align:center">144.06㎡ / 114.75㎡</td><td style="padding:6px 10px;text-align:center">109.76㎡ / 84.88㎡</td></tr>
-        <tr style="border-bottom:1px solid var(--border);background:var(--bg2,#f8fafc)"><td style="padding:6px 10px;color:var(--sub)">전용률</td><td style="padding:6px 10px;text-align:center"><strong>80%</strong></td><td style="padding:6px 10px;text-align:center">77%</td></tr>
-        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px;color:var(--sub)">해당층 / 총층</td><td style="padding:6px 10px;text-align:center">22 / 28층</td><td style="padding:6px 10px;text-align:center;color:#7c3aed;font-weight:700">27 / 27층 (최상층)</td></tr>
-        <tr style="border-bottom:1px solid var(--border);background:var(--bg2,#f8fafc)"><td style="padding:6px 10px;color:var(--sub)">방수 / 욕실</td><td style="padding:6px 10px;text-align:center"><strong>4방 / 2욕실</strong></td><td style="padding:6px 10px;text-align:center">3방 / 2욕실</td></tr>
-        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px;color:var(--sub)">향</td><td style="padding:6px 10px;text-align:center">남서향</td><td style="padding:6px 10px;text-align:center">남서향</td></tr>
-        <tr style="border-bottom:1px solid var(--border);background:var(--bg2,#f8fafc)"><td style="padding:6px 10px;color:var(--sub)">매매가</td><td style="padding:6px 10px;text-align:center;font-weight:700">17.2억</td><td style="padding:6px 10px;text-align:center;font-weight:700">16.7억</td></tr>
-        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px;color:var(--sub)">평당 단가</td><td style="padding:6px 10px;text-align:center;color:#0891b2;font-weight:700">3,945만 ✅</td><td style="padding:6px 10px;text-align:center;color:#ef4444">5,030만</td></tr>
-        <tr><td style="padding:6px 10px;color:var(--sub)">관리비</td><td style="padding:6px 10px;text-align:center;color:var(--sub)">미확인</td><td style="padding:6px 10px;text-align:center">29만/월</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- 리모델링 견적 -->
-  <div style="font-size:11px;font-weight:700;color:var(--sub);margin-bottom:8px;letter-spacing:.05em">🔨 리모델링 견적 (2026년, 발코니 미확장 기준)</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px">
-    <div style="background:rgba(8,145,178,.07);border:1px solid #0891b2;border-radius:8px;padding:12px">
-      <div style="font-weight:700;color:#0891b2;margin-bottom:8px;font-size:12px">매물 A (44평)</div>
-      <div style="font-size:11px;color:var(--text);line-height:2">
-        장판: 240~320 / 420~560만<br>
-        실크벽지: 320~400 / 450~560만<br>
-        부엌: 480~650 / 750~950만<br>
-        욕실 2개: 860~960 / 1,300~1,440만<br>
-        현관/중문: 155~175 / 175~225만<br>
-        철거: 120~160 / 160~210만
-      </div>
-      <div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(8,145,178,.3);font-size:12px">
-        기본형 <strong>2,175~2,665만</strong><br>
-        중급형 <strong>3,255~3,945만</strong>
-      </div>
-    </div>
-    <div style="background:rgba(124,58,237,.07);border:1px solid #7c3aed;border-radius:8px;padding:12px">
-      <div style="font-weight:700;color:#7c3aed;margin-bottom:8px;font-size:12px">매물 B (33평)</div>
-      <div style="font-size:11px;color:var(--text);line-height:2">
-        장판: 170~240 / 300~400만<br>
-        실크벽지: 240~300 / 330~420만<br>
-        부엌: 400~550 / 600~800만<br>
-        욕실 1개: 430~480 / 650~720만<br>
-        현관/중문: 120~170 / 120~170만<br>
-        철거: 80~120 / 100~150만
-      </div>
-      <div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(124,58,237,.3);font-size:12px">
-        기본형 <strong>1,440~1,860만</strong><br>
-        중급형 <strong>2,100~2,660만</strong>
-      </div>
-    </div>
-  </div>
-
-  <!-- 재정 + 자금조달 -->
-  <div style="font-size:11px;font-weight:700;color:var(--sub);margin-bottom:8px;letter-spacing:.05em">💰 재정 현황 — 매도 비용 상세</div>
-
-  <!-- 매도 비용 상세 -->
-  <div style="overflow-x:auto;margin-bottom:6px">
-    <table style="width:100%;border-collapse:collapse;font-size:12px">
-      <thead>
-        <tr style="background:var(--bg2,#f1f5f9)">
-          <th style="padding:7px 10px;text-align:left;color:var(--sub)">매도 항목</th>
-          <th style="padding:7px 10px;text-align:right;color:var(--sub)">금액</th>
-          <th style="padding:7px 10px;text-align:left;color:var(--sub)">산출 근거</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr style="border-bottom:1px solid var(--border)">
-          <td style="padding:6px 10px;font-weight:700">현 거주지 매도가 (삼익그린2차)</td>
-          <td style="padding:6px 10px;text-align:right;font-weight:700">+19.00억</td>
-          <td style="padding:6px 10px;font-size:11px;color:var(--sub)">2026.05 시세 기준</td>
-        </tr>
-        <tr style="border-bottom:1px solid var(--border);background:var(--bg2,#f8fafc)">
-          <td style="padding:6px 10px;color:#ef4444">(-) 주담대 잔액 상환</td>
-          <td style="padding:6px 10px;text-align:right;color:#ef4444">△2.70억</td>
-          <td style="padding:6px 10px;font-size:11px;color:var(--sub)">2.61% 변동금리 잔액</td>
-        </tr>
-        <tr style="border-bottom:1px solid var(--border)">
-          <td style="padding:6px 10px;color:#ef4444">(-) 기타 부채 상환</td>
-          <td style="padding:6px 10px;text-align:right;color:#ef4444">△1.00억</td>
-          <td style="padding:6px 10px;font-size:11px;color:var(--sub)">마통·기타·차량할부 합산</td>
-        </tr>
-        <tr style="border-bottom:1px solid var(--border);background:var(--bg2,#f8fafc)">
-          <td style="padding:6px 10px;color:#ef4444">(-) 양도소득세</td>
-          <td style="padding:6px 10px;text-align:right;color:#ef4444">△0.44억</td>
-          <td style="padding:6px 10px;font-size:11px;color:var(--sub)">1주택 12억 초과 과세 · 장특공제 40%(6년) · 공동명의 인당 2,217만</td>
-        </tr>
-        <tr style="border-bottom:1px solid var(--border)">
-          <td style="padding:6px 10px;color:#ef4444">(-) 중개보수 (매도)</td>
-          <td style="padding:6px 10px;text-align:right;color:#ef4444">△0.10억</td>
-          <td style="padding:6px 10px;font-size:11px;color:var(--sub)">19억 × 0.5% 협의 기준 (법정 상한 0.7%)</td>
-        </tr>
-        <tr style="border-bottom:1px solid var(--border);background:var(--bg2,#f8fafc)">
-          <td style="padding:6px 10px;color:#ef4444">(-) 이사비</td>
-          <td style="padding:6px 10px;text-align:right;color:#ef4444">△0.03억</td>
-          <td style="padding:6px 10px;font-size:11px;color:var(--sub)">포장이사 기준</td>
-        </tr>
-        <tr style="font-weight:700;font-size:13px;background:rgba(16,185,129,.08)">
-          <td style="padding:8px 10px">✅ 실제 가용 현금 (세금·복비 차감 후)</td>
-          <td style="padding:8px 10px;text-align:right;color:#10b981">14.73억</td>
-          <td style="padding:8px 10px;font-size:11px;color:var(--sub)">※ 종전 분석의 15.3억은 세금/복비 미차감 단순값</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div style="font-size:11px;color:var(--sub);margin-bottom:18px">* 양도세: 취득가 9.8억 기준. 실제 세액은 세무사 확인 필요.</div>
-
-  <!-- 매수 비용 상세 -->
-  <div style="font-size:11px;font-weight:700;color:var(--sub);margin-bottom:8px;letter-spacing:.05em">🏠 자금 조달 계획 — 매수 비용 전항목 포함</div>
-  <div style="overflow-x:auto;margin-bottom:6px">
-    <table style="width:100%;border-collapse:collapse;font-size:12px">
-      <thead>
-        <tr style="background:var(--bg2,#f1f5f9)">
-          <th style="padding:7px 10px;text-align:left;color:var(--sub)">매수 항목</th>
-          <th style="padding:7px 10px;text-align:right;color:#0891b2;font-weight:700">매물 A (44평)</th>
-          <th style="padding:7px 10px;text-align:right;color:#7c3aed;font-weight:700">매물 B (33평)</th>
-          <th style="padding:7px 10px;text-align:left;color:var(--sub)">산출 근거</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr style="border-bottom:1px solid var(--border)">
-          <td style="padding:6px 10px;font-weight:700">매매가</td>
-          <td style="padding:6px 10px;text-align:right;font-weight:700">17.20억</td>
-          <td style="padding:6px 10px;text-align:right;font-weight:700">16.70억</td>
-          <td style="padding:6px 10px;font-size:11px;color:var(--sub)">현재 호가</td>
-        </tr>
-        <tr style="border-bottom:1px solid var(--border);background:var(--bg2,#f8fafc)">
-          <td style="padding:6px 10px;color:#ef4444">취득세</td>
-          <td style="padding:6px 10px;text-align:right;color:#ef4444">0.516억</td>
-          <td style="padding:6px 10px;text-align:right;color:#ef4444">0.501억</td>
-          <td style="padding:6px 10px;font-size:11px;color:var(--sub)">3% (취득세 1주택 85㎡초과 3.3% 적용, 지방교육세 포함)</td>
-        </tr>
-        <tr style="border-bottom:1px solid var(--border)">
-          <td style="padding:6px 10px;color:#ef4444">중개보수 (매수)</td>
-          <td style="padding:6px 10px;text-align:right;color:#ef4444">0.09억</td>
-          <td style="padding:6px 10px;text-align:right;color:#ef4444">0.09억</td>
-          <td style="padding:6px 10px;font-size:11px;color:var(--sub)">900만 (법정 상한 0.7%, 협의)</td>
-        </tr>
-        <tr style="border-bottom:1px solid var(--border);background:var(--bg2,#f8fafc)">
-          <td style="padding:6px 10px;color:#ef4444">등기비용</td>
-          <td style="padding:6px 10px;text-align:right;color:#ef4444">0.015억</td>
-          <td style="padding:6px 10px;text-align:right;color:#ef4444">0.015억</td>
-          <td style="padding:6px 10px;font-size:11px;color:var(--sub)">법무사 보수 + 등록면허세 등</td>
-        </tr>
-        <tr style="border-bottom:1px solid var(--border)">
-          <td style="padding:6px 10px;color:#ef4444">입주비용 (이사비 300만+설치비 100만)</td>
-          <td style="padding:6px 10px;text-align:right;color:#ef4444">0.04억</td>
-          <td style="padding:6px 10px;text-align:right;color:#ef4444">0.04억</td>
-          <td style="padding:6px 10px;font-size:11px;color:var(--sub)">이사비 + 초기 생활설비 (에어컨·조명 등)</td>
-        </tr>
-        <tr style="border-bottom:1px solid var(--border);background:var(--bg2,#f8fafc)">
-          <td style="padding:6px 10px;color:#ef4444">리모델링 (기본형 중간값)</td>
-          <td style="padding:6px 10px;text-align:right;color:#ef4444">0.22억</td>
-          <td style="padding:6px 10px;text-align:right;color:#ef4444">0.15억</td>
-          <td style="padding:6px 10px;font-size:11px;color:var(--sub)">장판·벽지·부엌·욕실·현관 기본형</td>
-        </tr>
-        <tr style="border-bottom:2px solid var(--border);font-weight:600">
-          <td style="padding:6px 10px">총 필요자금</td>
-          <td style="padding:6px 10px;text-align:right">18.08억</td>
-          <td style="padding:6px 10px;text-align:right">17.50억</td>
-          <td style="padding:6px 10px;font-size:11px;color:var(--sub)">매매가 + 모든 부대비용</td>
-        </tr>
-        <tr style="border-bottom:1px solid var(--border);background:var(--bg2,#f8fafc)">
-          <td style="padding:6px 10px;color:var(--sub)">가용 현금</td>
-          <td colspan="2" style="padding:6px 10px;text-align:right;color:#10b981;font-weight:700">14.73억 공통</td>
-          <td style="padding:6px 10px;font-size:11px;color:var(--sub)">세금·복비 차감 후 실수령</td>
-        </tr>
-        <tr style="font-weight:700;font-size:13px">
-          <td style="padding:8px 10px">🏦 필요 신규 대출</td>
-          <td style="padding:8px 10px;text-align:right;color:#0891b2">3.35억</td>
-          <td style="padding:8px 10px;text-align:right;color:#7c3aed">2.77억</td>
-          <td style="padding:8px 10px;font-size:11px;color:var(--sub)">총필요자금 − 가용현금</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div style="font-size:11px;color:var(--sub);margin-bottom:18px">* 입주비 400만(이사비 300+설치비 100) 기준. 종전 단순 계산 대비 A: +0.714억 / B: +0.719억 — 양도세·복비·등기비 포함.</div>
-
-  <!-- 월 현금흐름 -->
-  <div style="font-size:11px;font-weight:700;color:var(--sub);margin-bottom:8px;letter-spacing:.05em">📅 월 현금흐름 (주담대 4.5% 고정 / 30년 원리금균등)</div>
-  <div style="background:rgba(0,0,0,.03);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;display:flex;gap:24px;flex-wrap:wrap">
-    <span>월 수입 <strong>900만</strong></span>
-    <span>생활비 △300만</span>
-    <span>영아·유치원비 △260만</span>
-    <span style="border-left:2px solid var(--border);padding-left:16px">상환 전 여유 <strong>340만</strong></span>
-  </div>
-  <div style="overflow-x:auto;margin-bottom:8px">
-    <table style="width:100%;border-collapse:collapse;font-size:12px">
-      <thead>
-        <tr style="background:var(--bg2,#f1f5f9)">
-          <th style="padding:8px 10px;text-align:left;color:var(--sub)">항목</th>
-          <th style="padding:8px 10px;text-align:right;color:#0891b2;font-weight:700">매물 A (44평)</th>
-          <th style="padding:8px 10px;text-align:right;color:#7c3aed;font-weight:700">매물 B (33평)</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px;color:var(--sub)">대출원금</td><td style="padding:6px 10px;text-align:right">3.35억</td><td style="padding:6px 10px;text-align:right">2.77억</td></tr>
-        <tr style="border-bottom:1px solid var(--border);background:var(--bg2,#f8fafc)"><td style="padding:6px 10px;color:var(--sub)">월 원리금</td><td style="padding:6px 10px;text-align:right">170만</td><td style="padding:6px 10px;text-align:right">140만</td></tr>
-        <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 10px;color:var(--sub)">DSR</td><td style="padding:6px 10px;text-align:right;color:#10b981;font-weight:700">18.9% ✅</td><td style="padding:6px 10px;text-align:right;color:#10b981;font-weight:700">15.6% ✅</td></tr>
-        <tr style="font-weight:700;font-size:13px"><td style="padding:6px 10px">월 잔여 현금</td><td style="padding:6px 10px;text-align:right;color:#0891b2">170만</td><td style="padding:6px 10px;text-align:right;color:#7c3aed">200만 (+30만)</td></tr>
-      </tbody>
-    </table>
-  </div>
-  <div style="font-size:11px;color:var(--sub)">* 월 차이 30만 → 연 360만. 양쪽 모두 DSR 40% 한도 여유 충분. 생활비 300만 기준.</div>
-
-  <!-- 최종 판정 -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px">
-    <div style="background:rgba(8,145,178,.1);border:2px solid #0891b2;border-radius:8px;padding:14px">
-      <div style="font-weight:700;color:#0891b2;margin-bottom:8px">🏆 매물 A — 705동 44평 ★ 추천</div>
-      <div style="font-size:11px;line-height:1.9">
-        ✅ 평당 단가 3,945만 — <strong>1,085만 절감</strong><br>
-        ✅ 전용 114.75㎡ — 11평 추가<br>
-        ✅ 4방 2욕실 — 방 1개 추가<br>
-        ✅ 22층 — 조망 우수<br>
-        ✅ DSR 18.9% — 40% 한도 대비 여유<br>
-        ✅ 월 잔여 170만 — 생활 안정<br>
-        ⚠ 리모델링 비용 A &gt; B (약 700만↑)
-      </div>
-    </div>
-    <div style="background:rgba(124,58,237,.08);border:1px solid #7c3aed;border-radius:8px;padding:14px">
-      <div style="font-weight:700;color:#7c3aed;margin-bottom:8px">매물 B — 708동 33평</div>
-      <div style="font-size:11px;line-height:1.9">
-        ✅ 가격 0.5억 저렴 (16.7억)<br>
-        ✅ 최상층 27층 — 조망 최우수<br>
-        ✅ DSR 15.6% — 대출 부담 상대적 경감<br>
-        ✅ 월 잔여 200만 — 월 30만 여유<br>
-        ⚠ 최상층 누수·단열 이력 점검 필수<br>
-        ⚠ 평당 단가 5,030만 — 비효율<br>
-        ⚠ 3방 — 자녀 성장 후 협소 가능
-      </div>
-    </div>
-  </div>
-
-  <div style="margin-top:12px;padding:12px 14px;background:rgba(8,145,178,.12);border-radius:8px;font-size:12px;line-height:1.9">
-    <strong>📌 결론:</strong> 전항목 비용 반영 시 대출 A 3.35억 / B 2.77억. DSR 각 18.9% / 15.6%로 양쪽 모두 40% 한도 여유. 월 잔여 차이 30만은 여전히 미미.
-    평당 단가 <strong>1,085만 절감 + 전용 11평 추가 + 방 1개</strong> 확보 → <strong>매물 A (705동 44평)이 재정적·자산적으로 모두 유리.</strong><br>
-    <span style="color:#ef4444">⚠ 초기 자금 소요 A 18.08억 / B 17.50억 — 가용현금 14.73억 대비 각 3.35억 / 2.77억 대출 필요. 대출 한도(LTV) 사전 확인 권장.</span>
-  </div>
-</div>
-
-<!-- ══ 11. Claude 최종 검토 ══ -->
-<div class="section" style="border:2px solid #6366f1;background:linear-gradient(135deg,#1e1b4b 0%,#312e81 100%);color:#e0e7ff">
-  <div class="section-title" style="color:#e0e7ff;border-bottom:1px solid rgba(255,255,255,.15);padding-bottom:10px;margin-bottom:16px">
-    <span class="icon">🧠</span> Claude 최종 검토 — 재정계산기 × 입지분석 통합
-    <span class="tag tag-hard" style="margin-left:auto;background:rgba(99,102,241,.4);color:#c7d2fe;border:1px solid #6366f1">실거래가 기준</span>
-  </div>
-
-  <!-- 재정 시뮬레이션 요약 -->
-  <div style="margin-bottom:16px">
-    <div style="font-size:12px;font-weight:700;color:#a5b4fc;margin-bottom:8px;letter-spacing:.05em">📊 재정 시뮬레이션 — 신동아리버파크 최종 두 매물 (삼익그린2차 19억 매도 · 전항목 비용 반영 · 주담대 4.5% 30년)</div>
-    <table style="width:100%;border-collapse:collapse;font-size:12px">
-      <thead>
-        <tr style="background:rgba(99,102,241,.3)">
-          <th style="padding:7px 10px;text-align:left;font-weight:700;color:#c7d2fe">항목</th>
-          <th style="padding:7px 10px;text-align:right;color:#67e8f9;font-weight:700">🏆 매물 A — 705동 44평<br>17.2억</th>
-          <th style="padding:7px 10px;text-align:right;color:#c4b5fd">매물 B — 708동 33평<br>16.7억</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr style="border-bottom:1px solid rgba(255,255,255,.08)">
-          <td style="padding:6px 10px;color:#cbd5e1">실제 가용 현금 (양도세·복비·이사비 차감)</td>
-          <td colspan="2" style="padding:6px 10px;text-align:right;color:#86efac;font-weight:700">14.73억 공통 (19억 − 부채 3.7억 − 양도세 0.44억 − 복비 0.1억 − 이사비 0.03억) · 생활비 300만 기준</td>
-        </tr>
-        <tr style="border-bottom:1px solid rgba(255,255,255,.08)">
-          <td style="padding:6px 10px;color:#cbd5e1">필요 신규 대출 (매매가 + 취득세 + 복비 + 등기 + 입주 + 리모델링)</td>
-          <td style="padding:6px 10px;text-align:right;color:#67e8f9;font-weight:700">3.35억</td>
-          <td style="padding:6px 10px;text-align:right;color:#c4b5fd;font-weight:700">2.77억</td>
-        </tr>
-        <tr style="border-bottom:1px solid rgba(255,255,255,.08)">
-          <td style="padding:6px 10px;color:#cbd5e1">월 원리금</td>
-          <td style="padding:6px 10px;text-align:right;color:#67e8f9">170만원</td>
-          <td style="padding:6px 10px;text-align:right;color:#c4b5fd">140만원</td>
-        </tr>
-        <tr style="border-bottom:1px solid rgba(255,255,255,.08)">
-          <td style="padding:6px 10px;color:#cbd5e1">DSR</td>
-          <td style="padding:6px 10px;text-align:right;color:#86efac;font-weight:700">18.9% ✅</td>
-          <td style="padding:6px 10px;text-align:right;color:#86efac;font-weight:700">15.6% ✅</td>
-        </tr>
-        <tr style="border-bottom:1px solid rgba(255,255,255,.08)">
-          <td style="padding:6px 10px;color:#cbd5e1">월 잔여 현금 (수입 − 원리금 − 생활비 300만 − 영아비)</td>
-          <td style="padding:6px 10px;text-align:right;color:#67e8f9;font-weight:700">170만원</td>
-          <td style="padding:6px 10px;text-align:right;color:#c4b5fd;font-weight:700">200만원 (+30만)</td>
-        </tr>
-        <tr>
-          <td style="padding:6px 10px;color:#cbd5e1">평당 단가</td>
-          <td style="padding:6px 10px;text-align:right;color:#86efac;font-weight:700">3,945만 ✅ (1,085만↓)</td>
-          <td style="padding:6px 10px;text-align:right;color:#fbbf24">5,030만</td>
-        </tr>
-      </tbody>
-    </table>
-    <div style="font-size:11px;color:#94a3b8;margin-top:6px">* 생활비 300만 + 영아·유치원비 260만 = 고정 560만 / 월 수입 900만 기준 · 입주비 400만(이사300+설치100) · 양도세 장특공제40% 공동명의 적용</div>
-  </div>
-
-  <!-- 단지별 종합 판정 -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
-    <div style="background:rgba(8,145,178,.25);border:2px solid #0891b2;border-radius:8px;padding:12px">
-      <div style="font-weight:700;color:#67e8f9;margin-bottom:6px">🏆 매물 A — 705동 44평 ★ 1순위</div>
-      <div style="font-size:11px;color:#cffafe;line-height:1.9">
-        ✅ 평당 단가 3,945만 — <strong>1,085만 절감</strong><br>
-        ✅ 대출 3.35억 · 월납입 170만<br>
-        ✅ DSR 18.9% — 40% 한도 여유<br>
-        ✅ 월 잔여 170만<br>
-        ✅ 전용 114.75㎡ · 4방 2욕실<br>
-        ✅ 22층 조망 우수<br>
-        ✅ 1·9호선 더블역세권<br>
-        ⚠ 리모델링 기본형 약 2,420만 (B보다 ~770만↑)
-      </div>
-    </div>
-    <div style="background:rgba(124,58,237,.2);border:1px solid #7c3aed;border-radius:8px;padding:12px">
-      <div style="font-weight:700;color:#c4b5fd;margin-bottom:6px">매물 B — 708동 33평 2순위</div>
-      <div style="font-size:11px;color:#ddd6fe;line-height:1.9">
-        ✅ 가격 0.5억 저렴 (16.7억)<br>
-        ✅ 대출 2.77억 · 월납입 140만<br>
-        ✅ DSR 15.6% — 대출 부담 경감<br>
-        ✅ 월 잔여 200만 (+30만)<br>
-        ✅ 최상층 27층 조망 최우수<br>
-        ⚠ 평당 단가 5,030만 — 비효율<br>
-        ⚠ 3방 — 자녀 성장 후 협소<br>
-        ⚠ 최상층 누수·단열 이력 점검 필수
-      </div>
-    </div>
-  </div>
-
-  <!-- 최종 결론 -->
-  <div style="background:rgba(99,102,241,.25);border:1.5px solid #6366f1;border-radius:8px;padding:14px">
-    <div style="font-weight:700;color:#c7d2fe;margin-bottom:8px;font-size:13px">📌 최종 결론 (2026.05 업데이트)</div>
-    <div style="font-size:12px;color:#e0e7ff;line-height:2">
-      <strong style="color:#67e8f9">1순위 — 신동아리버파크 705동 44평 (17.2억)</strong><br>
-      708동 33평보다 0.5억 비싸지만, 평당 단가 1,085만 절감 + 전용 11평 추가 + 방 1개 추가.
-      DSR 18.9%로 40% 한도 여유 충분하고 월 잔여 현금 170만.
-      교통(1·9호선 더블역세권)·직주근접·한강환경 강점 유지. <strong>재정적·자산적으로 모두 유리한 선택.</strong><br><br>
-      <strong style="color:#c4b5fd">2순위 — 신동아리버파크 708동 33평 (16.7억)</strong><br>
-      대출 2.77억(월납입 140만), DSR 15.6%로 여유. 월 잔여 200만으로 A 대비 30만 추가 우위.
-      최상층 조망은 최우수이나 누수·단열 이력 반드시 점검. 장기 거주 시 3방으로 공간 부족 가능성.
-    </div>
+  <div style="margin-top:16px;text-align:center;padding:14px;background:rgba(255,255,255,.05);border-radius:8px;font-size:13px;color:#cbd5e1;line-height:1.9">
+    <strong style="color:#67e8f9;font-size:15px">신동아리버파크 — 노량진 재개발 핵심 수혜 단지</strong><br>
+    1·9호선 더블역세권 + 노량진 뉴타운 완공 수혜 + 여의도·강남 20분 접근성.<br>
+    <span style="color:#fbbf24">⚠ 리모델링 추진 여부·토지거래허가구역 지속 여부는 모니터링 필요.</span>
   </div>
 </div>
 
@@ -1143,31 +598,39 @@ function pm25Grade(v) {
   if (v <= 75)  return { text:'나쁨 😷',   color:'#f59e0b' };
   return               { text:'매우나쁨 ☠️', color:'#dc2626' };
 }
-function haversine(lat1, lng1, lat2, lng2) {
-  const R = 6371000, toRad = d => d * Math.PI / 180;
-  const dLat = toRad(lat2 - lat1), dLng = toRad(lng2 - lng1);
-  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLng/2)**2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-}
 
 /* ── 1. 지도 ── */
 function loadMap() {
   try {
     document.getElementById('map-mock').remove();
     const map = L.map('map-container', { zoomControl: true })
-                 .setView([37.533, 127.045], 11);
+                 .setView([APT.lat, APT.lng], 14);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19,
     }).addTo(map);
+
     const makeIcon = (cls, letter) => L.divIcon({
       html: `<div class="lf-pin ${cls}"><div class="lf-inner">${letter}</div></div>`,
       iconSize: [34, 34], iconAnchor: [17, 34], popupAnchor: [0, -36], className: '',
     });
-    L.marker([A.lat, A.lng], { icon: makeIcon('lf-pin-a', 'A') })
-     .addTo(map).bindPopup(`<b>A. ${A.name}</b><br>서울 강동구 명일동`).openPopup();
-    L.marker([B.lat, B.lng], { icon: makeIcon('lf-pin-b', 'B') })
-     .addTo(map).bindPopup(`<b>B. ${B.name}</b><br>서울 동작구 노량진동 (실계약 완료)`);
+
+    // 신동아리버파크
+    L.marker([APT.lat, APT.lng], { icon: makeIcon('lf-pin-apt', '🏠') })
+     .addTo(map).bindPopup('<b>신동아리버파크</b><br>서울 동작구 노량진동 325<br>실계약 완료 (2026.05)').openPopup();
+
+    // 노량진역 (1·9호선)
+    L.marker([37.5143, 126.9426], { icon: makeIcon('lf-pin-sta', '1·9') })
+     .addTo(map).bindPopup('<b>노량진역</b><br>1호선 · 9호선<br>도보 약 15분');
+
+    // 상도역 (7호선)
+    L.marker([37.5059, 126.9391], { icon: makeIcon('lf-pin-sta2', '7') })
+     .addTo(map).bindPopup('<b>상도역</b><br>7호선<br>도보 약 9분');
+
+    // 동작역 (4·9호선)
+    L.marker([37.5042, 126.9802], { icon: makeIcon('lf-pin-sta3', '4·9') })
+     .addTo(map).bindPopup('<b>동작역</b><br>4호선 · 9호선<br>버스 약 15분');
+
     setStatus('st-map', 'live', '🗺️ OpenStreetMap ✅');
     setTag('tag-map', 'live', '실 지도');
   } catch (e) {
@@ -1189,47 +652,28 @@ async function kakaoCategory(code, lat, lng) {
 
 async function loadFacilityData() {
   try {
-    const jobs = CATS.flatMap(cat => [
-      kakaoCategory(cat.code, A.lat, A.lng).then(d => ({ id:'a', cat, d })),
-      kakaoCategory(cat.code, B.lat, B.lng).then(d => ({ id:'b', cat, d })),
-    ]);
+    const jobs = CATS.map(cat =>
+      kakaoCategory(cat.code, APT.lat, APT.lng).then(d => ({ cat, d }))
+    );
     const results = await Promise.allSettled(jobs);
-    const data = { a: {}, b: {} };
-    for (const r of results) {
-      if (r.status !== 'fulfilled') continue;
-      const { id, cat, d } = r.value;
-      const docs = d.documents || [];
-      data[id][cat.code] = {
-        count:   d.meta?.total_count ?? docs.length,
-        nearest: docs[0] ? { name: docs[0].place_name, dist: parseInt(docs[0].distance, 10) } : null,
-      };
-    }
     const tbody = document.getElementById('fac-tbody');
     tbody.innerHTML = '';
-    for (const cat of CATS) {
-      const ra = data.a[cat.code], rb = data.b[cat.code];
-      const na = ra?.nearest, nb = rb?.nearest;
-      const dists = [na?.dist ?? Infinity, nb?.dist ?? Infinity];
-      const minD = Math.min(...dists);
-      const winA = na && na.dist <= minD + 80;
-      const winB = nb && nb.dist <= minD + 80;
-      const fmt = n => n ? `${n.name} <b>${n.dist}m</b>` : '—';
-      const fmtC = r => r ? `${r.count}개` : '—';
-      const winners = [winA?'a':null, winB?'b':null].filter(Boolean);
-      let wtag = '';
-      if (winners.length >= 2 || (!winA && !winB)) wtag = '<span class="wtag wtag-tie">동일</span>';
-      else wtag = winners.map(w => `<span class="wtag wtag-${w}">${w.toUpperCase()}</span>`).join(' ');
-
+    for (const r of results) {
+      if (r.status !== 'fulfilled') continue;
+      const { cat, d } = r.value;
+      const docs = d.documents || [];
+      const count = d.meta?.total_count ?? docs.length;
+      const nearest = docs[0] ? `${docs[0].place_name} <b>${docs[0].distance}m</b>` : '—';
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td class="lbl">${cat.icon} ${cat.label}</td>
-        <td class="${winA?'win-a':''}">${fmt(na)}</td>
-        <td class="${winA?'win-a':''}">${fmtC(ra)}</td>
-        <td class="${winB?'win-b':''}">${fmt(nb)}</td>
-        <td class="${winB?'win-b':''}">${fmtC(rb)}</td>
-        <td>${wtag}</td>
+        <td>${nearest}</td>
+        <td>${count}개</td>
       `;
       tbody.appendChild(tr);
+    }
+    if (tbody.children.length === 0) {
+      tbody.innerHTML = '<tr class="loading-row"><td colspan="3">시설 데이터 없음</td></tr>';
     }
     setStatus('st-fac', 'live', '📍 시설검색 ✅');
     setTag('tag-fac', 'live', '실데이터');
@@ -1238,7 +682,7 @@ async function loadFacilityData() {
     setStatus('st-fac', 'error', '📍 시설검색 ❌');
     setTag('tag-fac', 'sample', '오류');
     document.getElementById('fac-tbody').innerHTML =
-      `<tr class="loading-row"><td colspan="6">⚠ 카카오 시설 로드 실패: ${e.message}</td></tr>`;
+      `<tr class="loading-row"><td colspan="3">⚠ 카카오 시설 로드 실패: ${e.message}</td></tr>`;
   }
 }
 
@@ -1254,8 +698,6 @@ function recentMonths(n) {
   return list;
 }
 async function fetchWithProxy(targetUrl) {
-  // apis.data.go.kr 는 프록시 서버 IP를 차단함(host_not_allowed).
-  // 브라우저 직접 호출(한국 가정 IP)이 CORS 허용 시 성공, 아니면 순서대로 폴백.
   const attempts = [];
   if (CUSTOM_PROXY_URL) {
     attempts.push(() => fetch(`${CUSTOM_PROXY_URL}?url=${encodeURIComponent(targetUrl)}`, { signal: AbortSignal.timeout(10000) }));
@@ -1287,111 +729,56 @@ async function fetchMolitMonth(lawdCd, yyyymm) {
 function parseMolitXml(xml, aptKw, areaMin=60, areaMax=130, umdNm='') {
   const items = xml.querySelectorAll('item');
   const prices = [];
-  const allNames = new Set();
   items.forEach(item => {
     const name  = (item.querySelector('aptNm')?.textContent ?? '').trim();
     const dong  = (item.querySelector('umdNm')?.textContent ?? '').trim();
     const area  = parseFloat(item.querySelector('excluUseAr')?.textContent ?? '0');
     const priceRaw = (item.querySelector('dealAmount')?.textContent ?? '').replace(/[,\s]/g,'');
     const price = parseInt(priceRaw, 10);
-    if (name) allNames.add(name);
     if (name.includes(aptKw) && (!umdNm || dong === umdNm) && area >= areaMin && area <= areaMax && !isNaN(price) && price > 0) {
       prices.push(price);
     }
   });
-  if (prices.length === 0 && allNames.size > 0) {
-    console.debug(`[MOLIT] "${aptKw}"(${umdNm}) 매칭 없음 (총 ${allNames.size}개 단지). 유사 단지:`,
-      [...allNames].filter(n => n.includes(aptKw.slice(0,2))).slice(0,10));
-  }
   if (prices.length === 0) return null;
   prices.sort((a,b)=>a-b);
   const mid = prices[Math.floor(prices.length / 2)];
   return +(mid / 10000).toFixed(2);
 }
+
 async function loadPriceData() {
   try {
     const months = recentMonths(12);
-    const [xmlsA, xmlsB] = await Promise.all([
-      Promise.all(months.map(m => fetchMolitMonth(A.lawdCd, m).catch(() => null))),
-      Promise.all(months.map(m => fetchMolitMonth(B.lawdCd, m).catch(() => null))),
-    ]);
-    const priceA  = xmlsA.map(x => x ? parseMolitXml(x, A.aptKw, 60,  75,  A.umdNm) : null);
-    const priceB  = xmlsB.map(x => x ? parseMolitXml(x, B.aptKw, 80,  95,  B.umdNm) : null);
-    const priceB2 = xmlsB.map(x => x ? parseMolitXml(x, B.aptKw, 105, 140, B.umdNm) : null);
+    const xmls = await Promise.all(months.map(m => fetchMolitMonth(APT.lawdCd, m).catch(() => null)));
+
+    const p25 = xmls.map(x => x ? parseMolitXml(x, APT.aptKw, 55, 67,  APT.umdNm) : null);
+    const p33 = xmls.map(x => x ? parseMolitXml(x, APT.aptKw, 80, 92,  APT.umdNm) : null);
+    const p43 = xmls.map(x => x ? parseMolitXml(x, APT.aptKw, 108, 122, APT.umdNm) : null);
     const labels = months.map(m => `${m.slice(0,4)}.${m.slice(4)}`);
+
     chartPrice.data.labels = labels;
-    chartPrice.data.datasets[0].data = priceA;
-    chartPrice.data.datasets[1].data = priceB;
-    chartPrice.data.datasets[2].data = priceB2;
+    chartPrice.data.datasets[0].data = p25;
+    chartPrice.data.datasets[1].data = p33;
+    chartPrice.data.datasets[2].data = p43;
     chartPrice.update();
-    const cA  = priceA.filter(v=>v!==null).length;
-    const cB  = priceB.filter(v=>v!==null).length;
-    const cB2 = priceB2.filter(v=>v!==null).length;
+
+    const c25 = p25.filter(v=>v!==null).length;
+    const c33 = p33.filter(v=>v!==null).length;
+    const c43 = p43.filter(v=>v!==null).length;
+    const total = c25 + c33 + c43;
     document.getElementById('price-info').textContent =
-      `거래 확인 — A: ${cA}개월 / B-30평대: ${cB}개월 / B-40평대: ${cB2}개월 (거래 없는 월은 공백)`;
-    setStatus('st-price', (cA+cB+cB2)>0?'live':'error', `💰 실거래가 ${(cA+cB+cB2)>0?'✅':'❌'}`);
-    setTag('tag-price', (cA+cB+cB2)>0?'live':'sample', (cA+cB+cB2)>0?'실데이터':'데이터 없음');
-  } catch (e) {
-    console.warn('[MOLIT]', e);
-    setStatus('st-price', 'error', '💰 실거래가 ❌');
-    setTag('tag-price', 'sample', '오류·샘플');
-    document.getElementById('price-info').innerHTML =
-      `⚠ 실거래가 API 차단됨 — apis.data.go.kr 가 공개 프록시 IP를 모두 차단하고 있습니다.<br>` +
-      `해결: compare.html 상단 <code>CUSTOM_PROXY_URL</code>에 개인 Cloudflare Worker 주소를 입력하세요. ` +
-      `(<a href="https://developers.cloudflare.com/workers/" target="_blank">Worker 설정 방법</a>)`;
-  }
-}
+      `거래 확인 — 25평: ${c25}개월 / 33평: ${c33}개월 / 43평: ${c43}개월 (거래 없는 월은 공백)`;
+    setStatus('st-price', total>0?'live':'error', `💰 실거래가 ${total>0?'✅':'❌'}`);
+    setTag('tag-price', total>0?'live':'sample', total>0?'실데이터':'데이터 없음');
 
-/* ── 3-B. 신동아리버파크 평형별 실거래가 심층 분석 ── */
-let sindongaDetailChart = null;
-async function loadSindongaDetail() {
-  const statusEl = document.getElementById('sindonga-chart-info');
-  const tagEl    = document.getElementById('tag-sindonga-detail');
-  try {
-    const months  = recentMonths(12);
-    const xmls    = await Promise.all(months.map(m => fetchMolitMonth(B.lawdCd, m).catch(() => null)));
-
-    // 3개 평형 범위: 25평(59㎡대), 33평(84㎡대), 43평(114㎡대)
-    const p25 = xmls.map(x => x ? parseMolitXml(x, B.aptKw, 55, 67,  B.umdNm) : null);
-    const p33 = xmls.map(x => x ? parseMolitXml(x, B.aptKw, 80, 92,  B.umdNm) : null);
-    const p43 = xmls.map(x => x ? parseMolitXml(x, B.aptKw, 108, 122, B.umdNm) : null);
-    const labels = months.map(m => `${m.slice(0,4)}.${m.slice(4)}`);
-
-    // 차트 갱신
-    if (sindongaDetailChart) sindongaDetailChart.destroy();
-    const ctx = document.getElementById('sindongaDetailChart').getContext('2d');
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    const lc = isDark ? '#94a3b8' : '#64748b';
-    sindongaDetailChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels,
-        datasets: [
-          { label: '25평 (59㎡)', data: p25, borderColor: '#94a3b8', backgroundColor: 'rgba(148,163,184,.1)', tension: 0.3, pointRadius: 4, spanGaps: true },
-          { label: '33평 (84㎡) — 매물B', data: p33, borderColor: '#7c3aed', backgroundColor: 'rgba(124,58,237,.1)', tension: 0.3, pointRadius: 5, borderWidth: 2.5, spanGaps: true },
-          { label: '43평 (114㎡) — 매물A', data: p43, borderColor: '#0891b2', backgroundColor: 'rgba(8,145,178,.1)', tension: 0.3, pointRadius: 5, borderWidth: 2.5, spanGaps: true },
-        ]
-      },
-      options: {
-        responsive: true, maintainAspectRatio: false,
-        scales: {
-          x: { ticks: { color: lc, maxRotation: 45 } },
-          y: { ticks: { color: lc, callback: v => v + '억' }, title: { display: true, text: '거래가 (억원)', color: lc } }
-        },
-        plugins: { legend: { labels: { color: lc } }, tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y?.toFixed(2)}억원` } } }
-      }
-    });
-
-    // API 데이터를 테이블에도 추가
+    // API 거래 데이터를 표에도 추가
     const apiTxRows = [];
     months.forEach((m, i) => {
       const xml = xmls[i];
       if (!xml) return;
-      const items = xml.querySelectorAll('item');
-      items.forEach(item => {
+      xml.querySelectorAll('item').forEach(item => {
         const name = (item.querySelector('aptNm')?.textContent ?? '').trim();
         const dong = (item.querySelector('umdNm')?.textContent ?? '').trim();
-        if (!name.includes(B.aptKw) || dong !== B.umdNm) return;
+        if (!name.includes(APT.aptKw) || dong !== APT.umdNm) return;
         const area  = parseFloat(item.querySelector('excluUseAr')?.textContent ?? '0');
         const priceRaw = (item.querySelector('dealAmount')?.textContent ?? '').replace(/[,\s]/g,'');
         const price = parseInt(priceRaw, 10);
@@ -1402,87 +789,34 @@ async function loadSindongaDetail() {
         apiTxRows.push({ month: m, day, area, price, floor, pyeong });
       });
     });
-
     if (apiTxRows.length > 0) {
       apiTxRows.sort((a, b) => b.month.localeCompare(a.month) || b.price - a.price);
-      const tbody = document.getElementById('sindonga-tx-body');
-      const apiRow = document.getElementById('sindonga-api-row');
-      if (apiRow) apiRow.remove();
-      // 최근 6건만 추가 표시
+      const tbody = document.getElementById('price-tx-body');
       apiTxRows.slice(0, 6).forEach(r => {
-        const py = r.area > 55 && r.area < 67 ? '25평' : r.area < 92 ? '33평' : r.area < 122 ? '43평' : `${Math.round(r.area/3.3)}평`;
+        const py = r.area < 67 ? '25평' : r.area < 92 ? '33평' : r.area < 122 ? '43평' : `${Math.round(r.area/3.3)}평`;
         const color = r.area < 67 ? '#94a3b8' : r.area < 92 ? '#7c3aed' : '#0891b2';
         const tr = document.createElement('tr');
-        tr.style.borderBottom = '1px solid var(--border)';
         tr.innerHTML = `
-          <td style="padding:6px 10px;font-weight:700;color:${color}">${py} (${r.area.toFixed(1)}㎡)</td>
-          <td style="padding:6px 10px">${r.month.slice(0,4)}.${r.month.slice(4)}${r.day?`.${r.day}`:''}</td>
-          <td style="padding:6px 10px;text-align:right;font-weight:700">${Math.round(r.price/10000)}억 ${r.price%10000?r.price%10000+'만':''}</td>
-          <td style="padding:6px 10px;text-align:center">${r.floor?r.floor+'층':'—'}</td>
-          <td style="padding:6px 10px;text-align:right">${r.pyeong?r.pyeong+'만/평':'—'}</td>
-          <td style="padding:6px 10px;font-size:11px;color:var(--muted)">API 실거래</td>`;
+          <td style="font-weight:700;color:${color}">${py} (${r.area.toFixed(1)}㎡)</td>
+          <td>${r.month.slice(0,4)}.${r.month.slice(4)}${r.day?`.${r.day}`:''}</td>
+          <td style="font-weight:700">${Math.round(r.price/10000)}억 ${r.price%10000?r.price%10000+'만':''}</td>
+          <td>${r.floor?r.floor+'층':'—'}</td>
+          <td>${r.pyeong?r.pyeong+'만/평':'—'}</td>
+          <td style="font-size:11px;color:var(--muted)">API 실거래</td>`;
         tbody.appendChild(tr);
       });
     }
-
-    const cnt = [p25, p33, p43].flatMap(a => a.filter(v => v !== null)).length;
-    if (cnt > 0) {
-      const lat = p43.filter(v=>v!==null).at(-1);
-      const lbt = p33.filter(v=>v!==null).at(-1);
-      statusEl.textContent = `API 실거래 확인 — 43평: ${p43.filter(v=>v!==null).length}개월 / 33평: ${p33.filter(v=>v!==null).length}개월 / 25평: ${p25.filter(v=>v!==null).length}개월${lat?` · 43평 최근 ${lat}억`:''  }${lbt?` · 33평 최근 ${lbt}억`:''}`;
-      if (tagEl) { tagEl.className = 'tag tag-live'; tagEl.textContent = '실데이터'; }
-    } else {
-      statusEl.textContent = '국토부 API 연결 실패 — 프록시 차단. 하드코딩 데이터 표시 중.';
-      if (tagEl) { tagEl.className = 'tag tag-sample'; tagEl.textContent = '하드코딩'; }
-      // 차트에 샘플 데이터 표시
-      // 43평 2025.10 확인거래 14.8억 → index 4 (Jun~May 기준 2025.10=idx4)
-      // 33평 2025.10 KB추정 14.1억 → index 4
-      sindongaDetailChart.data.datasets[2].data = [null,null,null,null,14.8,null,null,null,null,null,null,null];
-      sindongaDetailChart.data.datasets[1].data = [null,null,null,null,14.1,null,null,null,null,null,null,null];
-      sindongaDetailChart.update();
-    }
-  } catch(e) {
-    console.warn('[SindongaDetail]', e);
-    if (statusEl) statusEl.textContent = '국토부 API 연결 실패. 하드코딩 데이터 기준으로 표시 중.';
-    if (tagEl) { tagEl.className = 'tag tag-sample'; tagEl.textContent = '하드코딩'; }
-  }
-}
-
-/* ── 4. NEIS 학교알리미 ── */
-async function fetchNeisSchool(name) {
-  const url = `https://open.neis.go.kr/hub/schoolInfo?KEY=${NEIS_API_KEY}&Type=json` +
-    `&ATPT_OFCDC_SC_CODE=B10&SCHUL_NM=${encodeURIComponent(name)}&SCHUL_KND_SC_NM=`;
-  const res = await fetch(url);
-  const json = await res.json();
-  return json?.schoolInfo?.[1]?.row?.[0] ?? null;
-}
-async function loadSchoolData() {
-  try {
-    const [aElem, aMid, bElem, bMid] = await Promise.all([
-      fetchNeisSchool('서울고명초등학교'),
-      fetchNeisSchool('배재중학교'),
-      fetchNeisSchool('노량진초등학교'),
-      fetchNeisSchool('대방중학교'),
-    ]);
-    function applySchool(nameId, addrId, row) {
-      if (!row) return;
-      document.getElementById(nameId).textContent = row.SCHUL_NM ?? '—';
-      document.getElementById(addrId).textContent = (row.ORG_RDNMA ?? '').slice(0, 14) + '…';
-    }
-    applySchool('sa-elem-name', 'sa-elem-addr', aElem);
-    applySchool('sa-mid-name',  'sa-mid-addr',  aMid);
-    applySchool('sb-elem-name', 'sb-elem-addr', bElem);
-    applySchool('sb-mid-name',  'sb-mid-addr',  bMid);
-    setStatus('st-school', 'live', '🎓 학교알리미 ✅');
-    setTag('tag-school', 'live', '실데이터');
   } catch (e) {
-    console.warn('[NEIS]', e);
-    setStatus('st-school', 'error', '🎓 학교알리미 ❌');
-    setTag('tag-school', 'sample', '오류·하드코딩');
+    console.warn('[MOLIT]', e);
+    setStatus('st-price', 'error', '💰 실거래가 ❌');
+    setTag('tag-price', 'sample', '오류·샘플');
+    document.getElementById('price-info').innerHTML =
+      `⚠ 실거래가 API 차단됨 — apis.data.go.kr 가 공개 프록시 IP를 모두 차단하고 있습니다.<br>` +
+      `해결: compare.html 상단 <code>CUSTOM_PROXY_URL</code>에 개인 Cloudflare Worker 주소를 입력하세요.`;
   }
 }
 
-/* ── 5. 서울시 대기환경 ── */
+/* ── 4. 서울시 대기환경 ── */
 let chartAir = null;
 async function loadAirData() {
   try {
@@ -1491,40 +825,30 @@ async function loadAirData() {
     const json = await res.json();
     const rows = json?.RealtimeCityAir?.row ?? [];
     if (rows.length === 0) throw new Error('빈 응답');
-    const rowA = rows.find(r => r.MSRSTENAME?.includes('강동')) ?? null;
     const rowB = rows.find(r => r.MSRSTENAME?.includes('동작')) ?? null;
-    function applyAir(valId, gradeId, timeId, row) {
-      if (!row) return;
-      const pm = parseFloat(row.PM25);
-      document.getElementById(valId).textContent = isNaN(pm) ? '—' : `${pm} μg/m³`;
+    if (rowB) {
+      const pm = parseFloat(rowB.PM25);
+      document.getElementById('air-val').textContent = isNaN(pm) ? '—' : `${pm} μg/m³`;
       const g = pm25Grade(isNaN(pm) ? null : pm);
-      const el = document.getElementById(gradeId);
+      const el = document.getElementById('air-grade');
       el.textContent = g.text; el.style.color = g.color;
-      document.getElementById(timeId).textContent = row.MSRDT ? `측정: ${row.MSRDT}` : '';
+      document.getElementById('air-time').textContent = rowB.MSRDT ? `측정: ${rowB.MSRDT}` : '';
     }
-    applyAir('air-a-val', 'air-a-grade', 'air-a-time', rowA);
-    applyAir('air-b-val', 'air-b-grade', 'air-b-time', rowB);
     const labels = rows.map(r => r.MSRSTENAME ?? '');
     const vals   = rows.map(r => parseFloat(r.PM25) || 0);
-    const colors = rows.map(r => {
-      if (r.MSRSTENAME?.includes('강동')) return '#2563eb';
-      if (r.MSRSTENAME?.includes('동작')) return '#16a34a';
-      return '#cbd5e1';
-    });
+    const colors = rows.map(r => r.MSRSTENAME?.includes('동작') ? '#0891b2' : '#cbd5e1');
     chartAir.data.labels = labels;
     chartAir.data.datasets[0].data = vals;
     chartAir.data.datasets[0].backgroundColor = colors;
     chartAir.update();
     document.getElementById('air-note').textContent =
-      `파란색: 강동구(A)  녹색: 동작구(B)  회색: 기타 자치구 | 출처: 서울시 대기환경정보`;
+      `청록색: 동작구  회색: 기타 자치구 | 출처: 서울시 대기환경정보`;
     setStatus('st-air', 'live', '🌬️ 대기환경 ✅');
     setTag('tag-air', 'live', '실데이터');
   } catch (e) {
     console.warn('[서울대기]', e);
-    ['a','b'].forEach(x => {
-      document.getElementById(`air-${x}-val`).textContent   = '— μg/m³';
-      document.getElementById(`air-${x}-grade`).textContent = '측정불가';
-    });
+    document.getElementById('air-val').textContent = '— μg/m³';
+    document.getElementById('air-grade').textContent = '측정불가';
     document.getElementById('air-note').textContent = `⚠ 서울시 대기 API 오류(${e.message}) — HTTP 혼합콘텐츠 차단 가능`;
     setStatus('st-air', 'error', '🌬️ 대기환경 ❌');
     setTag('tag-air', 'sample', '샘플');
@@ -1533,65 +857,60 @@ async function loadAirData() {
 
 /* ── 차트 초기화 ── */
 function initCharts() {
-  const CA = '#2563eb', CB = '#16a34a', CB2 = '#0891b2';
   const months12 = recentMonths(12).map(m => `${m.slice(0,4)}.${m.slice(4)}`);
-  const sampleA  = months12.map((_,i) => +(10.5 + i*0.08 + Math.sin(i*.5)*.4).toFixed(2));
-  const sampleB  = months12.map((_,i) => +(13.5 + i*0.08 + Math.sin(i*.6)*.3).toFixed(2));
-  // 43평(114㎡): 2025.10 확인거래 14.8억 기준, 최근 12개월 샘플 (17억+ 거래 없음 확인)
-  const sampleB2 = months12.map((_,i) => +(13.8 + i*0.09 + Math.sin(i*.6)*.3).toFixed(2));
+
+  // 실거래가 (샘플 — API 성공 시 교체됨)
+  const s25  = months12.map((_,i) => +(9.5 + i*0.05 + Math.sin(i*.5)*.2).toFixed(2));
+  const s33  = months12.map((_,i) => +(12.5 + i*0.07 + Math.sin(i*.6)*.3).toFixed(2));
+  const s43  = months12.map((_,i) => +(13.0 + i*0.08 + Math.sin(i*.6)*.3).toFixed(2));
   chartPrice = new Chart(document.getElementById('priceChart'), {
     type: 'line',
     data: {
       labels: months12,
       datasets: [
-        { label:'A. 삼익그린2차 (억)',             data:sampleA,  borderColor:CA,  backgroundColor:'rgba(37,99,235,.1)',  fill:true, tension:.4, pointRadius:3, spanGaps:true },
-        { label:'B. 신동아리버파크 30평대 (억)',   data:sampleB,  borderColor:CB,  backgroundColor:'rgba(22,163,74,.1)',  fill:true, tension:.4, pointRadius:3, spanGaps:true },
-        { label:'B. 신동아리버파크 40평대 (억)',   data:sampleB2, borderColor:CB2, backgroundColor:'rgba(8,145,178,.1)',  fill:true, tension:.4, pointRadius:3, spanGaps:true, borderDash:[5,3] },
+        { label:'25평 (59㎡)', data:s25, borderColor:'#94a3b8', backgroundColor:'rgba(148,163,184,.1)', fill:true, tension:.4, pointRadius:3, spanGaps:true },
+        { label:'33평 (84㎡)', data:s33, borderColor:'#7c3aed', backgroundColor:'rgba(124,58,237,.1)',  fill:true, tension:.4, pointRadius:3, spanGaps:true, borderWidth:2.5 },
+        { label:'43평 (114㎡) — 실계약', data:s43, borderColor:'#0891b2', backgroundColor:'rgba(8,145,178,.1)', fill:true, tension:.4, pointRadius:4, spanGaps:true, borderWidth:3 },
       ],
     },
     options: {
       responsive:true, maintainAspectRatio:false,
       plugins:{ legend:{ position:'top' }, tooltip:{ callbacks:{ label: c => ` ${c.dataset.label}: ${c.parsed.y}억` } } },
-      scales:{ y:{ title:{ display:true, text:'실거래가 (억원)' }, min:8 } },
+      scales:{ y:{ title:{ display:true, text:'실거래가 (억원)' }, min:7 } },
     },
   });
 
-  new Chart(document.getElementById('schoolChart'), {
+  // 개발호재 시뮬레이션
+  new Chart(document.getElementById('horeaChart'), {
     type: 'bar',
     data: {
-      labels: ['학급당 학생수 (초등·추정)', '학급당 학생수 (중학·추정)', '중학 전국 석차 백분위 (낮을수록 우수)'],
-      datasets: [
-        { label:'A. 삼익그린2차',          data:[22,25,35], backgroundColor:CA },
-        { label:'B. 신동아리버파크',        data:[23,24,40], backgroundColor:CB },
+      labels: [
+        '노량진 뉴타운\n완공 (2031)',
+        '수협 부지\n복합개발 (2030)',
+        '여의도\n금융중심 확장',
+        'GTX-C\n개통 (2028)',
+        '한강변\n수변공원',
+        '흑석뉴타운\n연쇄효과',
       ],
+      datasets: [{
+        label: '예상 시세 상승폭 (%)',
+        data: [18, 8, 5, 4, 3, 4],
+        backgroundColor: ['#0891b2','#0e7490','#155e75','#7c3aed','#6d28d9','#16a34a'],
+        borderRadius: 6,
+      }],
     },
     options: {
       responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{ position:'top' } },
-      scales:{ y:{ beginAtZero:true, max:50, title:{ display:true, text:'명 / 백분위(%)' } } },
+      plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label: c => ` 예상 상승: +${c.parsed.y}%` } } },
+      scales:{ y:{ beginAtZero:true, max:25, title:{ display:true, text:'예상 상승폭 (%)' }, ticks:{ callback: v => v+'%' } } },
     },
   });
 
-  new Chart(document.getElementById('crimeChart'), {
-    type: 'bar',
-    data: {
-      labels: ['살인','강도','절도','폭력','성범죄'],
-      datasets: [
-        { label:'A. 강동구 (샘플)',  data:[3,8,890,1240,95],  backgroundColor:CA },
-        { label:'B. 동작구 (샘플)',  data:[2,6,820,1380,110], backgroundColor:CB },
-      ],
-    },
-    options: {
-      responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{ position:'top' } },
-      scales:{ y:{ beginAtZero:true, title:{ display:true, text:'발생건수 (건/년)' } } },
-    },
-  });
-
+  // 대기환경 초기 (샘플)
   const districts = ['도봉','노원','강북','성북','중랑','동대문','광진','강동','송파','강남',
     '서초','동작','관악','금천','구로','영등포','양천','강서','마포','용산','종로','중구','성동','은평','서대문'];
   const samplePm = districts.map(() => Math.floor(Math.random()*30)+10);
-  const sampleColors = districts.map(d => d==='강동'?CA : d==='동작'?CB : '#cbd5e1');
+  const sampleColors = districts.map(d => d==='동작' ? '#0891b2' : '#cbd5e1');
   chartAir = new Chart(document.getElementById('airChart'), {
     type: 'bar',
     data: {
@@ -1604,26 +923,34 @@ function initCharts() {
       scales:{ y:{ beginAtZero:true, title:{ display:true, text:'PM2.5 (μg/m³)' } } },
     },
   });
-}
 
-/* ── 평면도 차트 ── */
-function initFloorChart() {
-  const ctx = document.getElementById('floorAreaChart');
-  if (!ctx) return;
-  new Chart(ctx, {
-    type: 'bar',
+  // 종합 미래가치 레이더
+  new Chart(document.getElementById('radarChart'), {
+    type: 'radar',
     data: {
-      labels: ['공급면적(㎡)', '전용면적(㎡)', '전용률(%)'],
-      datasets: [
-        { label:'A. 삼익그린2차',              data:[90.04,  66.87, 74.3], backgroundColor:'rgba(37,99,235,.7)' },
-        { label:'B. 신동아리버파크 (33평)',     data:[109.76, 84.88, 77.4], backgroundColor:'rgba(22,163,74,.7)' },
-        { label:'B. 신동아리버파크 (43평)',     data:[144.06,114.75, 79.7], backgroundColor:'rgba(8,145,178,.7)' },
-      ],
+      labels: ['교통 개선', '개발 계획', '주거 환경', '투자 수익'],
+      datasets: [{
+        label: '신동아리버파크 미래가치',
+        data: [8.5, 9.0, 7.5, 8.0],
+        borderColor: '#0891b2',
+        backgroundColor: 'rgba(8,145,178,.25)',
+        pointBackgroundColor: '#0891b2',
+        borderWidth: 2.5,
+        pointRadius: 5,
+      }],
     },
     options: {
       responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{ position:'top' } },
-      scales:{ y:{ beginAtZero:true } },
+      plugins:{ legend:{ labels:{ color:'#cbd5e1' } } },
+      scales:{
+        r:{
+          beginAtZero:true, min:0, max:10,
+          ticks:{ color:'#94a3b8', stepSize:2 },
+          pointLabels:{ color:'#e0e7ff', font:{ size:12, weight:'bold' } },
+          grid:{ color:'rgba(255,255,255,.15)' },
+          angleLines:{ color:'rgba(255,255,255,.2)' },
+        }
+      },
     },
   });
 }
@@ -1637,41 +964,38 @@ async function runAiAnalysis() {
   resultEl.textContent = '⏳ Claude가 분석 중입니다...';
   statusEl.textContent = '';
 
-  const prompt = `당신은 부동산 전문가입니다. 다음 두 아파트 단지를 비교 분석해주세요.
+  const prompt = `당신은 서울 부동산 전문가입니다. 다음 아파트의 미래가치를 종합 분석해주세요.
 
-【A. 삼익그린2차 (현 거주지 — 매도 예정)】
-- 위치: 서울 강동구 명일동
-- 전용: 66.87㎡ (27평), 공급 90.04㎡
-- 교통: 5호선 고덕역 도보 5~10분. 9호선 4단계 공사 중(2028년 개통)
-- 재건축: 조합설립 완료, 정비계획 공람 중 (→3,353가구)
-- 개발호재: 고덕비즈밸리(23만㎡) 완성, GTX-D 강동구 경유 확정
-- 매도가: 19억
-- 직장(을지로3가) 35~40분, 리비어어학원(신사동) 30~35분, 친가(명일신동아) 10분
-
-【B. 신동아리버파크 (실계약 완료)】
+【신동아리버파크 — 실계약 완료 (2026.05)】
 - 위치: 서울 동작구 노량진동 325번지 (한강변)
-- 실계약 호수: 705동 2405호 (24층)
-- 전용: 114.75㎡ (43평), 공급 144.06㎡ (계단식 · 침실4 · 욕실2)
-- 교통: 상도역(7호선) 도보 9분, 장승배기역(7호선) 도보 10분, 노량진역(1·9호선) 도보 15분
-- 준공: 2001년 2월 (25년차) / 1,696세대 / 7개동 / 최고 28층
-- 재건축·리모델링 추진 여부 미정
-- 노량진 뉴타운 개발 현황 (2026년 기준):
-  · 8개 구역 전체 착공 서울시 목표 2027년, 완공 목표 2031년
-  · 총 8개 구역 약 1만 가구 완성 → 동작구 서남권 인구 2~3만명 유입
-  · 수협 노량진 부지(4.8만㎡) 복합개발 2026년 상반기 공모 재개
-- 매수가: 17억 2,500만원
-- 직장(을지로3가) 15~20분 ⭐, 리비어어학원(신사동) 15~20분, 외가(원베일리) 20~25분
-- 토지거래허가구역 / 한강 조망 일부 동 가능
+- 실계약 호수: 705동 2405호 (24층) · 전용 114.75㎡ (43평)
+- 준공: 2001년 (약 25년 경과) / 1,696세대 / 7개동 / 최고 28층
+- 교통: 상도역(7호선) 도보 9분, 노량진역(1·9호선) 도보 15분
+  → 9호선 급행 강남 약 20분, 1호선 을지로(직장) 15~20분
+- 매수가: 17억 2,500만원 / 평당 3,945만원 (43평 기준)
+- 토지거래허가구역 지정 / 한강 조망 일부 동 가능
 
-【가족 상황】
-- 맞벌이 부부 (부부합산 월수입 960만원), 영유아 자녀
-- 주담대 약 3억3천5백만원 예정 (금리 4.5%, 30년, 월 원리금 약 170만원)
+【핵심 개발 호재 (2026년 기준)】
+1. 노량진 뉴타운 8개 구역 (약 1만 세대)
+   - 4·6구역 착공 완료, 8구역(아크로리버스카이) 시공 중
+   - 서울시 목표: 2027년 전면 착공, 2031년 완공
+   - 완공 시 동작구 서남권 인구 2~3만명 유입, 상권·학원가 재편
+2. 수협 노량진 부지(4.8만㎡) 복합개발 — 2026년 공모 재개
+3. 여의도 금융중심지 확장 (노량진역에서 9호선 2정거장)
+4. GTX-C 개통 (2028년) — 노량진 근접 수혜
+5. 흑석뉴타운 완료 → 동작구 전반 거주 선호도 상승
+
+【리스크 요인】
+- 25년 구축 (리모델링·재건축 여부 미정)
+- 노량진 뉴타운 공사 중 단기 주거환경 저하
+- 토지거래허가구역 — 매도 시 유동성 제약
+- 인근 신규 공급 증가 시 단기 가격 하락 가능성
 
 다음을 분석해주세요:
-1. 두 단지의 핵심 장단점 (각 3가지씩)
-2. A에서 B로 이사 결정의 재정적·입지적 타당성 평가
-3. B(신동아리버파크)의 핵심 리스크와 기회 요인
-4. 10년 후 자산가치 전망 비교
+1. 신동아리버파크의 5년/10년 후 자산가치 전망 (수치 포함)
+2. 핵심 투자 기회 요인 3가지
+3. 반드시 관리해야 할 리스크 3가지
+4. 동작구 노량진동 부동산 시장 전망
 
 한국어로 답변하고, 구체적 수치와 이유를 포함해 800자 이상 작성해주세요.`;
 
@@ -1702,28 +1026,10 @@ async function runAiAnalysis() {
 /* ── 메인 ── */
 async function main() {
   initCharts();
-  initFloorChart();
-  // sindongaDetailChart 초기 빈 차트
-  const sdCtx = document.getElementById('sindongaDetailChart');
-  if (sdCtx) {
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    const lc = isDark ? '#94a3b8' : '#64748b';
-    sindongaDetailChart = new Chart(sdCtx.getContext('2d'), {
-      type: 'line',
-      data: { labels: recentMonths(12).map(m=>`${m.slice(0,4)}.${m.slice(4)}`), datasets: [
-        { label: '25평 (59㎡)', data: [], borderColor: '#94a3b8', spanGaps: true },
-        { label: '33평 (84㎡) — 매물B', data: [], borderColor: '#7c3aed', borderWidth: 2.5, spanGaps: true },
-        { label: '43평 (114㎡) — 매물A', data: [], borderColor: '#0891b2', borderWidth: 2.5, spanGaps: true },
-      ]},
-      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: lc } } }, scales: { x: { ticks: { color: lc } }, y: { ticks: { color: lc, callback: v => v+'억' } } } }
-    });
-  }
   await Promise.allSettled([
     Promise.resolve(loadMap()),
     loadFacilityData(),
     loadPriceData(),
-    loadSindongaDetail(),
-    loadSchoolData(),
     loadAirData(),
   ]);
 }
