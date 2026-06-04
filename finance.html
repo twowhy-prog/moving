@@ -460,29 +460,6 @@
 
       <div class="sep"></div>
 
-      <!-- 영유비 포함 -->
-      <div style="margin-bottom:6px;display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none" onclick="toggleSub('daycare-body','daycare-icon')">
-        <strong>영유비 포함액</strong>
-        <small style="color:var(--sub)">— 주담대에 포함해 선납 후 파킹 운용</small>
-        <span id="daycare-icon" style="font-size:11px;color:var(--sub);margin-left:auto;transform:rotate(-90deg);display:inline-block;transition:transform .2s">▼</span>
-      </div>
-      <div id="daycare-body" style="display:none">
-      <div class="grid-3">
-        <div class="field">
-          <label>영유비 포함 분기수 (0~11)</label>
-          <input type="number" id="daycareQuarters" value="7" min="0" max="11" oninput="calc()">
-        </div>
-        <div class="field">
-          <label>분기 영유비 (만원)</label>
-          <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('daycarePerQ', -100)">▼</button>
-            <input type="number" id="daycarePerQ" value="789" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('daycarePerQ', 100)">▲</button>
-          </div>
-        </div>
-      </div>
-      </div><!-- /daycare-body -->
-
       <div class="grid-3">
         <div class="field">
           <label style="display:flex;align-items:center;gap:6px;">
@@ -510,14 +487,77 @@
         <div class="result-row total"><span>가용자금 (수령 − 부채 + 크립토)</span><span id="r_availCash">-</span></div>
         <div class="sep"></div>
         <div class="result-row"><span>매수 순수비용 (S2)</span><span id="r_buyCostRef">-</span></div>
-        <div class="result-row"><span>영유비 포함액 (<span id="r_dqLabel">-</span>분기)</span><span id="r_daycareIncluded">-</span></div>
-        <div class="result-row total"><span>총 필요금액</span><span id="r_buyCostTotal">-</span></div>
         <div class="sep"></div>
         <div class="result-row total"><span>🏦 최소 필요 주담대 (계산치)</span><span id="r_minLoan" class="color-blue">-</span></div>
         <div class="result-row"><span>확정 주담대 <small style="color:var(--sub)">(직접 입력 가능)</small></span><span id="r_loanApplied">-</span></div>
         <div class="result-row"><span>월 원리금 (원리금균등)</span><span id="r_monthlyPayment" class="color-red">-</span></div>
-        <div class="info">* 가용자금 = 세후수령 − 상환부채 + 크립토자산 &nbsp;|&nbsp; 최소주담대 = 총필요금액 − 가용자금</div>
+        <div class="info">* 가용자금 = 세후수령 − 상환부채 + 크립토자산 &nbsp;|&nbsp; 최소주담대 = 매수순수비용 − 가용자금</div>
       </div>
+    </div>
+  </div>
+
+  <!-- ===== 크립토 잔여 자산 ===== -->
+  <div class="section" id="sec10">
+    <div class="section-header" onclick="toggleSection('sec10')">
+      <div class="section-num" style="background:#10b981">🪙</div>
+      <h2>크립토 잔여 자산</h2>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="section-body">
+      <div style="margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <strong>총 보유량 입력</strong>
+        <small style="color:var(--sub)">— 이사 전 현재 총 보유수량 (S3 사용분과 별도)</small>
+        <button class="btn" style="font-size:11px;padding:3px 10px;margin-left:auto" onclick="fetchCryptoPrices()">🔄 업비트 시세 갱신</button>
+      </div>
+
+      <div class="debt-item">
+        <label style="min-width:60px">XRP 보유</label>
+        <span id="xrpPrice2" style="font-size:12px;color:var(--blue);font-weight:600;min-width:90px;text-align:right">-</span>
+        <button class="adjust-btn" onclick="adjustValue('xrpHold', -1000)">▼</button>
+        <input type="number" id="xrpHold" value="58000" oninput="calc()" style="width:90px">
+        <button class="adjust-btn" onclick="adjustValue('xrpHold', 1000)">▲</button>
+        <span style="flex-shrink:0">개 =</span>
+        <span class="amount color-green" id="xrpHoldValue">-</span>
+        <span style="flex-shrink:0">만원</span>
+      </div>
+      <div class="debt-item">
+        <label style="min-width:60px">BTC 보유</label>
+        <span id="btcPrice2" style="font-size:12px;color:var(--blue);font-weight:600;min-width:120px;text-align:right">-</span>
+        <button class="adjust-btn" onclick="adjustValue('btcHold', -0.1)">▼</button>
+        <input type="number" id="btcHold" value="0.89" step="0.01" oninput="calc()" style="width:70px">
+        <button class="adjust-btn" onclick="adjustValue('btcHold', 0.1)">▲</button>
+        <span style="flex-shrink:0">개 =</span>
+        <span class="amount color-green" id="btcHoldValue">-</span>
+        <span style="flex-shrink:0">만원</span>
+      </div>
+      <div class="debt-item">
+        <label style="min-width:60px">기타 보유</label>
+        <button class="adjust-btn" onclick="adjustValue('cryptoEtcHold', -100)">▼</button>
+        <input type="number" id="cryptoEtcHold" value="1000" oninput="calc()" style="width:100px">
+        <button class="adjust-btn" onclick="adjustValue('cryptoEtcHold', 100)">▲</button>
+        <span style="flex-shrink:0">만원</span>
+      </div>
+
+      <div class="result-box" style="margin-top:14px">
+        <div style="font-weight:600;margin-bottom:8px">📊 보유 → 사용 → 잔여</div>
+        <div class="result-row"><span>총 XRP 보유가치</span><span id="r_xrpHoldVal" class="color-green">-</span></div>
+        <div class="result-row"><span>총 BTC 보유가치</span><span id="r_btcHoldVal" class="color-green">-</span></div>
+        <div class="result-row"><span>기타 보유</span><span id="r_etcHoldVal" class="color-green">-</span></div>
+        <div class="result-row total"><span>총 보유 가치</span><span id="r_cryptoHoldTotal" class="color-green">-</span></div>
+        <div class="sep"></div>
+        <div class="result-row"><span>이사 사용 — XRP (S3)</span><span id="r_xrpUsed" style="color:var(--red)">-</span></div>
+        <div class="result-row"><span>이사 사용 — BTC (S3)</span><span id="r_btcUsed" style="color:var(--red)">-</span></div>
+        <div class="result-row"><span>이사 사용 — 기타 (S3)</span><span id="r_etcUsed" style="color:var(--red)">-</span></div>
+        <div class="result-row total"><span>이사 사용 합계</span><span id="r_cryptoUsedTotal" style="color:var(--red)">-</span></div>
+        <div class="sep"></div>
+        <div class="result-row"><span>잔여 XRP</span><span id="r_xrpRemainQty">-</span></div>
+        <div class="result-row indent"><span>잔여 XRP 가치</span><span id="r_xrpRemainVal" class="color-green">-</span></div>
+        <div class="result-row"><span>잔여 BTC</span><span id="r_btcRemainQty">-</span></div>
+        <div class="result-row indent"><span>잔여 BTC 가치</span><span id="r_btcRemainVal" class="color-green">-</span></div>
+        <div class="result-row"><span>잔여 기타</span><span id="r_etcRemainVal" class="color-green">-</span></div>
+        <div class="result-row total"><span>🪙 이사 후 잔여 크립토 총 가치</span><span id="r_cryptoRemainTotal" class="color-green">-</span></div>
+      </div>
+      <div class="info" style="margin-top:8px">* S3의 크립토 사용량이 총 보유량을 초과하면 빨간색으로 표시 &nbsp;|&nbsp; 시세는 업비트 기준 (기타 잔코인은 입력값 그대로 사용)</div>
     </div>
   </div>
 
@@ -608,55 +648,10 @@
     </div>
   </div>
 
-  <!-- ===== 섹션 5: 영유비 운용 ===== -->
-  <div class="section" id="sec5">
-    <div class="section-header" onclick="toggleSection('sec5')">
-      <div class="section-num">5</div>
-      <h2>영유비 운용 (파킹통장 vs 주담대 이자)</h2>
-      <span class="toggle-icon">▼</span>
-    </div>
-    <div class="section-body">
-      <div class="grid-3">
-        <div class="field">
-          <label>파킹통장 금리 (%)</label>
-          <input type="number" id="parkingRate" value="3.3" step="0.1" oninput="calc()">
-        </div>
-        <div class="field">
-          <label>총 영유 계획 분기</label>
-          <input type="number" id="totalPlannedQ" value="12" min="1" max="20" oninput="calc()">
-        </div>
-        <div class="field">
-          <label>기납부 분기</label>
-          <input type="number" id="paidQ" value="1" min="0" oninput="calc()">
-        </div>
-      </div>
-      <div class="info" style="margin-bottom:10px">* 총 잔여 영유 분기 = 계획 − 기납부 (자동계산) | 포함 분기수 · 분기 영유비는 섹션 3에서 입력</div>
-
-      <div class="result-box" style="margin-bottom:12px">
-        <div class="result-row"><span>총 잔여 영유 분기 (자동)</span><span id="r_totalDaycareQ">-</span></div>
-        <div class="result-row indent"><span>선납 운용 분기 (섹션 3)</span><span id="r_includedQ">-</span></div>
-        <div class="result-row indent"><span>직접 지불 분기</span><span id="r_directQ">-</span></div>
-        <div class="result-row"><span>총 영유비 포함액</span><span id="r_daycareTotal">-</span></div>
-        <div class="result-row"><span>파킹통장 운용 이자수익 (세전)</span><span id="r_parkingIncome">-</span></div>
-        <div class="result-row"><span>주담대 이자 부담 (포함액 비례)</span><span id="r_loanInterestCost">-</span></div>
-        <div class="result-row total"><span>실질 순비용 (이자부담 - 파킹이익)</span><span id="r_daycareNetCost">-</span></div>
-      </div>
-
-      <div class="table-wrap">
-        <table id="daycareTable">
-          <thead>
-            <tr><th>분기</th><th>기초잔액</th><th>파킹이자</th><th>영유비지출</th><th>기말잔액</th><th>주담대이자</th></tr>
-          </thead>
-          <tbody id="daycareTableBody"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===== 섹션 6: 월 현금흐름 ===== -->
+  <!-- ===== 섹션 5: 월 현금흐름 ===== -->
   <div class="section" id="sec6">
     <div class="section-header" onclick="toggleSection('sec6')">
-      <div class="section-num">6</div>
+      <div class="section-num">5</div>
       <h2>월 현금흐름</h2>
       <span class="toggle-icon">▼</span>
     </div>
@@ -671,42 +666,43 @@
           </div>
         </div>
         <div class="field">
-          <label>월 영유비 <small>— ② 직납 기간 (S3 분기영유비÷3 자동)</small></label>
-          <div class="result-box" style="padding:8px 12px;margin:0">
-            <span id="r_daycareMonthlyAuto" style="font-weight:600">-</span>
-            <span style="color:var(--sub);font-size:12px"> 만원/월</span>
+          <label>분기 영유비 (만원)</label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('daycarePerQ', -100)">▼</button>
+            <input type="number" id="daycarePerQ" value="789" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('daycarePerQ', 100)">▲</button>
           </div>
         </div>
         <div class="field">
-          <label>초등교육비 (만원/월) <small>— ③ 영유 후</small></label>
+          <label>초등교육비 (만원/월) <small>— ② 영유 후</small></label>
           <div class="field-adjust">
             <button class="adjust-btn" onclick="adjustValue('elemSchoolMonthly', -5)">▼</button>
             <input type="number" id="elemSchoolMonthly" value="50" oninput="calc()">
             <button class="adjust-btn" onclick="adjustValue('elemSchoolMonthly', 5)">▲</button>
           </div>
         </div>
-      </div>
-
-      <div class="cashflow-grid-3">
-        <!-- ① 영유기간1 -->
-        <div>
-          <div class="period-header" style="background:#dbeafe;color:#1d4ed8;border:1.5px solid #93c5fd">
-            ① 영유기간1<br><small style="font-weight:400">영유비 주담대 포함 · <span id="r_cf1_months">-</span>개월</small>
-          </div>
-          <div class="result-box" style="border-radius:0 0 8px 8px;margin-top:0">
-            <div class="result-row"><span>월 수입 합계</span><span id="r_cf1_income">-</span></div>
-            <div class="result-row"><span>파킹이자 (월평균)</span><span id="r_cf1_parking" class="color-green">-</span></div>
-            <div class="result-row"><span>주담대 원리금</span><span id="r_cf1_loan">-</span></div>
-            <div class="result-row"><span>생활비</span><span id="r_cf1_living">-</span></div>
-            <div class="result-row"><span>기타부채 상환</span><span id="r_cf1_other">-</span></div>
-            <div class="sep"></div>
-            <div class="result-row total"><span>월 여유</span><span id="r_cf1_surplus">-</span></div>
+        <div class="field">
+          <label>총 영유 계획 분기</label>
+          <input type="number" id="totalPlannedQ" value="12" min="1" max="20" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>기납부 분기</label>
+          <input type="number" id="paidQ" value="1" min="0" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>잔여 영유 분기 (자동)</label>
+          <div class="result-box" style="padding:8px 12px;margin:0">
+            <span id="r_remainDaycareQ" style="font-weight:600">-</span>
+            <span style="color:var(--sub);font-size:12px"> 분기 (<span id="r_remainDaycareMonths">-</span>개월)</span>
           </div>
         </div>
-        <!-- ② 영유기간2 -->
-        <div id="cf2_card">
+      </div>
+
+      <div class="cashflow-grid" style="margin-top:12px">
+        <!-- ① 영유기간 -->
+        <div id="cf_daycare_card">
           <div class="period-header" style="background:#fef3c7;color:#92400e;border:1.5px solid #fbbf24">
-            ② 영유기간2<br><small style="font-weight:400">영유비 직납 · <span id="r_cf2_months">-</span>개월</small>
+            ① 영유기간 (직납)<br><small style="font-weight:400"><span id="r_cf2_months">-</span>개월</small>
           </div>
           <div class="result-box" style="border-radius:0 0 8px 8px;margin-top:0">
             <div class="result-row"><span>월 수입 합계</span><span id="r_cf2_income">-</span></div>
@@ -718,10 +714,10 @@
             <div class="result-row total"><span>월 여유</span><span id="r_cf2_surplus">-</span></div>
           </div>
         </div>
-        <!-- ③ 영유기간 후 -->
+        <!-- ② 영유기간 후 -->
         <div>
           <div class="period-header" style="background:#d1fae5;color:#065f46;border:1.5px solid #6ee7b7">
-            ③ 영유기간 후<br><small style="font-weight:400">초등학교 입학</small>
+            ② 영유기간 후<br><small style="font-weight:400">초등학교 입학</small>
           </div>
           <div class="result-box" style="border-radius:0 0 8px 8px;margin-top:0">
             <div class="result-row"><span>월 수입 합계</span><span id="r_cf3_income">-</span></div>
@@ -741,10 +737,10 @@
     </div>
   </div>
 
-  <!-- ===== 섹션 7: 절세/투자 계획 ===== -->
+  <!-- ===== 섹션 6: 절세/투자 계획 ===== -->
   <div class="section" id="sec7">
     <div class="section-header" onclick="toggleSection('sec7')">
-      <div class="section-num">7</div>
+      <div class="section-num">6</div>
       <h2>절세 / 투자 계획</h2>
       <span class="toggle-icon">▼</span>
     </div>
@@ -806,6 +802,10 @@
             <button class="adjust-btn" onclick="adjustValue('parkingMonthly', 5)">▲</button>
           </div>
         </div>
+        <div class="field">
+          <label>파킹통장 금리 (%)</label>
+          <input type="number" id="parkingRate" value="3.3" step="0.1" oninput="calc()">
+        </div>
       </div>
 
       <div class="result-box">
@@ -832,59 +832,10 @@
     </div>
   </div>
 
-  <!-- ===== 섹션 8: 리모델링 비용 ===== -->
-  <div class="section" id="sec8">
-    <div class="section-header" onclick="toggleSection('sec8')">
-      <div class="section-num">8</div>
-      <h2>리모델링 비용 분석</h2>
-      <span class="toggle-icon">▼</span>
-    </div>
-    <div class="section-body">
-      <div class="grid-3">
-        <div class="field">
-          <label>분담금 예상액 (만원)</label>
-          <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('remoShare', -1000)">▼</button>
-            <input type="number" id="remoShare" value="24700" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('remoShare', 1000)">▲</button>
-          </div>
-        </div>
-        <div class="field">
-          <label>이주기간 (개월)</label>
-          <input type="number" id="remoPeriod" value="48" oninput="calc()">
-        </div>
-        <div class="field">
-          <label>월 임시거주비 (만원)</label>
-          <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('remoMonthly', -10)">▼</button>
-            <input type="number" id="remoMonthly" value="150" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('remoMonthly', 10)">▲</button>
-          </div>
-        </div>
-        <div class="field">
-          <label>리모델링 후 예상 시세 (만원)</label>
-          <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('remoExpected', -1000)">▼</button>
-            <input type="number" id="remoExpected" value="230000" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('remoExpected', 1000)">▲</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="result-box">
-        <div class="result-row"><span>총 이주비</span><span id="r_remoMoveCost">-</span></div>
-        <div class="result-row"><span>총 추가비용</span><span id="r_remoExtra">-</span></div>
-        <div class="result-row"><span>총 투자비용 (매수가+추가)</span><span id="r_remoTotalCost">-</span></div>
-        <div class="result-row"><span>예상 시세차익</span><span id="r_remoGain" class="color-green">-</span></div>
-        <div class="result-row total"><span>투자수익률</span><span id="r_remoRoi">-</span></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===== 섹션 9: 자녀 증여 계획 ===== -->
+  <!-- ===== 섹션 7: 자녀 증여 계획 ===== -->
   <div class="section" id="sec9">
     <div class="section-header" onclick="toggleSection('sec9')">
-      <div class="section-num">9</div>
+      <div class="section-num">7</div>
       <h2>자녀 증여 계획 (윤호)</h2>
       <span class="toggle-icon">▼</span>
     </div>
@@ -973,68 +924,52 @@
     </div>
   </div>
 
-  <!-- ===== 섹션 10: 크립토 잔여 자산 ===== -->
-  <div class="section" id="sec10">
-    <div class="section-header" onclick="toggleSection('sec10')">
-      <div class="section-num">10</div>
-      <h2>크립토 잔여 자산</h2>
+  <!-- ===== 섹션 8: 리모델링 비용 (마지막) ===== -->
+  <div class="section" id="sec8">
+    <div class="section-header" onclick="toggleSection('sec8')">
+      <div class="section-num">8</div>
+      <h2>리모델링 비용 분석</h2>
       <span class="toggle-icon">▼</span>
     </div>
     <div class="section-body">
-      <div style="margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <strong>총 보유량 입력</strong>
-        <small style="color:var(--sub)">— 이사 전 현재 총 보유수량 (S3 사용분과 별도)</small>
-        <button class="btn" style="font-size:11px;padding:3px 10px;margin-left:auto" onclick="fetchCryptoPrices()">🔄 업비트 시세 갱신</button>
+      <div class="grid-3">
+        <div class="field">
+          <label>분담금 예상액 (만원)</label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('remoShare', -1000)">▼</button>
+            <input type="number" id="remoShare" value="24700" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('remoShare', 1000)">▲</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>이주기간 (개월)</label>
+          <input type="number" id="remoPeriod" value="48" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>월 임시거주비 (만원)</label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('remoMonthly', -10)">▼</button>
+            <input type="number" id="remoMonthly" value="150" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('remoMonthly', 10)">▲</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>리모델링 후 예상 시세 (만원)</label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('remoExpected', -1000)">▼</button>
+            <input type="number" id="remoExpected" value="230000" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('remoExpected', 1000)">▲</button>
+          </div>
+        </div>
       </div>
 
-      <div class="debt-item">
-        <label style="min-width:60px">XRP 보유</label>
-        <span id="xrpPrice2" style="font-size:12px;color:var(--blue);font-weight:600;min-width:90px;text-align:right">-</span>
-        <button class="adjust-btn" onclick="adjustValue('xrpHold', -1000)">▼</button>
-        <input type="number" id="xrpHold" value="58000" oninput="calc()" style="width:90px">
-        <button class="adjust-btn" onclick="adjustValue('xrpHold', 1000)">▲</button>
-        <span style="flex-shrink:0">개 =</span>
-        <span class="amount color-green" id="xrpHoldValue">-</span>
-        <span style="flex-shrink:0">만원</span>
+      <div class="result-box">
+        <div class="result-row"><span>총 이주비</span><span id="r_remoMoveCost">-</span></div>
+        <div class="result-row"><span>총 추가비용</span><span id="r_remoExtra">-</span></div>
+        <div class="result-row"><span>총 투자비용 (매수가+추가)</span><span id="r_remoTotalCost">-</span></div>
+        <div class="result-row"><span>예상 시세차익</span><span id="r_remoGain" class="color-green">-</span></div>
+        <div class="result-row total"><span>투자수익률</span><span id="r_remoRoi">-</span></div>
       </div>
-      <div class="debt-item">
-        <label style="min-width:60px">BTC 보유</label>
-        <span id="btcPrice2" style="font-size:12px;color:var(--blue);font-weight:600;min-width:120px;text-align:right">-</span>
-        <button class="adjust-btn" onclick="adjustValue('btcHold', -0.1)">▼</button>
-        <input type="number" id="btcHold" value="0.89" step="0.01" oninput="calc()" style="width:70px">
-        <button class="adjust-btn" onclick="adjustValue('btcHold', 0.1)">▲</button>
-        <span style="flex-shrink:0">개 =</span>
-        <span class="amount color-green" id="btcHoldValue">-</span>
-        <span style="flex-shrink:0">만원</span>
-      </div>
-      <div class="debt-item">
-        <label style="min-width:60px">기타 보유</label>
-        <button class="adjust-btn" onclick="adjustValue('cryptoEtcHold', -100)">▼</button>
-        <input type="number" id="cryptoEtcHold" value="1000" oninput="calc()" style="width:100px">
-        <button class="adjust-btn" onclick="adjustValue('cryptoEtcHold', 100)">▲</button>
-        <span style="flex-shrink:0">만원</span>
-      </div>
-
-      <div class="result-box" style="margin-top:14px">
-        <div style="font-weight:600;margin-bottom:8px">📊 보유 → 사용 → 잔여</div>
-        <div class="result-row"><span>총 XRP 보유가치</span><span id="r_xrpHoldVal" class="color-green">-</span></div>
-        <div class="result-row"><span>총 BTC 보유가치</span><span id="r_btcHoldVal" class="color-green">-</span></div>
-        <div class="result-row"><span>기타 보유</span><span id="r_etcHoldVal" class="color-green">-</span></div>
-        <div class="result-row total"><span>총 보유 가치</span><span id="r_cryptoHoldTotal" class="color-green">-</span></div>
-        <div class="sep"></div>
-        <div class="result-row"><span>이사 사용 — XRP (S3)</span><span id="r_xrpUsed" style="color:var(--red)">-</span></div>
-        <div class="result-row"><span>이사 사용 — BTC (S3)</span><span id="r_btcUsed" style="color:var(--red)">-</span></div>
-        <div class="result-row"><span>이사 사용 — 기타 (S3)</span><span id="r_etcUsed" style="color:var(--red)">-</span></div>
-        <div class="result-row total"><span>이사 사용 합계</span><span id="r_cryptoUsedTotal" style="color:var(--red)">-</span></div>
-        <div class="sep"></div>
-        <div class="result-row"><span>잔여 XRP</span><span id="r_xrpRemainQty">-</span></div>
-        <div class="result-row indent"><span>잔여 XRP 가치</span><span id="r_xrpRemainVal" class="color-green">-</span></div>
-        <div class="result-row"><span>잔여 BTC</span><span id="r_btcRemainQty">-</span></div>
-        <div class="result-row indent"><span>잔여 BTC 가치</span><span id="r_btcRemainVal" class="color-green">-</span></div>
-        <div class="result-row"><span>잔여 기타</span><span id="r_etcRemainVal" class="color-green">-</span></div>
-        <div class="result-row total"><span>🪙 이사 후 잔여 크립토 총 가치</span><span id="r_cryptoRemainTotal" class="color-green">-</span></div>
-      </div>
-      <div class="info" style="margin-top:8px">* S3의 크립토 사용량이 총 보유량을 초과하면 빨간색으로 표시 &nbsp;|&nbsp; 시세는 업비트 기준 (기타 잔코인은 입력값 그대로 사용)</div>
     </div>
   </div>
 
@@ -1079,13 +1014,13 @@ const INPUT_IDS = [
   'buyPrice','moveinCost','renovationCost','registrationFee','buyFeeInput','bondFee',
   'debtMortgage','debtMortgageRate','debtMaton','debtMatonRate',
   'debtEtc','debtEtcRate','debtCar','debtCarMonths',
-  'daycareQuarters','daycarePerQ',
+  'daycarePerQ',
   'xrpQty','btcQty','cryptoEtc',
   'xrpHold','btcHold','cryptoEtcHold',
   'myIncome','spouseIncome',
   'newLoanRate','newLoanYears',
-  'parkingRate',
   'totalPlannedQ','paidQ',
+  'parkingRate',
   'livingCost','elemSchoolMonthly',
   'pension1','pension2','irp1','irp2','isa','parkingMonthly',
   'remoShare','remoPeriod','remoMonthly','remoExpected',
@@ -1394,8 +1329,6 @@ function calc() {
   // ─── 섹션 3: 주담대 필요액 산출 ───
   const newLoanRate  = val('newLoanRate');
   const newLoanYears = val('newLoanYears');
-  const daycareQ     = val('daycareQuarters');
-  const daycarePerQ  = val('daycarePerQ');
 
   // 부채 상환 (체크박스 선택 여부에 따라)
   const mortgageAmt = val('debtMortgage');
@@ -1413,9 +1346,7 @@ function calc() {
   const cryptoTotal = xrpValue + btcValue + cryptoEtc;
 
   const availCash       = saleGross - debtTotal + cryptoTotal; // 부채 차감 + 크립토 가산
-  const daycareIncluded = daycareQ * daycarePerQ;
-  const buyCostTotal    = buyCostBase + daycareIncluded; // 총 필요금액
-  const minLoan         = buyCostTotal - availCash;      // 최소 필요 주담대
+  const minLoan         = buyCostBase - availCash;             // 최소 필요 주담대
 
   // 최소 필요액 기준 천만원 단위 올림
   const autoLoan = Math.max(0, Math.ceil(minLoan / 1000) * 1000);
@@ -1438,9 +1369,6 @@ function calc() {
   $('btcValue').textContent         = btcPriceKRW > 0 ? fmt(btcValue) : '(시세 미조회)';
   $('r_availCash').textContent      = fmt(availCash) + ' 만원';
   $('r_buyCostRef').textContent     = fmt(buyCostBase) + ' 만원';
-  $('r_dqLabel').textContent        = daycareQ;
-  $('r_daycareIncluded').textContent= fmt(daycareIncluded) + ' 만원';
-  $('r_buyCostTotal').textContent   = fmt(buyCostTotal) + ' 만원';
   $('r_minLoan').textContent        = fmt(minLoan) + ' 만원';
   $('r_loanApplied').textContent    = fmt(newLoan) + ' 만원';
   const loanGap = newLoan - minLoan;
@@ -1505,62 +1433,16 @@ function calc() {
   const annualIncome   = totalIncomeInput * 12;
   const finalLoanLimit = Math.min(ltvLimit, calcLoanFromMonthly(annualIncome * 0.4 / 12 - existDebtMonthly, newLoanRate, newLoanYears));
 
-  // ─── 섹션 5: 영유비 운용 ───
-  const parkingRate    = val('parkingRate') / 100 / 4;
-  const totalPlannedQ  = val('totalPlannedQ');
-  const paidQ          = val('paidQ');
-  const totalDaycareQ  = Math.max(0, totalPlannedQ - paidQ);
-  const includedQ      = daycareQ;
-  const directQ        = Math.max(0, totalDaycareQ - includedQ);
-  const daycareTotal   = includedQ * daycarePerQ;
-
-  $('r_totalDaycareQ').textContent = totalDaycareQ + '분기 (' + (totalDaycareQ * 3) + '개월)';
-  $('r_includedQ').textContent     = includedQ + '분기';
-  $('r_directQ').textContent       = directQ + '분기 (월급 직접 지불)';
-
-  // 분기 테이블 생성 (includedQ가 totalDaycareQ보다 클 경우도 전부 표시)
-  let balance = daycareTotal;
-  let totalParkingIncome = 0;
-  let totalLoanInterest = 0;
-  const rows = [];
-  for (let q = 1; q <= Math.max(totalDaycareQ, includedQ); q++) {
-    const interest = q <= includedQ ? balance * parkingRate : 0;
-    const loanInt  = q <= includedQ ? balance * (newLoanRate / 100 / 4) : 0;
-    const expense  = daycarePerQ;
-    const endBal   = q <= includedQ ? balance + interest - expense : 0;
-    if (q <= includedQ) {
-      totalParkingIncome += interest;
-      totalLoanInterest  += loanInt;
-    }
-    rows.push({ q, startBal: q <= includedQ ? balance : 0, interest, expense: q <= includedQ ? expense : 0, endBal, loanInt });
-    if (q <= includedQ) balance = endBal;
-  }
-
-  const tbody = $('daycareTableBody');
-  tbody.innerHTML = rows.map(r =>
-    `<tr>
-      <td>${r.q}분기</td>
-      <td>${r.startBal > 0 ? fmt(r.startBal) : '-'}</td>
-      <td class="color-green">${r.interest > 0 ? '+'+fmt(r.interest) : '-'}</td>
-      <td>${r.expense > 0 ? fmt(r.expense) : '-'}</td>
-      <td>${r.endBal > 0 ? fmt(r.endBal) : '-'}</td>
-      <td class="color-red">${r.loanInt > 0 ? fmt(r.loanInt) : '-'}</td>
-    </tr>`
-  ).join('');
-
-  const daycareNetCost = totalLoanInterest - totalParkingIncome;
-  const parkingNetGain = totalParkingIncome - totalLoanInterest; // +이면 이익, −이면 비용
-  $('r_daycareTotal').textContent = fmt(daycareTotal) + ' 만원';
-  $('r_parkingIncome').textContent = '+' + fmt(totalParkingIncome) + ' 만원';
-  $('r_loanInterestCost').textContent = fmt(totalLoanInterest) + ' 만원';
-  $('r_daycareNetCost').textContent = fmt(daycareNetCost) + ' 만원';
-
-  // --- 섹션 6: 월 현금흐름 ---
+  // --- 섹션 5: 월 현금흐름 ---
   const livingCost        = val('livingCost');
-  // 영유비(직납): S3 분기영유비 ÷ 3 으로 자동 연동
+  const daycarePerQ       = val('daycarePerQ');
   const daycareMonthly    = daycarePerQ / 3;
-  $('r_daycareMonthlyAuto').textContent = fmt(daycareMonthly);
   const elemSchoolMonthly = val('elemSchoolMonthly');
+  const totalDaycareQ     = Math.max(0, val('totalPlannedQ') - val('paidQ'));
+  const daycareMonths     = totalDaycareQ * 3;
+
+  $('r_remainDaycareQ').textContent     = totalDaycareQ;
+  $('r_remainDaycareMonths').textContent = daycareMonths;
 
   // 기타부채 월상환: 체크박스 ON = 매도수익으로 상환 완료 → 월납입 없음, OFF = 계속 상환 중
   const cfMatonMonthly = $('debt_maton').checked ? 0 : matonMonthly;
@@ -1569,39 +1451,24 @@ function calc() {
   const otherDebtMonthly = cfMatonMonthly + cfEtcMonthly + cfCarMonthly;
   const totalIncome = totalIncomeInput;
 
-  // S5 파킹이자 월평균 (① 영유기간1에만 적용)
-  const p1_months = includedQ * 3;
-  const p2_months = directQ * 3;
-  const parkingAvgMonthly = p1_months > 0 ? totalParkingIncome / p1_months : 0;
-
-  // ① 영유기간1: 영유비가 주담대에 포함 → 월 직납 없음 + 파킹이자 수입
-  const surplus_p1 = totalIncome + parkingAvgMonthly - monthlyPayment - livingCost - otherDebtMonthly;
-  // ② 영유기간2: 영유비 직납
+  // ① 영유기간: 영유비 직납
   const surplus_p2 = totalIncome - monthlyPayment - daycareMonthly - livingCost - otherDebtMonthly;
-  // ③ 영유기간 후: 초등교육비
+  // ② 영유기간 후: 초등교육비
   const surplus_p3 = totalIncome - monthlyPayment - elemSchoolMonthly - livingCost - otherDebtMonthly;
 
-  $('r_cf1_months').textContent  = p1_months;
-  $('r_cf1_income').textContent  = fmt(totalIncome) + ' 만원';
-  $('r_cf1_parking').textContent = '+' + fmt(parkingAvgMonthly) + ' 만원';
-  $('r_cf1_loan').textContent    = fmt(monthlyPayment) + ' 만원';
-  $('r_cf1_living').textContent  = fmt(livingCost) + ' 만원';
-  $('r_cf1_other').textContent   = fmt(otherDebtMonthly) + ' 만원';
-  const s1El = $('r_cf1_surplus'); s1El.textContent = fmt(surplus_p1) + ' 만원'; setColor(s1El, surplus_p1, 1, 0.5);
-
-  $('r_cf2_months').textContent  = p2_months;
-  if (p2_months > 0) {
+  $('r_cf2_months').textContent  = daycareMonths;
+  if (daycareMonths > 0) {
     $('r_cf2_income').textContent  = fmt(totalIncome) + ' 만원';
     $('r_cf2_loan').textContent    = fmt(monthlyPayment) + ' 만원';
     $('r_cf2_daycare').textContent = fmt(daycareMonthly) + ' 만원';
     $('r_cf2_living').textContent  = fmt(livingCost) + ' 만원';
     $('r_cf2_other').textContent   = fmt(otherDebtMonthly) + ' 만원';
     const s2El = $('r_cf2_surplus'); s2El.textContent = fmt(surplus_p2) + ' 만원'; setColor(s2El, surplus_p2, 1, 0.5);
-    document.getElementById('cf2_card').style.opacity = '1';
+    document.getElementById('cf_daycare_card').style.opacity = '1';
   } else {
     ['r_cf2_income','r_cf2_loan','r_cf2_daycare','r_cf2_living','r_cf2_other','r_cf2_surplus']
       .forEach(id => { const el = $(id); el.textContent = '-'; el.className = ''; });
-    document.getElementById('cf2_card').style.opacity = '0.4';
+    document.getElementById('cf_daycare_card').style.opacity = '0.4';
   }
 
   $('r_cf3_income').textContent  = fmt(totalIncome) + ' 만원';
@@ -1612,22 +1479,20 @@ function calc() {
   const s3El = $('r_cf3_surplus'); s3El.textContent = fmt(surplus_p3) + ' 만원'; setColor(s3El, surplus_p3, 1, 0.5);
 
   // 현금흐름 차트
-  updateCashflowChart(totalIncome, monthlyPayment, daycareMonthly, elemSchoolMonthly, livingCost, otherDebtMonthly, surplus_p1, surplus_p2, surplus_p3);
+  updateCashflowChart(totalIncome, monthlyPayment, daycareMonthly, elemSchoolMonthly, livingCost, otherDebtMonthly, surplus_p2, surplus_p3);
 
-  // --- 섹션 7: 자동 배분 ---
+  // --- 섹션 6: 자동 배분 ---
   const isAutoAlloc = $('autoAllocate').checked;
   if (isAutoAlloc) {
     // 36개월 중 각 기간 길이
-    const m1 = Math.min(p1_months, 36);
-    const m2 = Math.min(p2_months, Math.max(0, 36 - m1));
-    const m3 = 36 - m1 - m2;
+    const m1 = Math.min(daycareMonths, 36);
+    const m2 = 36 - m1;
     // 최저 월 여유 (가장 빠듯한 달 기준 = 보수적 배분)
-    let minS = surplus_p3; // ③ 항상 포함
-    if (m1 > 0) minS = Math.min(minS, surplus_p1);
-    if (m2 > 0) minS = Math.min(minS, surplus_p2);
+    let minS = surplus_p3;
+    if (m1 > 0) minS = Math.min(minS, surplus_p2);
     const budget = Math.max(0, Math.floor(minS));
     // 가중평균 표시용
-    const wavg = Math.round((surplus_p1*m1 + surplus_p2*m2 + surplus_p3*m3) / 36);
+    const wavg = Math.round((surplus_p2*m1 + surplus_p3*m2) / 36);
     $('r_allocBudgetInfo').textContent =
       `최저 여유 ${fmt(budget)}만원/월 · 36개월 평균 ${fmt(wavg)}만원/월`;
     const a = autoAllocateSavings(budget);
@@ -1812,7 +1677,7 @@ function calc() {
 }
 
 // ===== 차트 =====
-function updateCashflowChart(income, loan, daycare, elemSchool, living, other, s1, s2, s3) {
+function updateCashflowChart(income, loan, daycare, elemSchool, living, other, s1, s2) {
   const ctx = $('cashflowChart').getContext('2d');
   if (cashflowChart) cashflowChart.destroy();
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -1821,14 +1686,14 @@ function updateCashflowChart(income, loan, daycare, elemSchool, living, other, s
   cashflowChart = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: ['① 영유기간1\n(영유비 포함)', '② 영유기간2\n(영유비 직납)', '③ 영유기간 후\n(초등)'],
+      labels: ['① 영유기간\n(직납)', '② 영유기간 후\n(초등)'],
       datasets: [
-        { label: '주담대',     data: [loan,  loan,     loan],     backgroundColor: '#ef4444' },
-        { label: '영유비(직납)', data: [0,     daycare,  0],        backgroundColor: '#f59e0b' },
-        { label: '초등교육비',  data: [0,     0,        elemSchool], backgroundColor: '#f97316' },
-        { label: '생활비',     data: [living, living,  living],   backgroundColor: '#8b5cf6' },
-        { label: '기타부채',   data: [other,  other,   other],    backgroundColor: '#94a3b8' },
-        { label: '월 여유',    data: [s1,     s2,      s3],       backgroundColor: '#10b981' },
+        { label: '주담대',     data: [loan,    loan],       backgroundColor: '#ef4444' },
+        { label: '영유비(직납)', data: [daycare, 0],         backgroundColor: '#f59e0b' },
+        { label: '초등교육비',  data: [0,       elemSchool], backgroundColor: '#f97316' },
+        { label: '생활비',     data: [living,  living],     backgroundColor: '#8b5cf6' },
+        { label: '기타부채',   data: [other,   other],      backgroundColor: '#94a3b8' },
+        { label: '월 여유',    data: [s1,      s2],         backgroundColor: '#10b981' },
       ]
     },
     options: {
@@ -1932,7 +1797,6 @@ loadInputs(); // 저장된 값 복원
 calc();
 fetchCryptoPrices();
 // 기본 접힘 섹션
-toggleSection('sec5');
 toggleSection('sec9');
 </script>
 </body>

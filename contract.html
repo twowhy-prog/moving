@@ -490,6 +490,53 @@
         </div>
       </div>
     </div>
+    <!-- 인테리어 계약 납부 일정 -->
+    <div style="border:1px solid var(--border);border-left:3px solid #8b5cf6;border-radius:6px;padding:10px 12px;margin-bottom:0;background:rgba(139,92,246,.04)">
+      <div style="font-size:11px;font-weight:700;color:#6d28d9;margin-bottom:8px">🎨 인테리어 계약 납부 일정</div>
+      <div class="grid-4">
+        <div class="field">
+          <label>계약금 (만원)</label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('interiorDeposit', -100)">▼</button>
+            <input type="number" id="interiorDeposit" value="0" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('interiorDeposit', 100)">▲</button>
+          </div>
+          <div class="field" style="margin-top:4px;margin-bottom:0">
+            <label style="font-size:10px">계약일</label>
+            <input type="date" id="date_interior_contract" onchange="calc()" style="width:100%;padding:3px 6px;font-size:11px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--sub)">
+          </div>
+        </div>
+        <div class="field">
+          <label>중도금 (만원)</label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('interiorInterim', -100)">▼</button>
+            <input type="number" id="interiorInterim" value="0" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('interiorInterim', 100)">▲</button>
+          </div>
+          <div class="field" style="margin-top:4px;margin-bottom:0">
+            <label style="font-size:10px">중도금일</label>
+            <input type="date" id="date_interior_interim" onchange="calc()" style="width:100%;padding:3px 6px;font-size:11px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--sub)">
+          </div>
+        </div>
+        <div class="field">
+          <label>잔금 (만원)</label>
+          <div class="field-adjust">
+            <button class="adjust-btn" onclick="adjustValue('interiorBalance', -100)">▼</button>
+            <input type="number" id="interiorBalance" value="0" oninput="calc()">
+            <button class="adjust-btn" onclick="adjustValue('interiorBalance', 100)">▲</button>
+          </div>
+          <div class="field" style="margin-top:4px;margin-bottom:0">
+            <label style="font-size:10px">잔금일</label>
+            <input type="date" id="date_interior_balance" onchange="calc()" style="width:100%;padding:3px 6px;font-size:11px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--sub)">
+          </div>
+        </div>
+        <div class="field">
+          <label style="font-weight:600;color:var(--text)">인테리어 합계</label>
+          <div style="padding:7px 10px;background:var(--input-bg);border-radius:6px;border:1px solid var(--border);font-size:14px;font-weight:600;color:#8b5cf6" id="r_interiorTotal">-</div>
+          <div style="font-size:10px;color:var(--sub);margin-top:4px">* 잔금 후 수리비와 별도 항목</div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- ===== 섹션 1: 단계별 자금 흐름 ===== -->
@@ -686,6 +733,10 @@
             <span class="lbl">추가 납부</span>
             <span class="amt amt-out" id="t_buy_contract_add">-</span>
           </div>
+          <div class="txn-row" id="t_buy_interior_dep_row" style="opacity:0.4">
+            <span class="lbl">🎨 인테리어 계약금</span>
+            <span class="amt amt-neg" id="t_buy_interior_dep">-</span>
+          </div>
           <div class="txn-subtotal">
             <span>지급 누계</span>
             <span class="amt-out" id="t_buy_contract_cum">-</span>
@@ -711,6 +762,10 @@
         </div>
         <div class="txn-cell" id="ct_buy_interim_cell">
           <div id="ct_buy_interim_content"><div class="txn-na">— 없음</div></div>
+          <div class="txn-row" id="t_buy_interior_int_row" style="opacity:0.4">
+            <span class="lbl">🎨 인테리어 중도금</span>
+            <span class="amt amt-neg" id="t_buy_interior_int">-</span>
+          </div>
           <div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--border)">
             <div class="txn-row">
               <span class="lbl" style="font-weight:600">①+③+④ 누계</span>
@@ -815,6 +870,10 @@
             <span class="lbl">수리비</span>
             <span class="amt amt-neg" id="t_buy_renovation">-</span>
           </div>
+          <div class="txn-row" id="t_buy_interior_bal_row" style="opacity:0.4">
+            <span class="lbl">🎨 인테리어 잔금</span>
+            <span class="amt amt-neg" id="t_buy_interior_bal">-</span>
+          </div>
           <div class="txn-subtotal">
             <span>단계 소계</span>
             <span id="t_buy_net">-</span>
@@ -894,6 +953,7 @@
           <div class="net-row"><span style="color:var(--sub)">— 등기비</span><span id="nr_buy_reg" style="color:var(--red)">-</span></div>
           <div class="net-row"><span style="color:var(--sub)">— 입주비</span><span id="nr_buy_movein" style="color:var(--red)">-</span></div>
           <div class="net-row"><span style="color:var(--sub)">— 수리비</span><span id="nr_buy_renovation" style="color:var(--red)">-</span></div>
+          <div class="net-row" id="nr_interior_row"><span style="color:var(--sub)">— 인테리어 계약</span><span id="nr_buy_interior" style="color:var(--red)">-</span></div>
           <div class="net-total"><span>매수 총 지출</span><span id="nr_buy_net" style="color:var(--red)">-</span></div>
         </div>
       </div>
@@ -916,6 +976,10 @@
         <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px">
           <span style="color:var(--sub)">— 매수 총 지출</span>
           <span id="final_buy_net" style="color:var(--red);font-weight:600">-</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px">
+          <span style="color:var(--sub)">— 인테리어 계약 합계</span>
+          <span id="final_interior" style="color:var(--red);font-weight:600">-</span>
         </div>
         <div style="display:flex;justify-content:space-between;padding:8px 0 2px;font-weight:700;font-size:15px;border-top:2px solid var(--border);margin-top:4px">
           <span>이사 후 잔여 현금</span>
@@ -970,10 +1034,12 @@ const CT_INPUT_IDS = [
   'refBuyDeposit','buyInterim1','buyInterim2','buyInterim3',
   'ctSaleDeposit1','ctSaleDeposit2','ctDeposit1',
   'ct1XrpQty','ct1BtcQty','ct2XrpQty','ct2BtcQty','ct3XrpQty','ct3BtcQty','ctCryptoEtc',
+  'interiorDeposit','interiorInterim','interiorBalance',
 ];
 const CT_DATE_IDS = [
   'date_stage1','date_stageYak','date_stage2','date_stage3','date_stage5',
   'date_sell_interim1','date_sell_interim2','date_buy_interim1','date_buy_interim2','date_buy_interim3',
+  'date_interior_contract','date_interior_interim','date_interior_balance',
 ];
 
 // finance_inputs_v1 → contract 필드 매핑
@@ -1263,6 +1329,14 @@ function calc() {
   const refBondFee         = val('refBondFee');
   const buyCost            = refAcqTax + refBuyFee + refRegFee + refMoveinCost + refRenovationCost + refBondFee;
 
+  // 인테리어 계약 납부 일정
+  const interiorDeposit = val('interiorDeposit');
+  const interiorInterim = val('interiorInterim');
+  const interiorBalance = val('interiorBalance');
+  const interiorTotal   = interiorDeposit + interiorInterim + interiorBalance;
+
+  $('r_interiorTotal').textContent = fmt(interiorTotal) + ' 만원';
+
   // 합계 표시
   $('r_saleCostTotal').textContent = fmt(saleCost) + ' 만원';
   $('r_buyCostTotal').textContent  = fmt(buyCost)  + ' 만원';
@@ -1384,7 +1458,7 @@ function calc() {
   const buyEquityTotal = buyPrice + buyCost;
 
   // 이사 후 잔여 = (매도 실수령 + 주담대) − 매수 총 지출
-  const remainder = sellNet - buyEquityTotal;
+  const remainder = sellNet - buyEquityTotal - interiorTotal;
 
   // 세입자 누계 체크 (상단 박스) — buyCumTotal3 재사용
   const cumEl  = $('tenant_cumTotal');
@@ -1451,9 +1525,14 @@ function calc() {
   $('t_buy_contract').textContent      = fmt(buyContract) + ' 만원';
   $('t_buy_earnest2').textContent      = fmt(ctDeposit1) + ' 만원';
   $('t_buy_contract_add').textContent  = '−' + fmt(buyContractAdd) + ' 만원';
+  // 인테리어 계약금
+  const intDepEl = $('t_buy_interior_dep');
+  if (intDepEl) intDepEl.textContent = '−' + fmt(interiorDeposit) + ' 만원';
+  const intDepRow = $('t_buy_interior_dep_row');
+  if (intDepRow) intDepRow.style.opacity = interiorDeposit > 0 ? '1' : '0.3';
   $('t_buy_contract_cum').textContent  = '−' + fmt(buyContract) + ' 만원';
   // ③ 매도-매수 순 잔액
-  const stage3Net = sellContractCum - buyContract;
+  const stage3Net = sellContractCum - buyContract - interiorDeposit;
   const net3El = $('t_stage3_net');
   if (net3El) {
     if (stage3Net >= 0) {
@@ -1490,7 +1569,7 @@ function calc() {
     chkEl.style.background = '#fef2f2'; chkEl.style.color = 'var(--red)';
   }
   // ④ 매도 누계 vs 매수 누계 순잔액
-  const stage4Net = sellCumTotal3 - buyCumTotal3;
+  const stage4Net = sellCumTotal3 - buyCumTotal3 - interiorInterim;
   const net4El = $('t_stage4_net');
   if (net4El) {
     if (stage4Net >= 0) {
@@ -1538,6 +1617,12 @@ function calc() {
       `<div class="txn-na">— 없음</div><div class="txn-note">중도금 없이 잔금 직결.</div>`;
   }
 
+  // 인테리어 중도금
+  const intIntEl = $('t_buy_interior_int');
+  if (intIntEl) intIntEl.textContent = '−' + fmt(interiorInterim) + ' 만원';
+  const intIntRow = $('t_buy_interior_int_row');
+  if (intIntRow) intIntRow.style.opacity = interiorInterim > 0 ? '1' : '0.3';
+
   // 크립토 2차
   $('t_sell_crypto2').textContent = '+' + fmt(crypto2) + ' 만원';
   $('t_sell_crypto2_row').style.opacity = crypto2 > 0 ? '1' : '0.3';
@@ -1582,6 +1667,11 @@ function calc() {
   $('t_buy_reg').textContent     = '−' + fmt(refRegFee)    + ' 만원';
   $('t_buy_movein').textContent      = '−' + fmt(refMoveinCost)      + ' 만원';
   $('t_buy_renovation').textContent  = '−' + fmt(refRenovationCost)  + ' 만원';
+  // 인테리어 잔금
+  const intBalEl = $('t_buy_interior_bal');
+  if (intBalEl) intBalEl.textContent = '−' + fmt(interiorBalance) + ' 만원';
+  const intBalRow = $('t_buy_interior_bal_row');
+  if (intBalRow) intBalRow.style.opacity = interiorBalance > 0 ? '1' : '0.3';
   const buyNetEl = $('t_buy_net');
   buyNetEl.textContent = '−' + fmt(buyCost) + ' 만원';
   buyNetEl.className   = 'amt-neg';
@@ -1618,7 +1708,7 @@ function calc() {
 
   // 취득세는 잔금일로부터 60일 이내 납부 → 잔금일 즉시 지출에서 제외
   const buyCostImmediate = buyCost - refAcqTax;
-  const balanceDayNet = sellBalance - buyBalance + newLoan + crypto3 - debt - saleCost - buyCostImmediate;
+  const balanceDayNet = sellBalance - buyBalance + newLoan + crypto3 - debt - saleCost - buyCostImmediate - interiorBalance;
   const scBal = $('sc_balance');
   scBal.textContent = (balanceDayNet >= 0 ? '+' : '−') + fmt(Math.abs(balanceDayNet));
   scBal.style.color = balanceDayNet >= 0 ? 'var(--green)' : 'var(--red)';
@@ -1663,6 +1753,11 @@ function calc() {
   $('nr_buy_reg').textContent     = '−' + fmt(refRegFee)     + ' 만원';
   $('nr_buy_movein').textContent      = '−' + fmt(refMoveinCost)     + ' 만원';
   $('nr_buy_renovation').textContent  = '−' + fmt(refRenovationCost) + ' 만원';
+  // 인테리어
+  const nrIntEl = $('nr_buy_interior');
+  if (nrIntEl) nrIntEl.textContent = (interiorTotal > 0 ? '−' + fmt(interiorTotal) : '—') + ' 만원';
+  const nrIntRow = $('nr_interior_row');
+  if (nrIntRow) nrIntRow.style.opacity = interiorTotal > 0 ? '1' : '0.4';
   $('nr_buy_net').textContent = fmt(buyEquityTotal) + ' 만원';
 
   // 최종 정산
@@ -1670,6 +1765,8 @@ function calc() {
   $('nr_buy_loan').textContent    = '+' + fmt(newLoan) + ' 만원';
   $('nr_crypto').textContent      = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? '+' + fmt(cryptoProceeds) : `+${fmt(ctEtcVal)} + α`) + ' 만원 (1+2+3차)';
   $('final_buy_net').textContent  = fmt(buyEquityTotal) + ' 만원';
+  const finalIntEl = $('final_interior');
+  if (finalIntEl) finalIntEl.textContent = (interiorTotal > 0 ? '−' + fmt(interiorTotal) : '—') + ' 만원';
   const remEl = $('final_remainder');
   remEl.textContent = fmt(remainder) + ' 만원';
   remEl.style.color = remainder >= 0 ? 'var(--green)' : 'var(--red)';
