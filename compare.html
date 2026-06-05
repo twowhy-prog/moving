@@ -788,23 +788,23 @@ async function loadPriceData() {
     const months = recentMonths(12);
     const xmls = await Promise.all(months.map(m => fetchMolitMonth(APT.lawdCd, m).catch(() => null)));
 
-    const p25 = xmls.map(x => x ? parseMolitXml(x, APT.aptKw, 55, 67,  APT.umdNm) : null);
-    const p33 = xmls.map(x => x ? parseMolitXml(x, APT.aptKw, 80, 92,  APT.umdNm) : null);
-    const p43 = xmls.map(x => x ? parseMolitXml(x, APT.aptKw, 108, 122, APT.umdNm) : null);
+    const p18 = xmls.map(x => x ? parseMolitXml(x, APT.aptKw, 55, 67,  APT.umdNm) : null);
+    const p25 = xmls.map(x => x ? parseMolitXml(x, APT.aptKw, 80, 92,  APT.umdNm) : null);
+    const p34 = xmls.map(x => x ? parseMolitXml(x, APT.aptKw, 108, 122, APT.umdNm) : null);
     const labels = months.map(m => `${m.slice(0,4)}.${m.slice(4)}`);
 
     chartPrice.data.labels = labels;
-    chartPrice.data.datasets[0].data = p25;
-    chartPrice.data.datasets[1].data = p33;
-    chartPrice.data.datasets[2].data = p43;
+    chartPrice.data.datasets[0].data = p18;
+    chartPrice.data.datasets[1].data = p25;
+    chartPrice.data.datasets[2].data = p34;
     chartPrice.update();
 
+    const c18 = p18.filter(v=>v!==null).length;
     const c25 = p25.filter(v=>v!==null).length;
-    const c33 = p33.filter(v=>v!==null).length;
-    const c43 = p43.filter(v=>v!==null).length;
-    const total = c25 + c33 + c43;
+    const c34 = p34.filter(v=>v!==null).length;
+    const total = c18 + c25 + c34;
     document.getElementById('price-info').textContent =
-      `거래 확인 — 25평: ${c25}개월 / 33평: ${c33}개월 / 43평: ${c43}개월 (거래 없는 월은 공백)`;
+      `거래 확인 — 18평: ${c18}개월 / 25평: ${c25}개월 / 34평: ${c34}개월 (거래 없는 월은 공백)`;
     setStatus('st-price', total>0?'live':'error', `💰 실거래가 ${total>0?'✅':'❌'}`);
     setTag('tag-price', total>0?'live':'sample', total>0?'실데이터':'데이터 없음');
 
@@ -831,7 +831,7 @@ async function loadPriceData() {
       apiTxRows.sort((a, b) => b.month.localeCompare(a.month) || b.price - a.price);
       const tbody = document.getElementById('price-tx-body');
       apiTxRows.slice(0, 6).forEach(r => {
-        const py = r.area < 67 ? '25평' : r.area < 92 ? '33평' : r.area < 122 ? '43평' : `${Math.round(r.area/3.3)}평`;
+        const py = r.area < 67 ? '18평' : r.area < 92 ? '25평' : r.area < 122 ? '34평' : `${Math.round(r.area/3.3)}평`;
         const color = r.area < 67 ? '#94a3b8' : r.area < 92 ? '#7c3aed' : '#0891b2';
         const tr = document.createElement('tr');
         tr.innerHTML = `
@@ -897,24 +897,24 @@ async function loadAirData() {
 function initCharts() {
   const months12 = recentMonths(12).map(m => `${m.slice(0,4)}.${m.slice(4)}`);
 
-  // 실거래가 (샘플 — API 성공 시 교체됨)
-  const s25  = months12.map((_,i) => +(9.5 + i*0.05 + Math.sin(i*.5)*.2).toFixed(2));
-  const s33  = months12.map((_,i) => +(12.5 + i*0.07 + Math.sin(i*.6)*.3).toFixed(2));
-  const s43  = months12.map((_,i) => +(13.0 + i*0.08 + Math.sin(i*.6)*.3).toFixed(2));
+  // 실거래가 (샘플 — API 성공 시 교체됨, 실제 시세 기준)
+  const s18  = months12.map((_,i) => +(14.3 + i*0.02 + Math.sin(i*.5)*.15).toFixed(2));
+  const s25  = months12.map((_,i) => +(16.1 + i*0.03 + Math.sin(i*.6)*.18).toFixed(2));
+  const s34  = months12.map((_,i) => +(16.6 + i*0.02 + Math.sin(i*.5)*.15).toFixed(2));
   chartPrice = new Chart(document.getElementById('priceChart'), {
     type: 'line',
     data: {
       labels: months12,
       datasets: [
-        { label:'25평 (59㎡)', data:s25, borderColor:'#94a3b8', backgroundColor:'rgba(148,163,184,.1)', fill:true, tension:.4, pointRadius:3, spanGaps:true },
-        { label:'33평 (84㎡)', data:s33, borderColor:'#7c3aed', backgroundColor:'rgba(124,58,237,.1)',  fill:true, tension:.4, pointRadius:3, spanGaps:true, borderWidth:2.5 },
-        { label:'43평 (114㎡) — 실계약', data:s43, borderColor:'#0891b2', backgroundColor:'rgba(8,145,178,.1)', fill:true, tension:.4, pointRadius:4, spanGaps:true, borderWidth:3 },
+        { label:'18평 (59㎡)', data:s18, borderColor:'#94a3b8', backgroundColor:'rgba(148,163,184,.1)', fill:true, tension:.4, pointRadius:3, spanGaps:true },
+        { label:'25평 (84㎡)', data:s25, borderColor:'#7c3aed', backgroundColor:'rgba(124,58,237,.1)',  fill:true, tension:.4, pointRadius:3, spanGaps:true, borderWidth:2.5 },
+        { label:'34평 (114㎡)', data:s34, borderColor:'#0891b2', backgroundColor:'rgba(8,145,178,.1)', fill:true, tension:.4, pointRadius:4, spanGaps:true, borderWidth:3 },
       ],
     },
     options: {
       responsive:true, maintainAspectRatio:false,
       plugins:{ legend:{ position:'top' }, tooltip:{ callbacks:{ label: c => ` ${c.dataset.label}: ${c.parsed.y}억` } } },
-      scales:{ y:{ title:{ display:true, text:'실거래가 (억원)' }, min:7 } },
+      scales:{ y:{ title:{ display:true, text:'실거래가 (억원)' }, min:13 } },
     },
   });
 
