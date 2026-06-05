@@ -804,7 +804,7 @@ async function loadPriceData() {
     const c34 = p34.filter(v=>v!==null).length;
     const total = c18 + c25 + c34;
     document.getElementById('price-info').textContent =
-      `거래 확인 — 18평: ${c18}개월 / 25평: ${c25}개월 / 34평: ${c34}개월 (거래 없는 월은 공백)`;
+      `거래 확인 — 25평: ${c18}개월 / 33평: ${c25}개월 / 43평: ${c34}개월 (거래 없는 월은 공백)`;
     setStatus('st-price', total>0?'live':'error', `💰 실거래가 ${total>0?'✅':'❌'}`);
     setTag('tag-price', total>0?'live':'sample', total>0?'실데이터':'데이터 없음');
 
@@ -831,7 +831,7 @@ async function loadPriceData() {
       apiTxRows.sort((a, b) => b.month.localeCompare(a.month) || b.price - a.price);
       const tbody = document.getElementById('price-tx-body');
       apiTxRows.slice(0, 6).forEach(r => {
-        const py = r.area < 67 ? '18평' : r.area < 92 ? '25평' : r.area < 122 ? '34평' : `${Math.round(r.area/3.3)}평`;
+        const py = r.area < 67 ? '25평' : r.area < 92 ? '33평' : r.area < 122 ? '43평' : `${Math.round(r.area/3.3)}평`;
         const color = r.area < 67 ? '#94a3b8' : r.area < 92 ? '#7c3aed' : '#0891b2';
         const tr = document.createElement('tr');
         tr.innerHTML = `
@@ -906,9 +906,9 @@ function initCharts() {
     data: {
       labels: months12,
       datasets: [
-        { label:'18평 (59㎡)', data:s18, borderColor:'#94a3b8', backgroundColor:'rgba(148,163,184,.1)', fill:true, tension:.4, pointRadius:3, spanGaps:true },
-        { label:'25평 (84㎡)', data:s25, borderColor:'#7c3aed', backgroundColor:'rgba(124,58,237,.1)',  fill:true, tension:.4, pointRadius:3, spanGaps:true, borderWidth:2.5 },
-        { label:'34평 (114㎡)', data:s34, borderColor:'#0891b2', backgroundColor:'rgba(8,145,178,.1)', fill:true, tension:.4, pointRadius:4, spanGaps:true, borderWidth:3 },
+        { label:'25평 (전용 59㎡)', data:s18, borderColor:'#94a3b8', backgroundColor:'rgba(148,163,184,.1)', fill:true, tension:.4, pointRadius:3, spanGaps:true },
+        { label:'33평 (전용 84㎡)', data:s25, borderColor:'#7c3aed', backgroundColor:'rgba(124,58,237,.1)',  fill:true, tension:.4, pointRadius:3, spanGaps:true, borderWidth:2.5 },
+        { label:'43평 (전용 114㎡)', data:s34, borderColor:'#0891b2', backgroundColor:'rgba(8,145,178,.1)', fill:true, tension:.4, pointRadius:4, spanGaps:true, borderWidth:3 },
       ],
     },
     options: {
