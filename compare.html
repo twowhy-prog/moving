@@ -750,7 +750,8 @@ function parseMolitXml(xml, aptKw, areaMin=60, areaMax=130, umdNm='') {
 }
 
 async function debugMolit() {
-  const ym = recentMonths(1)[0];
+  const months = recentMonths(6);
+  const ym = months[2]; // 3개월 전 (데이터 완성도 높음)
   console.log(`[MOLIT DEBUG] 조회: lawdCd=${APT.lawdCd}, 월=${ym}`);
   try {
     const xml = await fetchMolitMonth(APT.lawdCd, ym);
@@ -768,9 +769,14 @@ async function debugMolit() {
     });
     // 신동아 키워드 포함 항목 우선 출력
     const matched = rows.filter(r => r.aptNm.includes('신동아') || r.aptNm.includes('리버파크'));
-    console.log('[MOLIT DEBUG] "신동아"/"리버파크" 포함 항목:', matched);
-    console.table(matched.length ? matched : rows.slice(0,30));
-    alert(`총 ${items.length}건 응답, "신동아"/"리버파크" 매칭: ${matched.length}건\nF12 콘솔에서 상세 확인하세요.`);
+    const noryangjin = rows.filter(r => r.umdNm === '노량진동');
+    console.log(`[MOLIT DEBUG] 조회 월: ${ym}, 총 ${items.length}건`);
+    console.log('[MOLIT DEBUG] "신동아"/"리버파크" 포함:', matched);
+    console.log('[MOLIT DEBUG] 노량진동 전체 거래:', noryangjin);
+    console.log('[MOLIT DEBUG] 동작구 전체 aptNm 목록:', [...new Set(rows.map(r=>r.aptNm))].sort());
+    console.table(noryangjin.length ? noryangjin : rows.slice(0,50));
+    const aptNames = [...new Set(rows.map(r=>r.aptNm))].sort().join('\n');
+    alert(`총 ${items.length}건 응답\n노량진동: ${noryangjin.length}건, "신동아"/"리버파크": ${matched.length}건\n\n[동작구 전체 아파트명]\n${aptNames}`);
   } catch(e) {
     console.error('[MOLIT DEBUG] 실패:', e);
     alert('API 호출 실패: ' + e.message);
