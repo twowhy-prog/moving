@@ -1551,9 +1551,9 @@ function calc() {
   $('s_saleNet').textContent   = fmt(saleGross);
 
   $('s_buyPrice').textContent  = fmt(buyPrice) + ' 만원';
-  $('s_buyCost').textContent   = fmt(buyCostTotal);
+  $('s_buyCost').textContent   = fmt(buyCostBase);
 
-  const gap    = buyCostTotal - saleGross;
+  const gap    = buyCostBase - saleGross;
   const gapEl  = $('s_gap');
   gapEl.textContent  = (gap > 0 ? '' : '+') + fmt(-gap) + ' 만원';
   gapEl.className    = gap > 0 ? 'value color-red' : 'value color-green';
