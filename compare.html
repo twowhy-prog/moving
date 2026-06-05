@@ -427,6 +427,10 @@ const CATS = [
     <span class="tag tag-loading" id="tag-price" style="margin-left:auto">로딩중…</span>
   </div>
   <div id="price-info" style="font-size:12px;color:var(--muted);margin-bottom:10px">데이터를 불러오는 중입니다…</div>
+  <div style="margin-bottom:10px">
+    <button class="btn" style="font-size:11px;padding:3px 10px;background:#f1f5f9;color:#334155;border:1px solid #cbd5e1" onclick="debugMolit()">🔍 API 원본 조회 (콘솔 확인)</button>
+    <span style="font-size:11px;color:var(--muted);margin-left:8px">F12 콘솔에서 aptNm·umdNm·면적 확인</span>
+  </div>
   <div class="chart-wrap-tall"><canvas id="priceChart"></canvas></div>
 
   <!-- 하드코딩 확인 거래 -->
@@ -743,6 +747,34 @@ function parseMolitXml(xml, aptKw, areaMin=60, areaMax=130, umdNm='') {
   prices.sort((a,b)=>a-b);
   const mid = prices[Math.floor(prices.length / 2)];
   return +(mid / 10000).toFixed(2);
+}
+
+async function debugMolit() {
+  const ym = recentMonths(1)[0];
+  console.log(`[MOLIT DEBUG] 조회: lawdCd=${APT.lawdCd}, 월=${ym}`);
+  try {
+    const xml = await fetchMolitMonth(APT.lawdCd, ym);
+    const items = xml.querySelectorAll('item');
+    console.log(`[MOLIT DEBUG] 총 ${items.length}건 응답`);
+    const rows = [];
+    items.forEach(item => {
+      rows.push({
+        aptNm:  (item.querySelector('aptNm')?.textContent  ?? '').trim(),
+        umdNm:  (item.querySelector('umdNm')?.textContent  ?? '').trim(),
+        area:   parseFloat(item.querySelector('excluUseAr')?.textContent ?? '0'),
+        price:  (item.querySelector('dealAmount')?.textContent ?? '').trim(),
+        floor:  (item.querySelector('floor')?.textContent  ?? '').trim(),
+      });
+    });
+    // 신동아 키워드 포함 항목 우선 출력
+    const matched = rows.filter(r => r.aptNm.includes('신동아') || r.aptNm.includes('리버파크'));
+    console.log('[MOLIT DEBUG] "신동아"/"리버파크" 포함 항목:', matched);
+    console.table(matched.length ? matched : rows.slice(0,30));
+    alert(`총 ${items.length}건 응답, "신동아"/"리버파크" 매칭: ${matched.length}건\nF12 콘솔에서 상세 확인하세요.`);
+  } catch(e) {
+    console.error('[MOLIT DEBUG] 실패:', e);
+    alert('API 호출 실패: ' + e.message);
+  }
 }
 
 async function loadPriceData() {
