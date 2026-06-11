@@ -590,35 +590,10 @@
         </div>
       </div>
 
-      <!-- 가계약금 입력 -->
-      <div class="grid-2" style="margin-bottom:8px">
-        <div>
-          <div class="field">
-            <label>매도 약정계약금 1차 (만원)</label>
-            <div class="field-adjust">
-              <button class="adjust-btn" onclick="adjustValue('ctSaleDeposit1', -500)">▼</button>
-              <input type="number" id="ctSaleDeposit1" value="5000" oninput="calc()">
-              <button class="adjust-btn" onclick="adjustValue('ctSaleDeposit1', 500)">▲</button>
-            </div>
-          </div>
-          <div class="field">
-            <label>매도 약정계약금 2차 (만원) <small style="color:var(--sub)">약정서 작성 시</small></label>
-            <div class="field-adjust">
-              <button class="adjust-btn" onclick="adjustValue('ctSaleDeposit2', -500)">▼</button>
-              <input type="number" id="ctSaleDeposit2" value="5000" oninput="calc()">
-              <button class="adjust-btn" onclick="adjustValue('ctSaleDeposit2', 500)">▲</button>
-            </div>
-          </div>
-        </div>
-        <div class="field">
-          <label>매수 가계약금 지급 (만원)</label>
-          <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('ctDeposit1', -500)">▼</button>
-            <input type="number" id="ctDeposit1" value="5000" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('ctDeposit1', 500)">▲</button>
-          </div>
-        </div>
-      </div>
+      <!-- 가계약금 (고정값 — 입력 불필요) -->
+      <input type="hidden" id="ctSaleDeposit1" value="5000">
+      <input type="hidden" id="ctSaleDeposit2" value="5000">
+      <input type="hidden" id="ctDeposit1" value="5000">
 
       <!-- 세입자 전세보증금 (세입자 없음) -->
       <div style="background:var(--input-bg);border-radius:8px;padding:12px 14px;margin-bottom:12px;border-left:3px solid var(--border);opacity:0.6">
@@ -1027,7 +1002,7 @@ const CT_INPUT_IDS = [
   'refAcqTax','refBuyFee','refRegFee','refMoveinCost','refRenovationCost','refBondFee',
   'refSaleDeposit','saleInterim1','saleInterim2',
   'refBuyDeposit','buyInterim1','buyInterim2',
-  'ctSaleDeposit1','ctSaleDeposit2','ctDeposit1',
+  'ctDeposit1',
   'ct1XrpQty','ct1BtcQty','ct2XrpQty','ct2BtcQty','ct3XrpQty','ct3BtcQty','ctCryptoEtc',
   'interiorDeposit','interiorInterim','interiorBalance',
 ];
