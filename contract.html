@@ -214,11 +214,19 @@
         </div>
       </div>
       <div class="field">
-        <label>기존 부채 합계 — 잔금일 상환 (만원)</label>
+        <label>기존 부채 — 잔금일(9/4) 상환 (만원)</label>
         <div class="field-adjust">
           <button class="adjust-btn" onclick="adjustValue('refDebt', -500)">▼</button>
-          <input type="number" id="refDebt" value="36200" oninput="calc()">
+          <input type="number" id="refDebt" value="27000" oninput="calc()">
           <button class="adjust-btn" onclick="adjustValue('refDebt', 500)">▲</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>기존 부채 — 별도 상환 (만원)</label>
+        <div class="field-adjust">
+          <button class="adjust-btn" onclick="adjustValue('refDebtOther', -500)">▼</button>
+          <input type="number" id="refDebtOther" value="8600" oninput="calc()">
+          <button class="adjust-btn" onclick="adjustValue('refDebtOther', 500)">▲</button>
         </div>
       </div>
       <div class="field">
@@ -839,8 +847,12 @@
         <div class="txn-stage-label" id="stage6" onclick="toggleStage('stage6')" style="cursor:pointer">⑥ 잔금 후 처리 — 당일 자금 정산 <span id="stage6_date" class="stage-date-badge"></span><span class="stage-toggle-icon">▼</span><button class="stage-done-btn" id="cbtn_stage6" onclick="event.stopPropagation();toggleComplete('stage6')">□ 완료 처리</button><span class="badge badge-blue" id="badge_stage6" style="margin-left:6px">예정</span></div>
         <div class="txn-cell sell">
           <div class="txn-row">
-            <span class="lbl">기존 부채 상환</span>
+            <span class="lbl">기존 부채 상환 (잔금일)</span>
             <span class="amt amt-neg" id="t_sell_debt">-</span>
+          </div>
+          <div class="txn-row" id="t_sell_debt_other_row" style="opacity:0.4">
+            <span class="lbl">기존 부채 상환 (별도)</span>
+            <span class="amt amt-neg" id="t_sell_debt_other">-</span>
           </div>
           <div class="txn-row">
             <span class="lbl">양도세+지방소득세</span>
@@ -1049,7 +1061,7 @@ async function fetchCtCryptoPrices() {
 // ── localStorage ──
 const CT_SAVE_KEY = 'contract_inputs_v1';
 const CT_INPUT_IDS = [
-  'refSalePrice','refAcqCost','refBuyPrice','refDebt','refNewLoan',
+  'refSalePrice','refAcqCost','refBuyPrice','refDebt','refDebtOther','refNewLoan',
   'refTransferTax','refSaleFee','refMoveCost',
   'refAcqTax','refBuyFee','refRegFee','refMoveinCost','refBondFee',
   'refSaleDeposit','saleInterim1','saleInterim2',
@@ -1089,13 +1101,15 @@ function _applyFinanceData(d, silent) {
   });
   if (d._currentLoan && $('refNewLoan')) $('refNewLoan').value = d._currentLoan;
   if (d._currentTransferTax !== undefined && $('refTransferTax')) $('refTransferTax').value = d._currentTransferTax;
-  // 부채 합계 → refDebt (체크박스 상태 반영)
+  // 부채 합계 → refDebt(잔금일분) + refDebtOther(별도분) 으로 배분
   if ($('refDebt') && d.debtMortgage !== undefined) {
     const _m  = parseFloat(d.debtMortgage) || 0;
     const _ma = d.debt_maton !== false ? (parseFloat(d.debtMaton) || 0) : 0;
     const _e  = d.debt_etc   !== false ? (parseFloat(d.debtEtc)   || 0) : 0;
     const _c  = d.debt_car   !== false ? (parseFloat(d.debtCar)   || 0) : 0;
-    $('refDebt').value = _m + _ma + _e + _c;
+    const _totalDebt = _m + _ma + _e + _c;
+    const _balanceDebt = val('refDebt') || 0;  // 사용자가 설정한 잔금일 상환분 유지
+    $('refDebtOther').value = Math.max(0, _totalDebt - _balanceDebt);
   }
   if (!silent) {
     calc();
@@ -1336,7 +1350,9 @@ function autoBondFee() {
 function calc() {
   const salePrice        = val('refSalePrice');
   const buyPrice         = val('refBuyPrice');
-  const debt             = val('refDebt');
+  const debtBalance      = val('refDebt');       // 잔금일 상환분
+  const debtOther        = val('refDebtOther');  // 별도 상환분
+  const debt             = debtBalance + debtOther;  // 총 부채
   const newLoan          = val('refNewLoan');
 
   // 매도 비용 분리
@@ -1675,7 +1691,9 @@ function calc() {
   $('t_buy_total_cum').textContent   = '−' + fmt(buyTotalCum) + ' 만원';
 
   // ⑥ 잔금 후 처리
-  $('t_sell_debt').textContent        = '−' + fmt(debt)            + ' 만원';
+  $('t_sell_debt').textContent        = '−' + fmt(debtBalance)     + ' 만원';
+  $('t_sell_debt_other').textContent  = '−' + fmt(debtOther)       + ' 만원';
+  $('t_sell_debt_other_row').style.opacity = debtOther > 0 ? '1' : '0.4';
   $('t_sell_transfertax').textContent = '−' + fmt(refTransferTax)  + ' 만원';
   $('t_sell_fee').textContent         = '−' + fmt(refSaleFee)      + ' 만원';
   $('t_sell_move').textContent        = '−' + fmt(refMoveCost)     + ' 만원';
@@ -1744,12 +1762,12 @@ function calc() {
 
   // 취득세는 잔금일로부터 60일 이내 납부 → 잔금일 즉시 지출에서 제외
   const buyCostImmediate = buyCost - refAcqTax;
-  const balanceDayNet = sellBalance - buyBalance + newLoan + crypto3 - debt - saleCost - buyCostImmediate - interiorBalance;
+  const balanceDayNet = sellBalance - buyBalance + newLoan + crypto3 - debtBalance - saleCost - buyCostImmediate - interiorBalance;
   const scBal = $('sc_balance');
   scBal.textContent = (balanceDayNet >= 0 ? '+' : '−') + fmt(Math.abs(balanceDayNet));
   scBal.style.color = balanceDayNet >= 0 ? 'var(--green)' : 'var(--red)';
   const balIn  = sellBalance + newLoan + crypto3;
-  const balOut = buyBalance + debt + saleCost + buyCostImmediate;
+  const balOut = buyBalance + debtBalance + saleCost + buyCostImmediate;
   const cryptoNote = crypto3 > 0 ? ` (+3차크립토 ${fmt(crypto3)})` : '';
   $('sc_balance_note').innerHTML =
     `<span style="color:var(--green)">수취 +${fmt(balIn)}${cryptoNote}</span> / <span style="color:var(--red)">지출 −${fmt(balOut)}</span><br>` +
