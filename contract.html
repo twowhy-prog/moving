@@ -888,9 +888,9 @@
             <span class="lbl">입주비</span>
             <span class="amt amt-neg" id="t_buy_movein">-</span>
           </div>
-          <div class="txn-row">
-            <span class="lbl">수리비</span>
-            <span class="amt amt-neg" id="t_buy_renovation">-</span>
+          <div class="txn-row" id="t_renovation_row" style="opacity:0.4">
+            <span class="lbl">추가 비용</span>
+            <span class="amt amt-neg" id="t_buy_renovation">—</span>
           </div>
           <div class="txn-row" id="t_buy_interior_bal_row" style="opacity:0.4">
             <span class="lbl">🎨 인테리어 잔금</span>
@@ -974,7 +974,7 @@
           <div class="net-row"><span style="color:var(--sub)">— 매수 중개보수</span><span id="nr_buy_fee" style="color:var(--red)">-</span></div>
           <div class="net-row"><span style="color:var(--sub)">— 등기비</span><span id="nr_buy_reg" style="color:var(--red)">-</span></div>
           <div class="net-row"><span style="color:var(--sub)">— 입주비</span><span id="nr_buy_movein" style="color:var(--red)">-</span></div>
-          <div class="net-row"><span style="color:var(--sub)">— 수리비</span><span id="nr_buy_renovation" style="color:var(--red)">-</span></div>
+          <div class="net-row" id="nr_renovation_row" style="opacity:0.4"><span style="color:var(--sub)">— 추가 비용</span><span id="nr_buy_renovation" style="color:var(--red)">—</span></div>
           <div class="net-row" id="nr_interior_row"><span style="color:var(--sub)">— 인테리어 계약</span><span id="nr_buy_interior" style="color:var(--red)">-</span></div>
           <div class="net-total"><span>매수 총 지출</span><span id="nr_buy_net" style="color:var(--red)">-</span></div>
         </div>
@@ -1350,9 +1350,8 @@ function calc() {
   const refBuyFee        = val('refBuyFee');
   const refRegFee        = val('refRegFee');
   const refMoveinCost      = val('refMoveinCost');
-  const refRenovationCost  = val('refRenovationCost');
   const refBondFee         = val('refBondFee');
-  const buyCost            = refAcqTax + refBuyFee + refRegFee + refMoveinCost + refRenovationCost + refBondFee;
+  const buyCost            = refAcqTax + refBuyFee + refRegFee + refMoveinCost + refBondFee;
 
   // 인테리어 계약 납부 일정
   const interiorDeposit = val('interiorDeposit');
@@ -1694,8 +1693,11 @@ function calc() {
   $('t_buy_bondfee').textContent = '−' + fmt(refBondFee)   + ' 만원';
   $('t_buy_fee').textContent     = '−' + fmt(refBuyFee)    + ' 만원';
   $('t_buy_reg').textContent     = '−' + fmt(refRegFee)    + ' 만원';
-  $('t_buy_movein').textContent      = '−' + fmt(refMoveinCost)      + ' 만원';
-  $('t_buy_renovation').textContent  = '−' + fmt(refRenovationCost)  + ' 만원';
+  $('t_buy_movein').textContent = '−' + fmt(refMoveinCost) + ' 만원';
+  // 추가 비용 (추가 대금 합계)
+  $('t_buy_renovation').textContent = extraTotal > 0 ? '−' + fmt(extraTotal) + ' 만원' : '—';
+  const tRenRow = $('t_renovation_row');
+  if (tRenRow) tRenRow.style.opacity = extraTotal > 0 ? '1' : '0.4';
   // 인테리어 착수금
   const intStartupEl = $('t_buy_interior_startup');
   if (intStartupEl) intStartupEl.textContent = '−' + fmt(interiorStartup) + ' 만원';
@@ -1786,19 +1788,22 @@ function calc() {
   $('nr_buy_fee').textContent     = '−' + fmt(refBuyFee)     + ' 만원';
   $('nr_buy_reg').textContent     = '−' + fmt(refRegFee)     + ' 만원';
   $('nr_buy_movein').textContent      = '−' + fmt(refMoveinCost)     + ' 만원';
-  $('nr_buy_renovation').textContent  = '−' + fmt(refRenovationCost) + ' 만원';
-  // 인테리어
+  // 수리비 행 → 추가 비용 표시
+  $('nr_buy_renovation').textContent  = extraTotal > 0 ? '−' + fmt(extraTotal) + ' 만원' : '—';
+  const nrRenRow = $('nr_renovation_row');
+  if (nrRenRow) nrRenRow.style.opacity = extraTotal > 0 ? '1' : '0.4';
+  // 인테리어 기본 계약
   const nrIntEl = $('nr_buy_interior');
-  if (nrIntEl) nrIntEl.textContent = (interiorTotal > 0 ? '−' + fmt(interiorTotal) : '—') + ' 만원';
+  if (nrIntEl) nrIntEl.textContent = (interiorBase > 0 ? '−' + fmt(interiorBase) : '—') + ' 만원';
   const nrIntRow = $('nr_interior_row');
-  if (nrIntRow) nrIntRow.style.opacity = interiorTotal > 0 ? '1' : '0.4';
-  $('nr_buy_net').textContent = fmt(buyEquityTotal) + ' 만원';
+  if (nrIntRow) nrIntRow.style.opacity = interiorBase > 0 ? '1' : '0.4';
+  $('nr_buy_net').textContent = fmt(buyEquityTotal + interiorTotal) + ' 만원';
 
   // 최종 정산
   $('final_sell_net').textContent = fmt(sellOnlyNet) + ' 만원';
   $('nr_buy_loan').textContent    = '+' + fmt(newLoan) + ' 만원';
   $('nr_crypto').textContent      = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? '+' + fmt(cryptoProceeds) : `+${fmt(ctEtcVal)} + α`) + ' 만원 (1+2+3차)';
-  $('final_buy_net').textContent  = fmt(buyEquityTotal) + ' 만원';
+  $('final_buy_net').textContent  = fmt(buyEquityTotal + interiorTotal) + ' 만원';
   const finalIntEl = $('final_interior');
   if (finalIntEl) finalIntEl.textContent = (interiorTotal > 0 ? '−' + fmt(interiorTotal) : '—') + ' 만원';
   const remEl = $('final_remainder');
