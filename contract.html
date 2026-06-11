@@ -492,15 +492,10 @@
       <div class="grid-4">
         <div class="field">
           <label>계약금 (만원)</label>
-          <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('interiorDeposit', -100)">▼</button>
-            <input type="number" id="interiorDeposit" value="0" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('interiorDeposit', 100)">▲</button>
-          </div>
-          <div class="field" style="margin-top:4px;margin-bottom:0">
-            <label style="font-size:10px">계약일</label>
-            <input type="date" id="date_interior_contract" onchange="calc()" style="width:100%;padding:3px 6px;font-size:11px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--sub)">
-          </div>
+          <div style="padding:7px 10px;background:var(--input-bg);border-radius:6px;border:1px solid var(--border);font-size:14px;font-weight:600;color:#8b5cf6">680</div>
+          <div style="font-size:10px;color:var(--sub);margin-top:4px">계약일: 2026-06-08</div>
+          <input type="hidden" id="interiorDeposit" value="680">
+          <input type="hidden" id="date_interior_contract" value="2026-06-08">
         </div>
         <div class="field">
           <label>중도금 (만원)</label>
@@ -1004,12 +999,12 @@ const CT_INPUT_IDS = [
   'refBuyDeposit','buyInterim1','buyInterim2',
   'ctDeposit1',
   'ct1XrpQty','ct1BtcQty','ct2XrpQty','ct2BtcQty','ct3XrpQty','ct3BtcQty','ctCryptoEtc',
-  'interiorDeposit','interiorInterim','interiorBalance',
+  'interiorInterim','interiorBalance',
 ];
 const CT_DATE_IDS = [
   'date_stage1','date_stageYak','date_stage3','date_stage5',
   'date_sell_interim1','date_sell_interim2','date_buy_interim1','date_buy_interim2',
-  'date_interior_contract','date_interior_interim','date_interior_balance',
+  'date_interior_interim','date_interior_balance',
 ];
 
 // finance_inputs_v1 → contract 필드 매핑
