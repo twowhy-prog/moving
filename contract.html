@@ -1154,6 +1154,14 @@ function ctLoadInputs() {
     const data = JSON.parse(localStorage.getItem(CT_SAVE_KEY) || '{}');
     CT_INPUT_IDS.forEach(id => { const el = $(id); if (el && id in data) el.value = data[id]; });
     CT_DATE_IDS.forEach(id  => { const el = $(id); if (el && id in data && data[id]) el.value = data[id]; });
+    // 마이그레이션: 구버전 refDebt(합산) → refDebt(잔금일 27,000) + refDebtOther(나머지)
+    const debtEl = $('refDebt'), otherEl = $('refDebtOther');
+    if (debtEl && otherEl && !('refDebtOther' in data)) {
+      const total = parseFloat(debtEl.value) || 0;
+      const balDay = 27000;
+      debtEl.value  = Math.min(total, balDay);
+      otherEl.value = Math.max(0, total - balDay);
+    }
   } catch(e) {}
 }
 
