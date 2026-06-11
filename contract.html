@@ -482,11 +482,7 @@
         </div>
         <div class="field">
           <label>2차 중도금 (만원)</label>
-          <input type="number" id="buyInterim2" value="10000" oninput="calc()">
-        </div>
-        <div class="field">
-          <label>3차 중도금 (만원) <small style="color:var(--sub)">조기 퇴거 협의</small></label>
-          <input type="number" id="buyInterim3" value="10000" oninput="calc()">
+          <input type="number" id="buyInterim2" value="20000" oninput="calc()">
         </div>
       </div>
     </div>
@@ -565,7 +561,7 @@
         <div class="cs-step" onclick="scrollToStage('stage2')" style="cursor:pointer">
           <div class="cs-dot active" id="dot_stage2">⏳</div>
           <div class="cs-label active" id="lbl_stage2">토지거래허가</div>
-          <div class="cs-date"><input type="date" id="date_stage2" onchange="updateStageDate('stage2')" title="허가 결정 예정일"></div>
+          <div class="cs-date" style="font-size:11px;color:var(--sub);text-align:center">6월 첫째주</div>
         </div>
         <div class="cs-line" id="line_stage2"></div>
         <div class="cs-step" onclick="scrollToStage('stage3')" style="cursor:pointer">
@@ -584,7 +580,6 @@
             <div style="font-size:11px;color:var(--sub);margin-top:4px;margin-bottom:2px">매수</div>
             <input type="date" id="date_buy_interim1" value="2026-07-20" onchange="updateInterimDates()" title="매수 1차 중도금">
             <input type="date" id="date_buy_interim2" value="2026-08-05" onchange="updateInterimDates()" title="매수 2차 중도금">
-            <input type="date" id="date_buy_interim3" value="2026-08-10" onchange="updateInterimDates()" title="매수 3차 중도금 (조기 퇴거)">
           </div>
         </div>
         <div class="cs-line" id="line_stage4"></div>
@@ -685,7 +680,7 @@
         </div>
 
         <!-- ② 토지거래허가 -->
-        <div class="txn-stage-label" id="stage2" onclick="toggleStage('stage2')" style="cursor:pointer">② 토지거래허가 <span id="stage2_date" class="stage-date-badge"></span><span class="stage-toggle-icon">▼</span><button class="stage-done-btn" id="cbtn_stage2" onclick="event.stopPropagation();toggleComplete('stage2')">□ 완료 처리</button><span class="badge badge-yellow" id="badge_stage2" style="margin-left:6px">진행중</span></div>
+        <div class="txn-stage-label" id="stage2" onclick="toggleStage('stage2')" style="cursor:pointer">② 토지거래허가 <span id="stage2_date" class="stage-date-badge">6월 첫째주</span><span class="stage-toggle-icon">▼</span><button class="stage-done-btn" id="cbtn_stage2" onclick="event.stopPropagation();toggleComplete('stage2')">□ 완료 처리</button><span class="badge badge-yellow" id="badge_stage2" style="margin-left:6px">진행중</span></div>
         <div class="txn-cell sell">
           <div class="txn-na">— 대기</div>
           <div class="txn-note">허가 기간 중 매수자 확정 후 삼익 매도 계약 준비.</div>
@@ -1031,14 +1026,14 @@ const CT_INPUT_IDS = [
   'refTransferTax','refSaleFee','refMoveCost',
   'refAcqTax','refBuyFee','refRegFee','refMoveinCost','refRenovationCost','refBondFee',
   'refSaleDeposit','saleInterim1','saleInterim2',
-  'refBuyDeposit','buyInterim1','buyInterim2','buyInterim3',
+  'refBuyDeposit','buyInterim1','buyInterim2',
   'ctSaleDeposit1','ctSaleDeposit2','ctDeposit1',
   'ct1XrpQty','ct1BtcQty','ct2XrpQty','ct2BtcQty','ct3XrpQty','ct3BtcQty','ctCryptoEtc',
   'interiorDeposit','interiorInterim','interiorBalance',
 ];
 const CT_DATE_IDS = [
-  'date_stage1','date_stageYak','date_stage2','date_stage3','date_stage5',
-  'date_sell_interim1','date_sell_interim2','date_buy_interim1','date_buy_interim2','date_buy_interim3',
+  'date_stage1','date_stageYak','date_stage3','date_stage5',
+  'date_sell_interim1','date_sell_interim2','date_buy_interim1','date_buy_interim2',
   'date_interior_contract','date_interior_interim','date_interior_balance',
 ];
 
@@ -1167,6 +1162,7 @@ const STAGE_DEFAULTS = {
 
 // ── 날짜 입력 → 상단 타임라인 + stage-label 뱃지 업데이트 ──
 function updateStageDate(stageId) {
+  if (stageId === 'stage2') return;
   const dateVal = $('date_' + stageId)?.value;
 
   // 하단 자금흐름 섹션 날짜 뱃지
@@ -1351,7 +1347,7 @@ function calc() {
   // ── 중도금 직접 입력 ──
   const ctSaleInterim = val('saleInterim1') + val('saleInterim2'); // 1차+2차 합계
   const sellInterim   = ctSaleInterim;
-  const ctInterim     = val('buyInterim1') + val('buyInterim2') + val('buyInterim3');   // 1차+2차+3차 합계
+  const ctInterim     = val('buyInterim1') + val('buyInterim2');   // 1차+2차 합계
   const buyInterim    = ctInterim;
 
   // ── 크립토 (1차: 실계약 / 2차: 3차 중도금) ──
@@ -1605,12 +1601,11 @@ function calc() {
 
   const buyInterimContent = $('ct_buy_interim_content');
   if (ctInterim > 0) {
-    const bi1 = val('buyInterim1'), bi2 = val('buyInterim2'), bi3 = val('buyInterim3');
-    const d_bi1 = $('date_buy_interim1')?.value, d_bi2 = $('date_buy_interim2')?.value, d_bi3 = $('date_buy_interim3')?.value;
+    const bi1 = val('buyInterim1'), bi2 = val('buyInterim2');
+    const d_bi1 = $('date_buy_interim1')?.value, d_bi2 = $('date_buy_interim2')?.value;
     buyInterimContent.innerHTML =
       `<div class="txn-row"><span class="lbl">1차 중도금 지급 ${fmt_d(d_bi1)}</span><span class="amt amt-out">−${fmt(bi1)} 만원</span></div>` +
       (bi2 > 0 ? `<div class="txn-row"><span class="lbl">2차 중도금 지급 ${fmt_d(d_bi2)}</span><span class="amt amt-out">−${fmt(bi2)} 만원</span></div>` : '') +
-      (bi3 > 0 ? `<div class="txn-row"><span class="lbl">3차 중도금 지급 ${fmt_d(d_bi3)} <small style="color:var(--sub)">조기 퇴거</small></span><span class="amt amt-out">−${fmt(bi3)} 만원</span></div>` : '') +
       `<div class="txn-note">합계 ${fmt(ctInterim)}만원. 잔금에서 차감.</div>`;
   } else {
     buyInterimContent.innerHTML =
