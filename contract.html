@@ -481,61 +481,105 @@
           <input type="number" id="buyInterim1" value="30000" oninput="calc()">
         </div>
         <div class="field">
-          <label>2차 중도금 (만원)</label>
-          <input type="number" id="buyInterim2" value="10000" oninput="calc()">
-        </div>
-        <div class="field">
-          <label>3차 중도금 (만원) <small style="color:var(--sub)">조기 퇴거 협의</small></label>
-          <input type="number" id="buyInterim3" value="10000" oninput="calc()">
+          <label>2차 중도금 (만원) <small style="color:var(--sub)">조기 퇴거 협의</small></label>
+          <input type="number" id="buyInterim2" value="20000" oninput="calc()">
         </div>
       </div>
     </div>
     <!-- 인테리어 계약 납부 일정 -->
-    <div style="border:1px solid var(--border);border-left:3px solid #8b5cf6;border-radius:6px;padding:10px 12px;margin-bottom:0;background:rgba(139,92,246,.04)">
-      <div style="font-size:11px;font-weight:700;color:#6d28d9;margin-bottom:8px">🎨 인테리어 계약 납부 일정</div>
-      <div class="grid-4">
-        <div class="field">
-          <label>계약금 (만원)</label>
-          <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('interiorDeposit', -100)">▼</button>
-            <input type="number" id="interiorDeposit" value="0" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('interiorDeposit', 100)">▲</button>
-          </div>
-          <div class="field" style="margin-top:4px;margin-bottom:0">
-            <label style="font-size:10px">계약일</label>
-            <input type="date" id="date_interior_contract" onchange="calc()" style="width:100%;padding:3px 6px;font-size:11px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--sub)">
-          </div>
+    <div style="border:1px solid var(--border);border-left:3px solid #8b5cf6;border-radius:6px;padding:10px 12px;margin-bottom:8px;background:rgba(139,92,246,.04)">
+      <div style="font-size:11px;font-weight:700;color:#6d28d9;margin-bottom:10px">🎨 인테리어 계약 납부 일정 <small style="font-weight:400;color:var(--sub)">(VAT별도 · 총 6,800만원)</small></div>
+      <!-- 숨겨진 고정 금액 -->
+      <input type="hidden" id="interiorDeposit" value="680">
+      <input type="hidden" id="interiorStartup" value="2720">
+      <input type="hidden" id="interiorInterim" value="2720">
+      <input type="hidden" id="interiorBalance" value="680">
+      <!-- 납부 일정 테이블 -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr) auto;gap:6px;align-items:start">
+        <!-- 계약금 -->
+        <div class="field" style="margin-bottom:0">
+          <label>계약금 <small style="color:var(--sub)">680만</small></label>
+          <input type="date" id="date_interior_contract" value="2026-06-08" onchange="calc()" style="width:100%;padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text)">
+          <div style="font-size:10px;color:var(--sub);margin-top:2px">계약서 작성 시</div>
         </div>
-        <div class="field">
-          <label>중도금 (만원)</label>
-          <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('interiorInterim', -100)">▼</button>
-            <input type="number" id="interiorInterim" value="0" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('interiorInterim', 100)">▲</button>
-          </div>
-          <div class="field" style="margin-top:4px;margin-bottom:0">
-            <label style="font-size:10px">중도금일</label>
-            <input type="date" id="date_interior_interim" onchange="calc()" style="width:100%;padding:3px 6px;font-size:11px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--sub)">
-          </div>
+        <!-- 착수금 -->
+        <div class="field" style="margin-bottom:0">
+          <label>착수금 <small style="color:var(--sub)">2,720만</small></label>
+          <input type="date" id="date_interior_startup" onchange="calc()" style="width:100%;padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text)">
+          <div style="font-size:10px;color:var(--sub);margin-top:2px">착공 시</div>
         </div>
-        <div class="field">
-          <label>잔금 (만원)</label>
-          <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('interiorBalance', -100)">▼</button>
-            <input type="number" id="interiorBalance" value="0" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('interiorBalance', 100)">▲</button>
-          </div>
-          <div class="field" style="margin-top:4px;margin-bottom:0">
-            <label style="font-size:10px">잔금일</label>
-            <input type="date" id="date_interior_balance" onchange="calc()" style="width:100%;padding:3px 6px;font-size:11px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--sub)">
-          </div>
+        <!-- 중도금 -->
+        <div class="field" style="margin-bottom:0">
+          <label>중도금 <small style="color:var(--sub)">2,720만</small></label>
+          <input type="date" id="date_interior_interim" onchange="calc()" style="width:100%;padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text)">
+          <div style="font-size:10px;color:var(--sub);margin-top:2px">목공 시작 시</div>
         </div>
-        <div class="field">
-          <label style="font-weight:600;color:var(--text)">인테리어 합계</label>
-          <div style="padding:7px 10px;background:var(--input-bg);border-radius:6px;border:1px solid var(--border);font-size:14px;font-weight:600;color:#8b5cf6" id="r_interiorTotal">-</div>
-          <div style="font-size:10px;color:var(--sub);margin-top:4px">* 잔금 후 수리비와 별도 항목</div>
+        <!-- 잔금 -->
+        <div class="field" style="margin-bottom:0">
+          <label>잔금 <small style="color:var(--sub)">680만</small></label>
+          <input type="date" id="date_interior_balance" onchange="calc()" style="width:100%;padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text)">
+          <div style="font-size:10px;color:var(--sub);margin-top:2px">공사 완료 시</div>
+        </div>
+        <!-- 합계 -->
+        <div class="field" style="margin-bottom:0">
+          <label style="font-weight:600;color:var(--text)">기본 합계</label>
+          <div style="padding:4px 8px;background:var(--input-bg);border-radius:4px;border:1px solid var(--border);font-size:13px;font-weight:600;color:#8b5cf6;white-space:nowrap" id="r_interiorBase">6,800 만원</div>
         </div>
       </div>
+    </div>
+
+    <!-- 추가 대금 -->
+    <div style="border:1px solid var(--border);border-left:3px solid #f59e0b;border-radius:6px;padding:10px 12px;margin-bottom:0;background:rgba(245,158,11,.04)">
+      <div style="font-size:11px;font-weight:700;color:#b45309;margin-bottom:10px">➕ 추가 대금 <small style="font-weight:400;color:var(--sub)">— 추가 공사·자재 등 별도 비용</small></div>
+      <div style="display:grid;grid-template-columns:1fr 90px 120px 24px;gap:4px;align-items:center;margin-bottom:4px">
+        <div style="font-size:10px;color:var(--sub);font-weight:600">항목</div>
+        <div style="font-size:10px;color:var(--sub);font-weight:600">금액 (만원)</div>
+        <div style="font-size:10px;color:var(--sub);font-weight:600">지급일</div>
+        <div></div>
+      </div>
+      <div id="extraItems">
+        <!-- 행 3개 기본 제공 -->
+        <div class="extra-row" style="display:grid;grid-template-columns:1fr 90px 120px 24px;gap:4px;align-items:center;margin-bottom:4px">
+          <input type="text" id="extraName1" placeholder="항목명" oninput="calc()" style="padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text);width:100%">
+          <input type="number" id="extraAmt1" value="0" oninput="calc()" style="padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text);width:100%">
+          <input type="date" id="date_extra1" onchange="calc()" style="padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text);width:100%">
+          <div></div>
+        </div>
+        <div class="extra-row" style="display:grid;grid-template-columns:1fr 90px 120px 24px;gap:4px;align-items:center;margin-bottom:4px">
+          <input type="text" id="extraName2" placeholder="항목명" oninput="calc()" style="padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text);width:100%">
+          <input type="number" id="extraAmt2" value="0" oninput="calc()" style="padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text);width:100%">
+          <input type="date" id="date_extra2" onchange="calc()" style="padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text);width:100%">
+          <div></div>
+        </div>
+        <div class="extra-row" style="display:grid;grid-template-columns:1fr 90px 120px 24px;gap:4px;align-items:center;margin-bottom:4px">
+          <input type="text" id="extraName3" placeholder="항목명" oninput="calc()" style="padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text);width:100%">
+          <input type="number" id="extraAmt3" value="0" oninput="calc()" style="padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text);width:100%">
+          <input type="date" id="date_extra3" onchange="calc()" style="padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text);width:100%">
+          <div></div>
+        </div>
+        <div class="extra-row" style="display:grid;grid-template-columns:1fr 90px 120px 24px;gap:4px;align-items:center;margin-bottom:4px">
+          <input type="text" id="extraName4" placeholder="항목명" oninput="calc()" style="padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text);width:100%">
+          <input type="number" id="extraAmt4" value="0" oninput="calc()" style="padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text);width:100%">
+          <input type="date" id="date_extra4" onchange="calc()" style="padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text);width:100%">
+          <div></div>
+        </div>
+        <div class="extra-row" style="display:grid;grid-template-columns:1fr 90px 120px 24px;gap:4px;align-items:center;margin-bottom:4px">
+          <input type="text" id="extraName5" placeholder="항목명" oninput="calc()" style="padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text);width:100%">
+          <input type="number" id="extraAmt5" value="0" oninput="calc()" style="padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text);width:100%">
+          <input type="date" id="date_extra5" onchange="calc()" style="padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text);width:100%">
+          <div></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-top:6px;border-top:1px solid var(--border);padding-top:6px">
+        <span style="font-size:12px;color:var(--sub)">추가 합계</span>
+        <span style="font-size:14px;font-weight:600;color:#b45309" id="r_extraTotal">0 만원</span>
+      </div>
+    </div>
+
+    <!-- 인테리어 총합계 -->
+    <div style="display:flex;align-items:center;justify-content:flex-end;gap:10px;padding:8px 12px;border-radius:6px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);margin-top:6px">
+      <span style="font-size:12px;font-weight:600;color:var(--sub)">기본 6,800만 + 추가</span>
+      <span style="font-size:16px;font-weight:700;color:#8b5cf6" id="r_interiorTotal">— 만원</span>
     </div>
   </div>
 
@@ -565,7 +609,7 @@
         <div class="cs-step" onclick="scrollToStage('stage2')" style="cursor:pointer">
           <div class="cs-dot active" id="dot_stage2">⏳</div>
           <div class="cs-label active" id="lbl_stage2">토지거래허가</div>
-          <div class="cs-date"><input type="date" id="date_stage2" onchange="updateStageDate('stage2')" title="허가 결정 예정일"></div>
+          <div class="cs-date" style="font-size:11px;color:var(--sub);text-align:center">6월 첫째주</div>
         </div>
         <div class="cs-line" id="line_stage2"></div>
         <div class="cs-step" onclick="scrollToStage('stage3')" style="cursor:pointer">
@@ -584,7 +628,6 @@
             <div style="font-size:11px;color:var(--sub);margin-top:4px;margin-bottom:2px">매수</div>
             <input type="date" id="date_buy_interim1" value="2026-07-20" onchange="updateInterimDates()" title="매수 1차 중도금">
             <input type="date" id="date_buy_interim2" value="2026-08-05" onchange="updateInterimDates()" title="매수 2차 중도금">
-            <input type="date" id="date_buy_interim3" value="2026-08-10" onchange="updateInterimDates()" title="매수 3차 중도금 (조기 퇴거)">
           </div>
         </div>
         <div class="cs-line" id="line_stage4"></div>
@@ -595,35 +638,10 @@
         </div>
       </div>
 
-      <!-- 가계약금 입력 -->
-      <div class="grid-2" style="margin-bottom:8px">
-        <div>
-          <div class="field">
-            <label>매도 약정계약금 1차 (만원)</label>
-            <div class="field-adjust">
-              <button class="adjust-btn" onclick="adjustValue('ctSaleDeposit1', -500)">▼</button>
-              <input type="number" id="ctSaleDeposit1" value="5000" oninput="calc()">
-              <button class="adjust-btn" onclick="adjustValue('ctSaleDeposit1', 500)">▲</button>
-            </div>
-          </div>
-          <div class="field">
-            <label>매도 약정계약금 2차 (만원) <small style="color:var(--sub)">약정서 작성 시</small></label>
-            <div class="field-adjust">
-              <button class="adjust-btn" onclick="adjustValue('ctSaleDeposit2', -500)">▼</button>
-              <input type="number" id="ctSaleDeposit2" value="5000" oninput="calc()">
-              <button class="adjust-btn" onclick="adjustValue('ctSaleDeposit2', 500)">▲</button>
-            </div>
-          </div>
-        </div>
-        <div class="field">
-          <label>매수 가계약금 지급 (만원)</label>
-          <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('ctDeposit1', -500)">▼</button>
-            <input type="number" id="ctDeposit1" value="5000" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('ctDeposit1', 500)">▲</button>
-          </div>
-        </div>
-      </div>
+      <!-- 가계약금 (고정값 — 입력 불필요) -->
+      <input type="hidden" id="ctSaleDeposit1" value="5000">
+      <input type="hidden" id="ctSaleDeposit2" value="5000">
+      <input type="hidden" id="ctDeposit1" value="5000">
 
       <!-- 세입자 전세보증금 (세입자 없음) -->
       <div style="background:var(--input-bg);border-radius:8px;padding:12px 14px;margin-bottom:12px;border-left:3px solid var(--border);opacity:0.6">
@@ -685,7 +703,7 @@
         </div>
 
         <!-- ② 토지거래허가 -->
-        <div class="txn-stage-label" id="stage2" onclick="toggleStage('stage2')" style="cursor:pointer">② 토지거래허가 <span id="stage2_date" class="stage-date-badge"></span><span class="stage-toggle-icon">▼</span><button class="stage-done-btn" id="cbtn_stage2" onclick="event.stopPropagation();toggleComplete('stage2')">□ 완료 처리</button><span class="badge badge-yellow" id="badge_stage2" style="margin-left:6px">진행중</span></div>
+        <div class="txn-stage-label" id="stage2" onclick="toggleStage('stage2')" style="cursor:pointer">② 토지거래허가 <span id="stage2_date" class="stage-date-badge">6월 첫째주</span><span class="stage-toggle-icon">▼</span><button class="stage-done-btn" id="cbtn_stage2" onclick="event.stopPropagation();toggleComplete('stage2')">□ 완료 처리</button><span class="badge badge-yellow" id="badge_stage2" style="margin-left:6px">진행중</span></div>
         <div class="txn-cell sell">
           <div class="txn-na">— 대기</div>
           <div class="txn-note">허가 기간 중 매수자 확정 후 삼익 매도 계약 준비.</div>
@@ -870,6 +888,10 @@
             <span class="lbl">수리비</span>
             <span class="amt amt-neg" id="t_buy_renovation">-</span>
           </div>
+          <div class="txn-row" id="t_buy_interior_startup_row" style="opacity:0.4">
+            <span class="lbl">🎨 인테리어 착수금</span>
+            <span class="amt amt-neg" id="t_buy_interior_startup">-</span>
+          </div>
           <div class="txn-row" id="t_buy_interior_bal_row" style="opacity:0.4">
             <span class="lbl">🎨 인테리어 잔금</span>
             <span class="amt amt-neg" id="t_buy_interior_bal">-</span>
@@ -1031,15 +1053,17 @@ const CT_INPUT_IDS = [
   'refTransferTax','refSaleFee','refMoveCost',
   'refAcqTax','refBuyFee','refRegFee','refMoveinCost','refRenovationCost','refBondFee',
   'refSaleDeposit','saleInterim1','saleInterim2',
-  'refBuyDeposit','buyInterim1','buyInterim2','buyInterim3',
-  'ctSaleDeposit1','ctSaleDeposit2','ctDeposit1',
+  'refBuyDeposit','buyInterim1','buyInterim2',
+  'ctDeposit1',
   'ct1XrpQty','ct1BtcQty','ct2XrpQty','ct2BtcQty','ct3XrpQty','ct3BtcQty','ctCryptoEtc',
-  'interiorDeposit','interiorInterim','interiorBalance',
+  'extraAmt1','extraAmt2','extraAmt3','extraAmt4','extraAmt5',
+  'extraName1','extraName2','extraName3','extraName4','extraName5',
 ];
 const CT_DATE_IDS = [
-  'date_stage1','date_stageYak','date_stage2','date_stage3','date_stage5',
-  'date_sell_interim1','date_sell_interim2','date_buy_interim1','date_buy_interim2','date_buy_interim3',
-  'date_interior_contract','date_interior_interim','date_interior_balance',
+  'date_stage1','date_stageYak','date_stage3','date_stage5',
+  'date_sell_interim1','date_sell_interim2','date_buy_interim1','date_buy_interim2',
+  'date_interior_contract','date_interior_startup','date_interior_interim','date_interior_balance',
+  'date_extra1','date_extra2','date_extra3','date_extra4','date_extra5',
 ];
 
 // finance_inputs_v1 → contract 필드 매핑
@@ -1167,6 +1191,7 @@ const STAGE_DEFAULTS = {
 
 // ── 날짜 입력 → 상단 타임라인 + stage-label 뱃지 업데이트 ──
 function updateStageDate(stageId) {
+  if (stageId === 'stage2') return;
   const dateVal = $('date_' + stageId)?.value;
 
   // 하단 자금흐름 섹션 날짜 뱃지
@@ -1331,10 +1356,15 @@ function calc() {
 
   // 인테리어 계약 납부 일정
   const interiorDeposit = val('interiorDeposit');
+  const interiorStartup = val('interiorStartup');
   const interiorInterim = val('interiorInterim');
   const interiorBalance = val('interiorBalance');
-  const interiorTotal   = interiorDeposit + interiorInterim + interiorBalance;
+  const interiorBase    = interiorDeposit + interiorStartup + interiorInterim + interiorBalance;
+  const extraTotal      = val('extraAmt1') + val('extraAmt2') + val('extraAmt3') + val('extraAmt4') + val('extraAmt5');
+  const interiorTotal   = interiorBase + extraTotal;
 
+  $('r_interiorBase').textContent  = fmt(interiorBase) + ' 만원';
+  $('r_extraTotal').textContent    = fmt(extraTotal) + ' 만원';
   $('r_interiorTotal').textContent = fmt(interiorTotal) + ' 만원';
 
   // 합계 표시
@@ -1351,7 +1381,7 @@ function calc() {
   // ── 중도금 직접 입력 ──
   const ctSaleInterim = val('saleInterim1') + val('saleInterim2'); // 1차+2차 합계
   const sellInterim   = ctSaleInterim;
-  const ctInterim     = val('buyInterim1') + val('buyInterim2') + val('buyInterim3');   // 1차+2차+3차 합계
+  const ctInterim     = val('buyInterim1') + val('buyInterim2');   // 1차+2차 합계
   const buyInterim    = ctInterim;
 
   // ── 크립토 (1차: 실계약 / 2차: 3차 중도금) ──
@@ -1605,12 +1635,11 @@ function calc() {
 
   const buyInterimContent = $('ct_buy_interim_content');
   if (ctInterim > 0) {
-    const bi1 = val('buyInterim1'), bi2 = val('buyInterim2'), bi3 = val('buyInterim3');
-    const d_bi1 = $('date_buy_interim1')?.value, d_bi2 = $('date_buy_interim2')?.value, d_bi3 = $('date_buy_interim3')?.value;
+    const bi1 = val('buyInterim1'), bi2 = val('buyInterim2');
+    const d_bi1 = $('date_buy_interim1')?.value, d_bi2 = $('date_buy_interim2')?.value;
     buyInterimContent.innerHTML =
       `<div class="txn-row"><span class="lbl">1차 중도금 지급 ${fmt_d(d_bi1)}</span><span class="amt amt-out">−${fmt(bi1)} 만원</span></div>` +
       (bi2 > 0 ? `<div class="txn-row"><span class="lbl">2차 중도금 지급 ${fmt_d(d_bi2)}</span><span class="amt amt-out">−${fmt(bi2)} 만원</span></div>` : '') +
-      (bi3 > 0 ? `<div class="txn-row"><span class="lbl">3차 중도금 지급 ${fmt_d(d_bi3)} <small style="color:var(--sub)">조기 퇴거</small></span><span class="amt amt-out">−${fmt(bi3)} 만원</span></div>` : '') +
       `<div class="txn-note">합계 ${fmt(ctInterim)}만원. 잔금에서 차감.</div>`;
   } else {
     buyInterimContent.innerHTML =
@@ -1667,6 +1696,11 @@ function calc() {
   $('t_buy_reg').textContent     = '−' + fmt(refRegFee)    + ' 만원';
   $('t_buy_movein').textContent      = '−' + fmt(refMoveinCost)      + ' 만원';
   $('t_buy_renovation').textContent  = '−' + fmt(refRenovationCost)  + ' 만원';
+  // 인테리어 착수금
+  const intStartupEl = $('t_buy_interior_startup');
+  if (intStartupEl) intStartupEl.textContent = '−' + fmt(interiorStartup) + ' 만원';
+  const intStartupRow = $('t_buy_interior_startup_row');
+  if (intStartupRow) intStartupRow.style.opacity = interiorStartup > 0 ? '1' : '0.3';
   // 인테리어 잔금
   const intBalEl = $('t_buy_interior_bal');
   if (intBalEl) intBalEl.textContent = '−' + fmt(interiorBalance) + ' 만원';
