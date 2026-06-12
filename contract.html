@@ -494,6 +494,20 @@
         </div>
       </div>
     </div>
+    <!-- 계약 시점 추가 수입 -->
+    <div style="border:1px solid var(--border);border-left:3px solid #22c55e;border-radius:6px;padding:10px 12px;margin-bottom:8px;background:rgba(34,197,94,.04)">
+      <div style="font-size:11px;font-weight:700;color:#15803d;margin-bottom:8px">💰 계약 시점 추가 수입 <small style="font-weight:400;color:var(--sub)">(계약금 부족분 보완)</small></div>
+      <div style="display:grid;grid-template-columns:1fr 100px;gap:4px 8px;align-items:center">
+        <div style="font-size:10px;color:var(--sub);font-weight:600">항목</div>
+        <div style="font-size:10px;color:var(--sub);font-weight:600">금액 (만원)</div>
+        <input type="text" id="ctExtra1Name" value="주식 매도" oninput="updateExtraLabel(1);calc()" style="padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text)">
+        <input type="number" id="ctExtra1Amt" value="0" oninput="calc()" style="padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text)">
+        <input type="text" id="ctExtra2Name" value="청약 해지" oninput="updateExtraLabel(2);calc()" style="padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text)">
+        <input type="number" id="ctExtra2Amt" value="0" oninput="calc()" style="padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text)">
+        <input type="text" id="ctExtra3Name" value="기타" oninput="updateExtraLabel(3);calc()" style="padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text)">
+        <input type="number" id="ctExtra3Amt" value="0" oninput="calc()" style="padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text)">
+      </div>
+    </div>
     <!-- 인테리어 계약 납부 일정 -->
     <div style="border:1px solid var(--border);border-left:3px solid #8b5cf6;border-radius:6px;padding:10px 12px;margin-bottom:8px;background:rgba(139,92,246,.04)">
       <div style="font-size:11px;font-weight:700;color:#6d28d9;margin-bottom:10px">🎨 인테리어 계약 납부 일정 <small style="font-weight:400;color:var(--sub)">(VAT별도 · 총 6,800만원)</small></div>
@@ -739,6 +753,19 @@
           <div class="txn-row" id="t_sell_crypto1_row">
             <span class="lbl">🪙 크립토 1차 매도 (+)</span>
             <span class="amt amt-in" id="t_sell_crypto1">-</span>
+          </div>
+          <!-- 계약 시점 추가 수입 -->
+          <div class="txn-row" id="t_sell_extra1_row" style="opacity:0.4">
+            <span class="lbl" id="t_sell_extra1_lbl">주식 매도</span>
+            <span class="amt amt-in" id="t_sell_extra1">+0 만원</span>
+          </div>
+          <div class="txn-row" id="t_sell_extra2_row" style="opacity:0.4">
+            <span class="lbl" id="t_sell_extra2_lbl">청약 해지</span>
+            <span class="amt amt-in" id="t_sell_extra2">+0 만원</span>
+          </div>
+          <div class="txn-row" id="t_sell_extra3_row" style="opacity:0.4">
+            <span class="lbl" id="t_sell_extra3_lbl">기타</span>
+            <span class="amt amt-in" id="t_sell_extra3">+0 만원</span>
           </div>
           <div class="txn-subtotal">
             <span>수령 누계</span>
@@ -1067,6 +1094,8 @@ const CT_INPUT_IDS = [
   'refSaleDeposit','saleInterim1','saleInterim2',
   'refBuyDeposit','buyInterim1','buyInterim2',
   'ctDeposit1',
+  'ctExtra1Amt','ctExtra2Amt','ctExtra3Amt',
+  'ctExtra1Name','ctExtra2Name','ctExtra3Name',
   'ct1XrpQty','ct1BtcQty','ct2XrpQty','ct2BtcQty','ct3XrpQty','ct3BtcQty','ctCryptoEtc',
   'extraAmt1','extraAmt2','extraAmt3','extraAmt4','extraAmt5',
   'extraName1','extraName2','extraName3','extraName4','extraName5',
@@ -1245,6 +1274,12 @@ function updateStageDate(stageId) {
     lbl.className = 'cs-label' + (def.cls ? ' ' + def.cls : '');
     if (line) line.classList.remove('done');
   }
+}
+
+function updateExtraLabel(n) {
+  const name = $('ctExtra' + n + 'Name')?.value || '';
+  const lbl  = $('t_sell_extra' + n + '_lbl');
+  if (lbl) lbl.textContent = name || '기타';
 }
 
 function adjustValue(id, amount) {
@@ -1496,7 +1531,8 @@ function calc() {
 
   // ── 매도 ──
   const sellBalance  = salePrice - sellContract - sellInterim;
-  const sellNet      = salePrice - debt - saleCost + newLoan + cryptoProceeds;
+  const ctExtraIncome = val('ctExtra1Amt') + val('ctExtra2Amt') + val('ctExtra3Amt');
+  const sellNet      = salePrice - debt - saleCost + newLoan + cryptoProceeds + ctExtraIncome;
 
   // ── 매수 ──
   const buyContract    = buyContractAmt;
@@ -1568,11 +1604,26 @@ function calc() {
   // 크립토 1차
   $('t_sell_crypto1').textContent = '+' + fmt(crypto1) + ' 만원';
   $('t_sell_crypto1_row').style.opacity = crypto1 > 0 ? '1' : '0.3';
-  const sellContractCum = sellContract + crypto1;
+  // 계약 시점 추가 수입 (ctExtraIncome 은 상단에서 이미 계산)
+  const ctExtraTotal = ctExtraIncome;
+  [1,2,3].forEach(n => {
+    const amt = val('ctExtra' + n + 'Amt');
+    const name = $('ctExtra' + n + 'Name')?.value || '기타';
+    const lbl = $('t_sell_extra' + n + '_lbl');
+    if (lbl) lbl.textContent = name;
+    const amtEl = $('t_sell_extra' + n);
+    if (amtEl) amtEl.textContent = '+' + fmt(amt) + ' 만원';
+    const row = $('t_sell_extra' + n + '_row');
+    if (row) row.style.opacity = amt > 0 ? '1' : '0.4';
+  });
+  const sellContractCum = sellContract + crypto1 + ctExtraTotal;
   $('t_sell_contract_cum').textContent = '+' + fmt(sellContractCum) + ' 만원';
   const cumNote3El = $('t_sell_contract_cum_note');
   if (cumNote3El) {
-    if (crypto1 > 0) { cumNote3El.textContent = `크립토 1차 ${fmt(crypto1)}만원 포함`; cumNote3El.style.display = ''; }
+    const notes = [];
+    if (crypto1 > 0) notes.push(`크립토 1차 ${fmt(crypto1)}만원`);
+    if (ctExtraTotal > 0) notes.push(`추가수입 ${fmt(ctExtraTotal)}만원`);
+    if (notes.length) { cumNote3El.textContent = notes.join(' · ') + ' 포함'; cumNote3El.style.display = ''; }
     else { cumNote3El.style.display = 'none'; }
   }
   $('t_buy_contract').textContent      = fmt(buyContract) + ' 만원';
@@ -1751,7 +1802,7 @@ function calc() {
   const cum1 = earnestNet;
   setCumVal('sc_cum1', cum1);
 
-  const contractNet = sellContractAddAmt + crypto1 - buyContractAdd;
+  const contractNet = sellContractAddAmt + crypto1 + ctExtraTotal - buyContractAdd;
   const scCon = $('sc_contract');
   scCon.textContent = (contractNet >= 0 ? '+' : '−') + fmt(Math.abs(contractNet));
   scCon.style.color = contractNet >= 0 ? 'var(--green)' : 'var(--red)';
