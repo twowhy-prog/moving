@@ -791,8 +791,12 @@
             <span class="amt amt-neg" id="t_buy_interior_dep">-</span>
           </div>
           <div class="txn-subtotal">
-            <span>지급 누계</span>
+            <span>지급 누계 <small style="font-weight:400;opacity:.7">(부동산)</small></span>
             <span class="amt-out" id="t_buy_contract_cum">-</span>
+          </div>
+          <div class="txn-subtotal" style="margin-top:2px;border-top:none;padding-top:0">
+            <span>지급 누계 <small style="font-weight:400;opacity:.7">(인테리어 등 전체)</small></span>
+            <span class="amt-out" id="t_buy_contract_cum_total">-</span>
           </div>
           <div id="t_stage3_net" style="font-size:12px;font-weight:600;margin-top:4px;padding:3px 8px;border-radius:6px;text-align:center;display:none"></div>
         </div>
@@ -1634,9 +1638,11 @@ function calc() {
   if (intDepEl) intDepEl.textContent = '−' + fmt(interiorDeposit) + ' 만원';
   const intDepRow = $('t_buy_interior_dep_row');
   if (intDepRow) intDepRow.style.opacity = interiorDeposit > 0 ? '1' : '0.3';
-  $('t_buy_contract_cum').textContent  = '−' + fmt(buyContract) + ' 만원';
-  // ③ 매도-매수 순 잔액
-  const stage3Net = sellContractCum - buyContract - interiorDeposit;
+  const buyCumTotal3Real = buyContract + interiorDeposit;
+  $('t_buy_contract_cum').textContent       = '−' + fmt(buyContract)       + ' 만원';
+  $('t_buy_contract_cum_total').textContent = '−' + fmt(buyCumTotal3Real)  + ' 만원';
+  // ③ 매도-매수 순 잔액 — 전체 지급 누계 기준
+  const stage3Net = sellContractCum - buyCumTotal3Real;
   const net3El = $('t_stage3_net');
   if (net3El) {
     if (stage3Net >= 0) {
