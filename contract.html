@@ -815,10 +815,13 @@
           </div>
           <div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--border)">
             <div class="txn-row">
-              <span class="lbl" style="font-weight:600">①+③+④ 누계</span>
+              <span class="lbl" style="font-weight:600">①+③+④ 누계 (부동산)</span>
+              <span class="amt amt-in" id="t_sell_interim_cum_base">-</span>
+            </div>
+            <div class="txn-row">
+              <span class="lbl" style="font-weight:600">①+③+④ 누계 (전체)</span>
               <span class="amt amt-in" id="t_sell_interim_cum">-</span>
             </div>
-            <div id="t_sell_interim_cum_note" style="font-size:10px;color:var(--sub);text-align:right;margin-top:2px;display:none"></div>
           </div>
         </div>
         <div class="txn-cell" id="ct_buy_interim_cell">
@@ -833,7 +836,11 @@
           </div>
           <div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--border)">
             <div class="txn-row">
-              <span class="lbl" style="font-weight:600">①+③+④ 누계</span>
+              <span class="lbl" style="font-weight:600">①+③+④ 누계 (부동산)</span>
+              <span class="amt" id="t_buy_tenant_cum_base">-</span>
+            </div>
+            <div class="txn-row">
+              <span class="lbl" style="font-weight:600">①+③+④ 누계 (전체)</span>
               <span class="amt" id="t_buy_tenant_cum">-</span>
             </div>
             <div class="txn-row" style="padding-left:10px">
@@ -1658,22 +1665,23 @@ function calc() {
     net3El.style.display = '';
   }
 
-  // ④ 중도금 — 매도 누계 (크립토 포함)
+  // ④ 중도금 — 매도 누계
   const cryptoTotal12 = crypto1 + crypto2;  // 3차는 이사 후이므로 4단계 누계에서 제외
-  const sellCumTotal3 = sellContract + ctSaleInterim + cryptoTotal12;
+  const sellCumBase4  = sellContract + ctSaleInterim;                          // 부동산만
+  const sellCumTotal3 = sellCumBase4 + cryptoTotal12 + ctExtraIncome;          // 전체
+  $('t_sell_interim_cum_base').textContent = '+' + fmt(sellCumBase4) + ' 만원';
   $('t_sell_interim_cum').textContent = '+' + fmt(sellCumTotal3) + ' 만원';
-  const cumNote4El = $('t_sell_interim_cum_note');
-  if (cumNote4El) {
-    if (cryptoTotal12 > 0) { cumNote4El.textContent = `크립토 1+2차 ${fmt(cryptoTotal12)}만원 포함`; cumNote4El.style.display = ''; }
-    else { cumNote4El.style.display = 'none'; }
-  }
 
   // ④ 중도금 — 누계 vs 세입자 요청액 체크
-  const buyCumTotal3 = buyContract + buyInterim;
-  const tenantDiff3  = buyCumTotal3 - ctTenantDeposit;
+  const buyCumBase4   = buyContract + buyInterim;                               // 부동산만
+  const buyCumTotal4Real = buyCumBase4 + interiorStartup + interiorInterim;    // 전체
+  const tenantDiff3   = buyCumBase4 - ctTenantDeposit;
+  const cumBaseEl3 = $('t_buy_tenant_cum_base');
+  cumBaseEl3.textContent = fmt(buyCumBase4) + ' 만원';
+  cumBaseEl3.className   = tenantDiff3 >= 0 ? 'amt amt-in' : 'amt amt-neg';
   const cumEl3 = $('t_buy_tenant_cum');
-  cumEl3.textContent = fmt(buyCumTotal3) + ' 만원';
-  cumEl3.className   = tenantDiff3 >= 0 ? 'amt amt-in' : 'amt amt-neg';
+  cumEl3.textContent = fmt(buyCumTotal4Real) + ' 만원';
+  cumEl3.className   = 'amt amt-neg';
   $('t_tenant_target').textContent = '목표 ' + fmt(ctTenantDeposit) + ' 만원';
   const chkEl = $('t_tenant_check');
   if (tenantDiff3 >= 0) {
@@ -1683,8 +1691,8 @@ function calc() {
     chkEl.textContent = '⚠️ 부족 ' + fmt(-tenantDiff3) + '만원 — 중도금 % 올리거나 계약금 조정 필요';
     chkEl.style.background = '#fef2f2'; chkEl.style.color = 'var(--red)';
   }
-  // ④ 매도 누계 vs 매수 누계 순잔액
-  const stage4Net = sellCumTotal3 - buyCumTotal3 - interiorInterim;
+  // ④ 매도 누계(전체) vs 매수 누계(전체) 순잔액
+  const stage4Net = sellCumTotal3 - buyCumTotal4Real;
   const net4El = $('t_stage4_net');
   if (net4El) {
     if (stage4Net >= 0) {
