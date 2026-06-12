@@ -1099,8 +1099,8 @@ function _applyFinanceData(d, silent) {
 function getCryptoHoldings() {
   try {
     const d = JSON.parse(localStorage.getItem('finance_inputs_v1') || '{}');
-    return { xrp: parseFloat(d.xrpQty) || 0, btc: 0.8 };
-  } catch(e) { return { xrp: 0, btc: 0.8 }; }
+    return { xrp: parseFloat(d.xrpQty) || 0, btc: 0.89 };
+  } catch(e) { return { xrp: 0, btc: 0.89 }; }
 }
 
 function syncFromFinance() {
