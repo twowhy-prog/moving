@@ -333,22 +333,20 @@
     <div style="font-size:11px;font-weight:600;color:var(--green);margin:6px 0 3px">1차 — 실계약 시</div>
     <div class="grid-4">
       <div class="field">
-        <label>XRP <span id="ct_xrpPriceLabel" style="font-size:10px;color:var(--blue);font-weight:600"></span></label>
+        <label>XRP</label>
         <div class="field-adjust">
           <button class="adjust-btn" onclick="adjClamp('ct1XrpQty', -1000, 'xrp')">▼</button>
           <input type="number" id="ct1XrpQty" value="0" oninput="clampCryptoQty('ct1XrpQty','xrp')">
           <button class="adjust-btn" onclick="adjClamp('ct1XrpQty', 1000, 'xrp')">▲</button>
         </div>
-        <div style="font-size:11px;color:var(--sub);margin-top:2px">개 ≈ <span id="ct1_xrpVal" style="color:var(--green);font-weight:600">-</span> 만원</div>
       </div>
       <div class="field">
-        <label>BTC <span id="ct_btcPriceLabel" style="font-size:10px;color:var(--blue);font-weight:600"></span></label>
+        <label>BTC</label>
         <div class="field-adjust">
           <button class="adjust-btn" onclick="adjClamp('ct1BtcQty', -0.1, 'btc')">▼</button>
-          <input type="number" id="ct1BtcQty" value="0" step="0.01" oninput="clampCryptoQty('ct1BtcQty','btc')">
+          <input type="number" id="ct1BtcQty" value="0.09" step="0.01" oninput="clampCryptoQty('ct1BtcQty','btc')">
           <button class="adjust-btn" onclick="adjClamp('ct1BtcQty', 0.1, 'btc')">▲</button>
         </div>
-        <div style="font-size:11px;color:var(--sub);margin-top:2px">개 ≈ <span id="ct1_btcVal" style="color:var(--green);font-weight:600">-</span> 만원</div>
       </div>
       <div class="field"></div>
       <div class="field">
@@ -370,7 +368,6 @@
           <input type="number" id="ct2XrpQty" value="0" oninput="clampCryptoQty('ct2XrpQty','xrp')">
           <button class="adjust-btn" onclick="adjClamp('ct2XrpQty', 1000, 'xrp')">▲</button>
         </div>
-        <div style="font-size:11px;color:var(--sub);margin-top:2px">개 ≈ <span id="ct2_xrpVal" style="color:var(--green);font-weight:600">-</span> 만원</div>
       </div>
       <div class="field">
         <label>BTC</label>
@@ -379,7 +376,6 @@
           <input type="number" id="ct2BtcQty" value="0" step="0.01" oninput="clampCryptoQty('ct2BtcQty','btc')">
           <button class="adjust-btn" onclick="adjClamp('ct2BtcQty', 0.1, 'btc')">▲</button>
         </div>
-        <div style="font-size:11px;color:var(--sub);margin-top:2px">개 ≈ <span id="ct2_btcVal" style="color:var(--green);font-weight:600">-</span> 만원</div>
       </div>
       <div class="field"></div>
       <div class="field">
@@ -401,7 +397,6 @@
           <input type="number" id="ct3XrpQty" value="0" oninput="clampCryptoQty('ct3XrpQty','xrp')">
           <button class="adjust-btn" onclick="adjClamp('ct3XrpQty', 1000, 'xrp')">▲</button>
         </div>
-        <div style="font-size:11px;color:var(--sub);margin-top:2px">개 ≈ <span id="ct3_xrpVal" style="color:var(--green);font-weight:600">-</span> 만원</div>
       </div>
       <div class="field">
         <label>BTC</label>
@@ -410,7 +405,6 @@
           <input type="number" id="ct3BtcQty" value="0" step="0.01" oninput="clampCryptoQty('ct3BtcQty','btc')">
           <button class="adjust-btn" onclick="adjClamp('ct3BtcQty', 0.1, 'btc')">▲</button>
         </div>
-        <div style="font-size:11px;color:var(--sub);margin-top:2px">개 ≈ <span id="ct3_btcVal" style="color:var(--green);font-weight:600">-</span> 만원</div>
       </div>
       <div class="field">
         <label>기타 자산 (만원)</label>
@@ -455,19 +449,15 @@
       <div class="grid-3">
         <div class="field">
           <label>계약금 (만원) <span id="r_saleDepositPct" style="font-size:10px;color:var(--sub);font-weight:400"></span></label>
-          <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('refSaleDeposit', -1000)">▼</button>
-            <input type="number" id="refSaleDeposit" value="18500" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('refSaleDeposit', 1000)">▲</button>
-          </div>
+          <input type="number" id="refSaleDeposit" value="18500" readonly style="background:var(--input-bg);cursor:default">
         </div>
         <div class="field">
           <label>1차 중도금 (만원)</label>
-          <input type="number" id="saleInterim1" value="30000" oninput="calc()">
+          <input type="number" id="saleInterim1" value="30000" readonly style="background:var(--input-bg);cursor:default">
         </div>
         <div class="field">
           <label>2차 중도금 (만원)</label>
-          <input type="number" id="saleInterim2" value="12000" oninput="calc()">
+          <input type="number" id="saleInterim2" value="12000" readonly style="background:var(--input-bg);cursor:default">
         </div>
       </div>
     </div>
@@ -478,19 +468,15 @@
       <div class="grid-3">
         <div class="field">
           <label>계약금 (만원) <span id="r_buyDepositPct" style="font-size:10px;color:var(--sub);font-weight:400"></span></label>
-          <div class="field-adjust">
-            <button class="adjust-btn" onclick="adjustValue('refBuyDeposit', -1000)">▼</button>
-            <input type="number" id="refBuyDeposit" value="20000" oninput="calc()">
-            <button class="adjust-btn" onclick="adjustValue('refBuyDeposit', 1000)">▲</button>
-          </div>
+          <input type="number" id="refBuyDeposit" value="20000" readonly style="background:var(--input-bg);cursor:default">
         </div>
         <div class="field">
           <label>1차 중도금 (만원)</label>
-          <input type="number" id="buyInterim1" value="30000" oninput="calc()">
+          <input type="number" id="buyInterim1" value="30000" readonly style="background:var(--input-bg);cursor:default">
         </div>
         <div class="field">
           <label>2차 중도금 (만원) <small style="color:var(--sub)">조기 퇴거 협의</small></label>
-          <input type="number" id="buyInterim2" value="20000" oninput="calc()">
+          <input type="number" id="buyInterim2" value="20000" readonly style="background:var(--input-bg);cursor:default">
         </div>
       </div>
     </div>
@@ -605,13 +591,13 @@
         <div class="cs-step" onclick="scrollToStage('stage1')" style="cursor:pointer">
           <div class="cs-dot done" id="dot_stage1">✓</div>
           <div class="cs-label done" id="lbl_stage1">가계약</div>
-          <div class="cs-date"><input type="date" id="date_stage1" value="2026-05-22" onchange="updateStageDate('stage1')" title="가계약 날짜"></div>
+          <div class="cs-date" style="font-size:11px;color:var(--sub);text-align:center">2026-05-22</div>
         </div>
         <div class="cs-line done" id="line_stage1"></div>
         <div class="cs-step" onclick="scrollToStage('stageYak')" style="cursor:pointer">
           <div class="cs-dot done" id="dot_stageYak">✓</div>
           <div class="cs-label done" id="lbl_stageYak">약정서</div>
-          <div class="cs-date"><input type="date" id="date_stageYak" value="2026-05-22" onchange="updateStageDate('stageYak')" title="약정서 작성일"></div>
+          <div class="cs-date" style="font-size:11px;color:var(--sub);text-align:center">2026-05-22</div>
         </div>
         <div class="cs-line done" id="line_stageYak"></div>
         <div class="cs-step" onclick="scrollToStage('stage2')" style="cursor:pointer">
@@ -623,26 +609,26 @@
         <div class="cs-step" onclick="scrollToStage('stage3')" style="cursor:pointer">
           <div class="cs-dot" id="dot_stage3">3</div>
           <div class="cs-label" id="lbl_stage3">계약</div>
-          <div class="cs-date"><input type="date" id="date_stage3" value="2026-06-05" onchange="updateStageDate('stage3')" title="실계약 예정일"></div>
+          <div class="cs-date" style="font-size:11px;color:var(--sub);text-align:center">2026-08-05</div>
         </div>
         <div class="cs-line" id="line_stage3"></div>
         <div class="cs-step" onclick="scrollToStage('stage4')" style="cursor:pointer">
           <div class="cs-dot skip" id="dot_stage4">—</div>
           <div class="cs-label" id="lbl_stage4">중도금</div>
-          <div class="cs-date" style="display:flex;flex-direction:column;gap:2px">
-            <div style="font-size:11px;color:var(--sub);margin-bottom:2px">매도</div>
-            <input type="date" id="date_sell_interim1" value="2026-07-17" onchange="updateInterimDates()" title="매도 1차 중도금">
-            <input type="date" id="date_sell_interim2" value="2026-08-03" onchange="updateInterimDates()" title="매도 2차 중도금">
-            <div style="font-size:11px;color:var(--sub);margin-top:4px;margin-bottom:2px">매수</div>
-            <input type="date" id="date_buy_interim1" value="2026-07-20" onchange="updateInterimDates()" title="매수 1차 중도금">
-            <input type="date" id="date_buy_interim2" value="2026-08-05" onchange="updateInterimDates()" title="매수 2차 중도금">
+          <div class="cs-date" style="display:flex;flex-direction:column;gap:2px;font-size:11px;color:var(--sub);text-align:center">
+            <div style="margin-bottom:2px">매도</div>
+            <div>2026-07-17</div>
+            <div>2026-08-05</div>
+            <div style="margin-top:4px;margin-bottom:2px">매수</div>
+            <div>2026-07-20</div>
+            <div>2026-08-05</div>
           </div>
         </div>
         <div class="cs-line" id="line_stage4"></div>
         <div class="cs-step" onclick="scrollToStage('stage5')" style="cursor:pointer">
           <div class="cs-dot" id="dot_stage5">5</div>
           <div class="cs-label" id="lbl_stage5">잔금</div>
-          <div class="cs-date"><input type="date" id="date_stage5" value="2026-09-04" onchange="updateStageDate('stage5')" title="잔금 예정일"></div>
+          <div class="cs-date" style="font-size:11px;color:var(--sub);text-align:center">2026-09-04</div>
         </div>
       </div>
 
@@ -724,27 +710,22 @@
         <!-- ③ 계약 -->
         <div class="txn-stage-label" id="stage3" onclick="toggleStage('stage3')" style="cursor:pointer">③ 계약 — 토허가 후 실계약 <span id="stage3_date" class="stage-date-badge"></span><span class="stage-toggle-icon">▼</span><button class="stage-done-btn" id="cbtn_stage3" onclick="event.stopPropagation();toggleComplete('stage3')">□ 완료 처리</button><span class="badge badge-yellow" id="badge_stage3" style="margin-left:6px">예정</span></div>
         <div class="txn-cell sell">
-          <div class="txn-row">
-            <span class="lbl">계약금 합계 (<span id="t_sell_pct">10</span>%)</span>
-            <span class="amt amt-in" id="t_sell_contract">-</span>
-          </div>
-          <div class="txn-row" style="padding-left:10px">
-            <span class="lbl">이미 수취 (가계약금)</span>
-            <span class="amt amt-neu" id="t_sell_earnest2">-</span>
-          </div>
-          <div class="txn-row" style="padding-left:10px">
-            <span class="lbl">추가 수취</span>
-            <span class="amt amt-in" id="t_sell_contract_add">-</span>
-          </div>
           <div class="txn-row" id="t_sell_crypto1_row">
             <span class="lbl">🪙 크립토 1차 매도 (+)</span>
-            <span class="amt amt-in" id="t_sell_crypto1">-</span>
+            <span class="amt amt-in" id="t_sell_crypto1">+862 만원</span>
+          </div>
+          <div class="txn-row">
+            <span class="lbl">청약해지 (+)</span>
+            <span class="amt amt-in">+3,000 만원</span>
+          </div>
+          <div class="txn-row">
+            <span class="lbl">주택매도 (+)</span>
+            <span class="amt amt-in">+16,138 만원</span>
           </div>
           <div class="txn-subtotal">
             <span>수령 누계</span>
-            <span class="amt-in" id="t_sell_contract_cum">-</span>
+            <span class="amt-in" id="t_sell_contract_cum">+20,000 만원</span>
           </div>
-          <div id="t_sell_contract_cum_note" style="font-size:10px;color:var(--sub);text-align:right;margin-top:2px;display:none"></div>
         </div>
         <div class="txn-cell">
           <div class="txn-row">
@@ -1122,8 +1103,8 @@ function _applyFinanceData(d, silent) {
 function getCryptoHoldings() {
   try {
     const d = JSON.parse(localStorage.getItem('finance_inputs_v1') || '{}');
-    return { xrp: parseFloat(d.xrpQty) || 0, btc: parseFloat(d.btcQty) || 0 };
-  } catch(e) { return { xrp: 0, btc: 0 }; }
+    return { xrp: parseFloat(d.xrpQty) || 0, btc: 0.8 };
+  } catch(e) { return { xrp: 0, btc: 0.8 }; }
 }
 
 function syncFromFinance() {
@@ -1559,22 +1540,8 @@ function calc() {
     net2El.className = net2 >= 0 ? 'amt-in' : 'amt-neg';
   }
 
-  // ③ 계약
-  const totalSaleEarnest   = ctSaleDeposit1 + ctSaleDeposit2;
-  const sellContractAddAmt = Math.max(0, sellContract - totalSaleEarnest);
-  $('t_sell_contract').textContent     = fmt(sellContract) + ' 만원';
-  $('t_sell_earnest2').textContent     = fmt(totalSaleEarnest) + ' 만원';
-  $('t_sell_contract_add').textContent = '+' + fmt(sellContractAddAmt) + ' 만원';
-  // 크립토 1차
-  $('t_sell_crypto1').textContent = '+' + fmt(crypto1) + ' 만원';
-  $('t_sell_crypto1_row').style.opacity = crypto1 > 0 ? '1' : '0.3';
-  const sellContractCum = sellContract + crypto1;
-  $('t_sell_contract_cum').textContent = '+' + fmt(sellContractCum) + ' 만원';
-  const cumNote3El = $('t_sell_contract_cum_note');
-  if (cumNote3El) {
-    if (crypto1 > 0) { cumNote3El.textContent = `크립토 1차 ${fmt(crypto1)}만원 포함`; cumNote3El.style.display = ''; }
-    else { cumNote3El.style.display = 'none'; }
-  }
+  // ③ 계약 (매도 사이드 하드코딩: 크립토1차+청약해지+주택매도 = 20,000만원)
+  const sellContractCum = 20000;
   $('t_buy_contract').textContent      = fmt(buyContract) + ' 만원';
   $('t_buy_earnest2').textContent      = fmt(ctDeposit1) + ' 만원';
   $('t_buy_contract_add').textContent  = '−' + fmt(buyContractAdd) + ' 만원';
@@ -1584,8 +1551,8 @@ function calc() {
   const intDepRow = $('t_buy_interior_dep_row');
   if (intDepRow) intDepRow.style.opacity = interiorDeposit > 0 ? '1' : '0.3';
   $('t_buy_contract_cum').textContent  = '−' + fmt(buyContract) + ' 만원';
-  // ③ 매도-매수 순 잔액
-  const stage3Net = sellContractCum - buyContract - interiorDeposit;
+  // ③ 매도-매수 순 잔액 (매도 수령 누계 20,000 vs 매수 계약금만 비교)
+  const stage3Net = sellContractCum - buyContract;
   const net3El = $('t_stage3_net');
   if (net3El) {
     if (stage3Net >= 0) {
