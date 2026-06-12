@@ -214,7 +214,7 @@
         </div>
       </div>
       <div class="field">
-        <label>기존 부채 — 잔금일(9/4) 상환 (만원)</label>
+        <label>담보대출 상환 — 잔금일(9/4) (만원)</label>
         <div class="field-adjust">
           <button class="adjust-btn" onclick="adjustValue('refDebt', -500)">▼</button>
           <input type="number" id="refDebt" value="27000" oninput="calc()">
@@ -222,7 +222,7 @@
         </div>
       </div>
       <div class="field">
-        <label>기존 부채 — 별도 상환 (만원)</label>
+        <label>기타 부채 상환 — 잔금일(9/4) (만원)</label>
         <div class="field-adjust">
           <button class="adjust-btn" onclick="adjustValue('refDebtOther', -500)">▼</button>
           <input type="number" id="refDebtOther" value="8600" oninput="calc()">
@@ -889,11 +889,11 @@
         <div class="txn-stage-label" id="stage6" onclick="toggleStage('stage6')" style="cursor:pointer">⑥ 잔금 후 처리 — 당일 자금 정산 <span id="stage6_date" class="stage-date-badge"></span><span class="stage-toggle-icon">▼</span><button class="stage-done-btn" id="cbtn_stage6" onclick="event.stopPropagation();toggleComplete('stage6')">□ 완료 처리</button><span class="badge badge-blue" id="badge_stage6" style="margin-left:6px">예정</span></div>
         <div class="txn-cell sell">
           <div class="txn-row">
-            <span class="lbl">기존 부채 상환 (잔금일)</span>
+            <span class="lbl">담보대출 상환</span>
             <span class="amt amt-neg" id="t_sell_debt">-</span>
           </div>
           <div class="txn-row" id="t_sell_debt_other_row" style="opacity:0.4">
-            <span class="lbl">기존 부채 상환 (별도)</span>
+            <span class="lbl">기타 부채 상환</span>
             <span class="amt amt-neg" id="t_sell_debt_other">-</span>
           </div>
           <div class="txn-row">
