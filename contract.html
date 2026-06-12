@@ -768,7 +768,11 @@
             <span class="amt amt-in" id="t_sell_extra3">+0 만원</span>
           </div>
           <div class="txn-subtotal">
-            <span>수령 누계</span>
+            <span>수령 누계 <small style="font-weight:400;opacity:.7">(부동산)</small></span>
+            <span class="amt-in" id="t_sell_contract_cum_base">-</span>
+          </div>
+          <div class="txn-subtotal" style="margin-top:2px;border-top:none;padding-top:0">
+            <span>수령 누계 <small style="font-weight:400;opacity:.7">(크립토·추가수입 전체)</small></span>
             <span class="amt-in" id="t_sell_contract_cum">-</span>
           </div>
           <div id="t_sell_contract_cum_note" style="font-size:10px;color:var(--sub);text-align:right;margin-top:2px;display:none"></div>
@@ -1621,7 +1625,8 @@ function calc() {
     if (row) row.style.opacity = amt > 0 ? '1' : '0.4';
   });
   const sellContractCum = sellContract + crypto1 + ctExtraTotal;
-  $('t_sell_contract_cum').textContent = '+' + fmt(sellContractCum) + ' 만원';
+  $('t_sell_contract_cum_base').textContent = '+' + fmt(sellContract) + ' 만원';
+  $('t_sell_contract_cum').textContent      = '+' + fmt(sellContractCum) + ' 만원';
   const cumNote3El = $('t_sell_contract_cum_note');
   if (cumNote3El) {
     const notes = [];
