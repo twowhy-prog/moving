@@ -342,11 +342,8 @@
       </div>
       <div class="field">
         <label>BTC</label>
-        <div class="field-adjust">
-          <button class="adjust-btn" onclick="adjClamp('ct1BtcQty', -0.1, 'btc')">▼</button>
-          <input type="number" id="ct1BtcQty" value="0.09" step="0.01" oninput="clampCryptoQty('ct1BtcQty','btc')">
-          <button class="adjust-btn" onclick="adjClamp('ct1BtcQty', 0.1, 'btc')">▲</button>
-        </div>
+        <input type="number" id="ct1BtcQty" value="0.09" step="0.01" readonly style="background:var(--input-bg);cursor:default">
+        <div style="font-size:11px;color:var(--sub);margin-top:2px">0.09개 고정</div>
       </div>
       <div class="field"></div>
       <div class="field">
@@ -1048,7 +1045,7 @@ const CT_INPUT_IDS = [
   'refSaleDeposit','saleInterim1','saleInterim2',
   'refBuyDeposit','buyInterim1','buyInterim2',
   'ctDeposit1',
-  'ct1XrpQty','ct1BtcQty','ct2XrpQty','ct2BtcQty','ct3XrpQty','ct3BtcQty','ctCryptoEtc',
+  'ct1XrpQty','ct2XrpQty','ct2BtcQty','ct3XrpQty','ct3BtcQty','ctCryptoEtc',
   'extraAmt1','extraAmt2','extraAmt3','extraAmt4','extraAmt5',
   'extraName1','extraName2','extraName3','extraName4','extraName5',
 ];
@@ -1072,7 +1069,6 @@ const FINANCE_SYNC_MAP = {
   bondFee:         'refBondFee',
   // 크립토: S3 가용분을 1차 배분에 기본 반영 (사용자가 2차로 이동 조정)
   xrpQty:      'ct1XrpQty',
-  btcQty:      'ct1BtcQty',
   cryptoEtc:   'ctCryptoEtc',
 };
 
@@ -1404,16 +1400,8 @@ function calc() {
 
   const cryptoProceeds = crypto1 + crypto2 + crypto3;
 
-  $('ct1_xrpVal').textContent = ctXrpPriceKRW > 0 ? fmt(ct1XrpVal) : '(시세 미조회)';
-  $('ct1_btcVal').textContent = ctBtcPriceKRW > 0 ? fmt(ct1BtcVal) : '(시세 미조회)';
   $('r_crypto1').textContent  = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? fmt(crypto1) : '시세 미조회') + ' 만원';
-
-  $('ct2_xrpVal').textContent = ctXrpPriceKRW > 0 ? fmt(ct2XrpVal) : '(시세 미조회)';
-  $('ct2_btcVal').textContent = ctBtcPriceKRW > 0 ? fmt(ct2BtcVal) : '(시세 미조회)';
   $('r_crypto2').textContent  = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? fmt(crypto2) : '시세 미조회') + ' 만원';
-
-  $('ct3_xrpVal').textContent = ctXrpPriceKRW > 0 ? fmt(ct3XrpVal) : '(시세 미조회)';
-  $('ct3_btcVal').textContent = ctBtcPriceKRW > 0 ? fmt(ct3BtcVal) : '(시세 미조회)';
   $('r_crypto3').textContent  = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? fmt(crypto3) : `${fmt(ctEtcVal)} + α`) + ' 만원';
 
   $('r_cryptoProceeds').textContent = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? fmt(cryptoProceeds) : `${fmt(ctEtcVal)} + α`) + ' 만원';
