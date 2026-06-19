@@ -381,7 +381,14 @@
         </div>
         <div style="font-size:11px;color:var(--sub);margin-top:2px">개 ≈ <span id="ct2_btcVal" style="color:var(--green);font-weight:600">-</span> 만원</div>
       </div>
-      <div class="field"></div>
+      <div class="field">
+        <label>기타 자산 (만원)</label>
+        <div class="field-adjust">
+          <button class="adjust-btn" onclick="adjustValue('ctCryptoEtc2', -100)">▼</button>
+          <input type="number" id="ctCryptoEtc2" value="0" oninput="calc()">
+          <button class="adjust-btn" onclick="adjustValue('ctCryptoEtc2', 100)">▲</button>
+        </div>
+      </div>
       <div class="field">
         <label style="font-weight:600">2차 합계</label>
         <div style="padding:7px 10px;background:var(--input-bg);border-radius:6px;border:1px solid var(--border);font-size:14px;font-weight:600;color:#8b5cf6" id="r_crypto2">-</div>
@@ -1464,7 +1471,8 @@ function calc() {
 
   const ct2XrpVal = ctXrpPriceKRW > 0 ? Math.round(val('ct2XrpQty') * ctXrpPriceKRW / 10000) : 0;
   const ct2BtcVal = ctBtcPriceKRW > 0 ? Math.round(val('ct2BtcQty') * ctBtcPriceKRW / 10000) : 0;
-  const crypto2   = ct2XrpVal + ct2BtcVal;
+  const ct2EtcVal = val('ctCryptoEtc2');
+  const crypto2   = ct2XrpVal + ct2BtcVal + ct2EtcVal;
 
   const ct3XrpVal = ctXrpPriceKRW > 0 ? Math.round(val('ct3XrpQty') * ctXrpPriceKRW / 10000) : 0;
   const ct3BtcVal = ctBtcPriceKRW > 0 ? Math.round(val('ct3BtcQty') * ctBtcPriceKRW / 10000) : 0;
@@ -1479,7 +1487,7 @@ function calc() {
 
   $('ct2_xrpVal').textContent = ctXrpPriceKRW > 0 ? fmt(ct2XrpVal) : '(시세 미조회)';
   $('ct2_btcVal').textContent = ctBtcPriceKRW > 0 ? fmt(ct2BtcVal) : '(시세 미조회)';
-  $('r_crypto2').textContent  = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? fmt(crypto2) : '시세 미조회') + ' 만원';
+  $('r_crypto2').textContent  = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? fmt(crypto2) : `${fmt(ct2EtcVal)} + α`) + ' 만원';
 
   $('ct3_xrpVal').textContent = ctXrpPriceKRW > 0 ? fmt(ct3XrpVal) : '(시세 미조회)';
   $('ct3_btcVal').textContent = ctBtcPriceKRW > 0 ? fmt(ct3BtcVal) : '(시세 미조회)';
