@@ -355,7 +355,7 @@
         <label style="font-weight:600">1차 합계</label>
         <div style="padding:7px 10px;background:var(--input-bg);border-radius:6px;border:1px solid var(--border);font-size:14px;font-weight:600;color:var(--green)" id="r_crypto1">-</div>
         <div style="font-size:11px;margin-top:4px;display:flex;justify-content:space-between;align-items:center">
-          <span style="color:var(--sub)">목표 1,500만원</span>
+          <span id="r_crypto1_target" style="color:var(--sub)">목표 계산 중…</span>
           <span id="r_crypto1_diff" style="font-weight:600;font-size:11px"></span>
         </div>
       </div>
@@ -393,7 +393,7 @@
         <label style="font-weight:600">2차 합계</label>
         <div style="padding:7px 10px;background:var(--input-bg);border-radius:6px;border:1px solid var(--border);font-size:14px;font-weight:600;color:#8b5cf6" id="r_crypto2">-</div>
         <div style="font-size:11px;margin-top:4px;display:flex;justify-content:space-between;align-items:center">
-          <span style="color:var(--sub)">목표 8,000만원</span>
+          <span id="r_crypto2_target" style="color:var(--sub)">목표 계산 중…</span>
           <span id="r_crypto2_diff" style="font-weight:600;font-size:11px"></span>
         </div>
       </div>
@@ -1495,23 +1495,7 @@ function calc() {
 
   $('r_cryptoProceeds').textContent = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? fmt(cryptoProceeds) : `${fmt(ctEtcVal)} + α`) + ' 만원';
 
-  // ── 필요액 달성 표시 ──
-  const diff1 = crypto1 - 1500;
-  const d1El = $('r_crypto1_diff');
-  if (d1El) {
-    if (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0) {
-      d1El.textContent = (diff1 >= 0 ? '✅ +' : '⚠️ ') + fmt(Math.abs(diff1)) + '만';
-      d1El.style.color = diff1 >= 0 ? 'var(--green)' : 'var(--red)';
-    } else { d1El.textContent = ''; }
-  }
-  const diff2 = crypto2 - 8000;
-  const d2El = $('r_crypto2_diff');
-  if (d2El) {
-    if (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0) {
-      d2El.textContent = (diff2 >= 0 ? '✅ +' : '⚠️ ') + fmt(Math.abs(diff2)) + '만';
-      d2El.style.color = diff2 >= 0 ? 'var(--green)' : 'var(--red)';
-    } else { d2El.textContent = ''; }
-  }
+  // ── 필요액 달성 표시 — 목표액은 stage3/stage4 계산 후 업데이트 ──
 
   // ── 보유 수량 초과 검증 ──
   const holdings = getCryptoHoldings();
@@ -1709,6 +1693,42 @@ function calc() {
       net4El.textContent = `⚠️ 부족 ${fmt(-stage4Net)}만원`; net4El.style.background = 'rgba(239,68,68,.1)'; net4El.style.color = 'var(--red)';
     }
     net4El.style.display = '';
+  }
+
+  // ── 크립토 1차·2차 목표액: 각 단계 여유 0원 기준으로 동적 계산 ──
+  if (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0) {
+    // 1차 목표 = ③계약 단계에서 여유 0원이 되려면 크립토 1차가 얼마여야 하는가
+    //   stage3Net = sellContractCum - buyCumTotal3Real
+    //   sellContractCum = sellContract + crypto1 + ctExtraTotal
+    //   → target1 = buyCumTotal3Real - (sellContract + ctExtraTotal)
+    const target1 = Math.max(0, buyCumTotal3Real - (sellContract + ctExtraTotal));
+    const t1El = $('r_crypto1_target');
+    if (t1El) t1El.textContent = '목표 ' + fmt(target1) + '만원';
+    const diff1 = crypto1 - target1;
+    const d1El = $('r_crypto1_diff');
+    if (d1El) {
+      d1El.textContent = (diff1 >= 0 ? '✅ +' : '⚠️ ') + fmt(Math.abs(diff1)) + '만';
+      d1El.style.color = diff1 >= 0 ? 'var(--green)' : 'var(--red)';
+    }
+
+    // 2차 목표 = ④중도금 단계에서 여유 0원이 되려면 크립토 1차+2차 합계가 얼마여야 하는가
+    //   stage4Net = (sellCumBase4 + crypto1 + crypto2 + ctExtraIncome) - buyCumTotal4Real
+    //   → crypto1 + crypto2 = buyCumTotal4Real - sellCumBase4 - ctExtraIncome
+    //   → target2 = max(0, (buyCumTotal4Real - sellCumBase4 - ctExtraIncome) - crypto1)
+    const target2 = Math.max(0, (buyCumTotal4Real - sellCumBase4 - ctExtraIncome) - crypto1);
+    const t2El = $('r_crypto2_target');
+    if (t2El) t2El.textContent = '목표 ' + fmt(target2) + '만원';
+    const diff2 = crypto2 - target2;
+    const d2El = $('r_crypto2_diff');
+    if (d2El) {
+      d2El.textContent = (diff2 >= 0 ? '✅ +' : '⚠️ ') + fmt(Math.abs(diff2)) + '만';
+      d2El.style.color = diff2 >= 0 ? 'var(--green)' : 'var(--red)';
+    }
+  } else {
+    const t1El = $('r_crypto1_target'); if (t1El) t1El.textContent = '목표 (시세 필요)';
+    const t2El = $('r_crypto2_target'); if (t2El) t2El.textContent = '목표 (시세 필요)';
+    const d1El = $('r_crypto1_diff'); if (d1El) d1El.textContent = '';
+    const d2El = $('r_crypto2_diff'); if (d2El) d2El.textContent = '';
   }
 
   const hasInterim = ctInterim > 0 || ctSaleInterim > 0 || ctTenantDeposit > 0;
