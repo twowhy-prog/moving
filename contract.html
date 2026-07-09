@@ -225,7 +225,7 @@
         <label>기타 부채 상환 — 잔금일(9/4) (만원)</label>
         <div class="field-adjust">
           <button class="adjust-btn" onclick="adjustValue('refDebtOther', -500)">▼</button>
-          <input type="number" id="refDebtOther" value="8600" oninput="calc()">
+          <input type="number" id="refDebtOther" value="3700" oninput="calc()">
           <button class="adjust-btn" onclick="adjustValue('refDebtOther', 500)">▲</button>
         </div>
       </div>
@@ -1153,12 +1153,11 @@ function _applyFinanceData(d, silent) {
   if (d._currentLoan && $('refNewLoan')) $('refNewLoan').value = d._currentLoan;
   if (d._currentTransferTax !== undefined && $('refTransferTax')) $('refTransferTax').value = d._currentTransferTax;
   // 부채 합계 → refDebt(잔금일분) + refDebtOther(별도분) 으로 배분
+  // 🔒 마통·기타대출은 2026-07 상환 완료로 제외 (finance.html 참조)
   if ($('refDebt') && d.debtMortgage !== undefined) {
     const _m  = parseFloat(d.debtMortgage) || 0;
-    const _ma = d.debt_maton !== false ? (parseFloat(d.debtMaton) || 0) : 0;
-    const _e  = d.debt_etc   !== false ? (parseFloat(d.debtEtc)   || 0) : 0;
     const _c  = d.debt_car   !== false ? (parseFloat(d.debtCar)   || 0) : 0;
-    const _totalDebt = _m + _ma + _e + _c;
+    const _totalDebt = _m + _c;
     const _balanceDebt = val('refDebt') || 0;  // 사용자가 설정한 잔금일 상환분 유지
     $('refDebtOther').value = Math.max(0, _totalDebt - _balanceDebt);
   }
