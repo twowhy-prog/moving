@@ -376,26 +376,6 @@
         <input type="number" id="debtMortgageRate" value="2.61" step="0.01" oninput="calc()" style="width:60px">%
       </div>
       <div class="debt-item">
-        <input type="checkbox" id="debt_maton" checked onchange="calc()">
-        <label>마통</label>
-        <span class="badge badge-yellow">선택상환</span>
-        <button class="adjust-btn" onclick="adjustValue('debtMaton', -100)">▼</button>
-        <input type="number" id="debtMaton" value="4000" oninput="calc()" style="width:80px">
-        <button class="adjust-btn" onclick="adjustValue('debtMaton', 100)">▲</button>
-        <span>만원 / 금리</span>
-        <input type="number" id="debtMatonRate" value="6" step="0.1" oninput="calc()" style="width:60px">%
-      </div>
-      <div class="debt-item">
-        <input type="checkbox" id="debt_etc" checked onchange="calc()">
-        <label>기타대출</label>
-        <span class="badge badge-yellow">선택상환</span>
-        <button class="adjust-btn" onclick="adjustValue('debtEtc', -100)">▼</button>
-        <input type="number" id="debtEtc" value="1500" oninput="calc()" style="width:80px">
-        <button class="adjust-btn" onclick="adjustValue('debtEtc', 100)">▲</button>
-        <span>만원 / 금리</span>
-        <input type="number" id="debtEtcRate" value="6" step="0.1" oninput="calc()" style="width:60px">%
-      </div>
-      <div class="debt-item">
         <input type="checkbox" id="debt_car" checked onchange="calc()">
         <label>자동차대출</label>
         <span class="badge badge-yellow">선택상환</span>
@@ -591,8 +571,6 @@
       <!-- 공통 부채 현황 -->
       <div class="result-box" style="margin-bottom:14px">
         <div style="font-weight:600;margin-bottom:6px;font-size:12px">공통 — 기존부채 월상환 (DSR 산입)</div>
-        <div class="result-row indent"><span>마통 월이자 <small style="color:var(--sub)">(상환전 기준)</small></span><span id="r_matonMonthly">-</span></div>
-        <div class="result-row indent"><span>기타대출 월이자 <small style="color:var(--sub)">(상환전 기준)</small></span><span id="r_etcMonthly">-</span></div>
         <div class="result-row indent"><span>자동차대출 월원리금 <small style="color:var(--sub)">(상환전 기준)</small></span><span id="r_carMonthly">-</span></div>
         <div class="result-row"><span>기존부채 월상환 합계</span><span id="r_existDebtMonthly">-</span></div>
         <div class="result-row"><span>LTV 한도 <small style="color:var(--sub)">(매수가 기준)</small></span><span id="r_ltvLimit">-</span></div>
@@ -1012,8 +990,7 @@ const INPUT_IDS = [
   'salePrice','acquirePrice','moveCost','saleFeeInput',
   'acquireYear','acquireMonth','saleYear','saleMonth',
   'buyPrice','moveinCost','renovationCost','registrationFee','buyFeeInput','bondFee',
-  'debtMortgage','debtMortgageRate','debtMaton','debtMatonRate',
-  'debtEtc','debtEtcRate','debtCar','debtCarMonths',
+  'debtMortgage','debtMortgageRate','debtCar','debtCarMonths',
   'daycarePerQ',
   'xrpQty','btcQty','cryptoEtc',
   'xrpHold','btcHold','cryptoEtcHold',
@@ -1026,7 +1003,7 @@ const INPUT_IDS = [
   'remoShare','remoPeriod','remoMonthly','remoExpected',
   'yunhoAge','giftPrior','giftLump','giftMonthly','giftRate','giftYears'
 ];
-const CHECKBOX_IDS = ['debt_mortgage','debt_maton','debt_etc','debt_car','autoAllocate'];
+const CHECKBOX_IDS = ['debt_mortgage','debt_car','autoAllocate'];
 
 function saveInputs() {
   const data = {};
@@ -1332,10 +1309,8 @@ function calc() {
 
   // 부채 상환 (체크박스 선택 여부에 따라)
   const mortgageAmt = val('debtMortgage');
-  const matonAmt    = $('debt_maton').checked ? val('debtMaton') : 0;
-  const etcAmt      = $('debt_etc').checked   ? val('debtEtc')   : 0;
   const carAmt      = $('debt_car').checked   ? val('debtCar')   : 0;
-  const debtTotal   = mortgageAmt + matonAmt + etcAmt + carAmt;
+  const debtTotal   = mortgageAmt + carAmt;
 
   // 크립토 가용 자산
   const xrpQty    = val('xrpQty');
@@ -1391,13 +1366,9 @@ function calc() {
   else                         ltvLimit = 48000 + Math.round((buyPrice - 150000) * 0.10);
 
   // DSR 기존부채: 대출 신청 시점 → 상환 여부와 무관하게 모두 포함
-  const matonMonthly  = val('debtMaton') * val('debtMatonRate') / 100 / 12;
-  const etcMonthly    = val('debtEtc')   * val('debtEtcRate')   / 100 / 12;
   const carMonthly    = calcMonthlyPayment(val('debtCar'), 6, val('debtCarMonths') / 12);
-  const existDebtMonthly = matonMonthly + etcMonthly + carMonthly;
+  const existDebtMonthly = carMonthly;
 
-  $('r_matonMonthly').textContent     = fmt(matonMonthly) + ' 만원';
-  $('r_etcMonthly').textContent       = fmt(etcMonthly) + ' 만원';
   $('r_carMonthly').textContent       = fmt(carMonthly) + ' 만원';
   $('r_existDebtMonthly').textContent = fmt(existDebtMonthly) + ' 만원';
   $('r_ltvLimit').textContent         = fmt(ltvLimit) + ' 만원';
@@ -1445,10 +1416,8 @@ function calc() {
   $('r_remainDaycareMonths').textContent = daycareMonths;
 
   // 기타부채 월상환: 체크박스 ON = 매도수익으로 상환 완료 → 월납입 없음, OFF = 계속 상환 중
-  const cfMatonMonthly = $('debt_maton').checked ? 0 : matonMonthly;
-  const cfEtcMonthly   = $('debt_etc').checked   ? 0 : etcMonthly;
   const cfCarMonthly   = $('debt_car').checked   ? 0 : carMonthly;
-  const otherDebtMonthly = cfMatonMonthly + cfEtcMonthly + cfCarMonthly;
+  const otherDebtMonthly = cfCarMonthly;
   const totalIncome = totalIncomeInput;
 
   // ① 영유기간: 영유비 직납
