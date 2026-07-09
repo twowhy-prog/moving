@@ -1831,7 +1831,9 @@ function calc() {
   // 최종 정산
   $('final_sell_net').textContent = fmt(sellOnlyNet) + ' 만원';
   $('nr_buy_loan').textContent    = '+' + fmt(newLoan) + ' 만원';
-  $('nr_crypto').textContent      = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? '+' + fmt(cryptoProceeds) : `+${fmt(ctEtcVal)} + α`) + ' 만원 (1+2+3차)';
+  // 크립토 1+2+3차 매도 예상 + ③계약 단계에 이미 수취한 주식+크립토 등 추가수입(ctExtraIncome) 합산
+  const cryptoPlusExtra = cryptoProceeds + ctExtraIncome;
+  $('nr_crypto').textContent      = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? '+' + fmt(cryptoPlusExtra) : `+${fmt(ctEtcVal + ctExtraIncome)} + α`) + ` 만원 (1+2+3차, 기수취 ${fmt(ctExtraIncome)} 포함)`;
   $('final_buy_net').textContent  = fmt(buyEquityTotal + interiorTotal) + ' 만원';
   const remEl = $('final_remainder');
   remEl.textContent = fmt(remainder) + ' 만원';
