@@ -1784,7 +1784,7 @@ function calc() {
   if (intBalEl) intBalEl.textContent = '−' + fmt(interiorBalance) + ' 만원';
   const intBalRow = $('t_buy_interior_bal_row');
   if (intBalRow) intBalRow.style.opacity = interiorBalance > 0 ? '1' : '0.3';
-  const stage6Net = stage6SellNet - buyCost;
+  const stage6Net = stage6SellNet - buyCost - extraTotal - interiorBalance;
   const stage6NetEl = $('t_stage6_net');
   stage6NetEl.textContent = (stage6Net >= 0 ? '+' : '−') + fmt(Math.abs(stage6Net)) + ' 만원';
   stage6NetEl.className   = stage6Net >= 0 ? 'amt-in' : 'amt-neg';
