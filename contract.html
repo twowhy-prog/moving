@@ -954,7 +954,8 @@
       </div><!-- /txn-grid -->
 
       <div class="info" style="margin-top:10px">
-        * 매도·매수 잔금일을 같은 날로 맞추면 현금 공백 없이 자금 연결 가능. 잔금일 전 매도 잔금이 입금되어야 매수 잔금 지급 가능.
+        * 매도·매수 잔금일을 같은 날로 맞추면 현금 공백 없이 자금 연결 가능. 잔금일 전 매도 잔금이 입금되어야 매수 잔금 지급 가능.<br>
+        * 위 금액 중 일부는 잔금일 당일 현금 지출이 아닌 할부 결제 예정 (예: 가전, 취득세) — 실제 당일 필요 현금은 소계보다 적을 수 있음.
       </div>
     </div>
   </div>
@@ -1784,7 +1785,7 @@ function calc() {
   if (intBalEl) intBalEl.textContent = '−' + fmt(interiorBalance) + ' 만원';
   const intBalRow = $('t_buy_interior_bal_row');
   if (intBalRow) intBalRow.style.opacity = interiorBalance > 0 ? '1' : '0.3';
-  const stage6Net = stage6SellNet - buyCost;
+  const stage6Net = stage6SellNet - buyCost - extraTotal - interiorBalance;
   const stage6NetEl = $('t_stage6_net');
   stage6NetEl.textContent = (stage6Net >= 0 ? '+' : '−') + fmt(Math.abs(stage6Net)) + ' 만원';
   stage6NetEl.className   = stage6Net >= 0 ? 'amt-in' : 'amt-neg';
