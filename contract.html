@@ -917,8 +917,8 @@
             <span class="lbl">이사비</span>
             <span class="amt amt-neg" id="t_sell_move">-</span>
           </div>
-          <div class="txn-row">
-            <span class="lbl">주담대 실행 (+)</span>
+          <div class="txn-row" id="t_buy_loan_row">
+            <span class="lbl">주담대 잔여 <small style="color:var(--sub)">(잔금 초과분, +)</small></span>
             <span class="amt amt-in" id="t_buy_loan">-</span>
           </div>
           <div class="txn-row" id="t_sell_crypto_row">
@@ -1787,6 +1787,8 @@ function calc() {
   // 잔금 주담대/본인 이체 분리
   const buyBalanceLoan = Math.min(newLoan, buyBalance);
   const buyBalanceSelf = Math.max(0, buyBalance - newLoan);
+  // 주담대 중 잔금 지급에 쓰이고 남은 금액 (은행 직접 입금으로 이미 반영된 분은 제외 → 이중계상 방지)
+  const loanLeftover = Math.max(0, newLoan - buyBalanceLoan);
 
   $('t_sell_balance').textContent    = '+' + fmt(sellBalance) + ' 만원';
   $('t_sell_total_cum').textContent  = '+' + fmt(sellTotalCum) + ' 만원';
@@ -1803,12 +1805,14 @@ function calc() {
   $('t_sell_transfertax').textContent = '−' + fmt(refTransferTax)  + ' 만원';
   $('t_sell_fee').textContent         = '−' + fmt(refSaleFee)      + ' 만원';
   $('t_sell_move').textContent        = '−' + fmt(refMoveCost)     + ' 만원';
-  const stage6SellNet = newLoan + crypto3 - debt - saleCost;
+  const stage6SellNet = loanLeftover + crypto3 - debt - saleCost;
   const sellNetEl = $('t_sell_net');
   sellNetEl.textContent = (stage6SellNet >= 0 ? '+' : '−') + fmt(Math.abs(stage6SellNet)) + ' 만원';
   sellNetEl.className   = stage6SellNet >= 0 ? 'amt-in' : 'amt-neg';
 
-  $('t_buy_loan').textContent    = '+' + fmt(newLoan)       + ' 만원';
+  $('t_buy_loan').textContent    = '+' + fmt(loanLeftover)  + ' 만원';
+  const buyLoanRow = $('t_buy_loan_row');
+  if (buyLoanRow) buyLoanRow.style.opacity = loanLeftover > 0 ? '1' : '0.4';
   // stage6 크립토: 1차·2차는 이미 stage3·4에서 처리 → 기타(ctEtcVal)만 표시
   const cryptoEl = $('t_sell_crypto');
   cryptoEl.textContent = (crypto3 > 0 ? '+' + fmt(crypto3) : (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? '+0' : '+α')) + ' 만원';
