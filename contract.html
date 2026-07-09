@@ -1015,12 +1015,8 @@
           <span id="nr_crypto" style="color:var(--green);font-weight:600">-</span>
         </div>
         <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px">
-          <span style="color:var(--sub)">— 매수 총 지출</span>
+          <span style="color:var(--sub)">— 매수 총 지출 <small style="color:var(--sub)">(인테리어 포함)</small></span>
           <span id="final_buy_net" style="color:var(--red);font-weight:600">-</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px">
-          <span style="color:var(--sub)">— 인테리어 계약 합계</span>
-          <span id="final_interior" style="color:var(--red);font-weight:600">-</span>
         </div>
         <div style="display:flex;justify-content:space-between;padding:8px 0 2px;font-weight:700;font-size:15px;border-top:2px solid var(--border);margin-top:4px">
           <span>이사 후 잔여 현금</span>
@@ -1837,8 +1833,6 @@ function calc() {
   $('nr_buy_loan').textContent    = '+' + fmt(newLoan) + ' 만원';
   $('nr_crypto').textContent      = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? '+' + fmt(cryptoProceeds) : `+${fmt(ctEtcVal)} + α`) + ' 만원 (1+2+3차)';
   $('final_buy_net').textContent  = fmt(buyEquityTotal + interiorTotal) + ' 만원';
-  const finalIntEl = $('final_interior');
-  if (finalIntEl) finalIntEl.textContent = (interiorTotal > 0 ? '−' + fmt(interiorTotal) : '—') + ' 만원';
   const remEl = $('final_remainder');
   remEl.textContent = fmt(remainder) + ' 만원';
   remEl.style.color = remainder >= 0 ? 'var(--green)' : 'var(--red)';
