@@ -374,7 +374,7 @@
       <div style="display:grid;grid-template-columns:1fr 100px;gap:4px 8px;align-items:center" class="locked-field">
         <div style="font-size:10px;color:var(--sub);font-weight:600">항목</div>
         <div style="font-size:10px;color:var(--sub);font-weight:600">금액 (만원)</div>
-        <input type="text" id="ctExtra1Name" value="주식+크립토 매도" oninput="updateExtraLabel(1);calc()" style="padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text)" disabled>
+        <input type="text" id="ctExtra1Name" value="주식·자산 매도" oninput="updateExtraLabel(1);calc()" style="padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text)" disabled>
         <input type="number" id="ctExtra1Amt" value="2180" oninput="calc()" style="padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text)" disabled>
         <input type="text" id="ctExtra2Name" value="청약 해지" oninput="updateExtraLabel(2);calc()" style="padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text)" disabled>
         <input type="number" id="ctExtra2Amt" value="0" oninput="calc()" style="padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text)" disabled>
@@ -875,8 +875,8 @@
           <span id="nr_buy_loan" style="color:var(--green);font-weight:600">-</span>
         </div>
         <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px">
-          <span style="color:var(--sub)">+ 💰 계약 시 추가 수입 <small style="color:var(--sub)">(주식+크립토 매도 — ③계약 기수취)</small></span>
-          <span id="nr_crypto" style="color:var(--green);font-weight:600">-</span>
+          <span style="color:var(--sub)">+ 💰 계약 시 추가 수입 <small style="color:var(--sub)">(③계약 시 기수취 — 매도 완료)</small></span>
+          <span id="nr_extraIncome" style="color:var(--green);font-weight:600">-</span>
         </div>
         <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px">
           <span style="color:var(--sub)">— 매수 총 지출 <small style="color:var(--sub)">(인테리어 포함)</small></span>
@@ -1530,8 +1530,8 @@ function calc() {
   // 최종 정산
   $('final_sell_net').textContent = fmt(sellOnlyNet) + ' 만원';
   $('nr_buy_loan').textContent    = '+' + fmt(newLoan) + ' 만원';
-  // ③계약 단계에 이미 수취한 주식+크립토 매도 등 추가수입
-  $('nr_crypto').textContent      = '+' + fmt(ctExtraIncome) + ' 만원';
+  // ③계약 단계에 이미 수취한 주식·자산 매도 등 추가수입
+  $('nr_extraIncome').textContent      = '+' + fmt(ctExtraIncome) + ' 만원';
   $('final_buy_net').textContent  = fmt(buyEquityTotal + interiorTotal) + ' 만원';
   const remEl = $('final_remainder');
   remEl.textContent = fmt(remainder) + ' 만원';
@@ -1552,11 +1552,11 @@ try {
 
 // 🔒 ①~④단계(중도금까지) 확정값 강제 고정 — 이전 저장값·동기화 결과를 덮어씀
 // 남은 단계는 ⑤잔금(9/4)·⑥잔금 후 처리뿐.
-// (계약금 부족분 2,180만원은 '주식+크립토 매도' 추가수입으로 확정)
+// (계약금 부족분 2,180만원은 '주식·자산 매도' 추가수입으로 확정)
 const CONFIRMED_LOCK = {
   // ③ 계약
   refSaleDeposit: '18500', refBuyDeposit: '20000',
-  ctExtra1Name: '주식+크립토 매도', ctExtra1Amt: '2180',
+  ctExtra1Name: '주식·자산 매도', ctExtra1Amt: '2180',
   ctExtra2Name: '청약 해지', ctExtra2Amt: '0',
   ctExtra3Name: '기타', ctExtra3Amt: '0',
   // ④ 중도금 — 매도 7/17·8/3 수취, 매수 7/20·8/5 지급 완료
