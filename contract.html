@@ -319,131 +319,32 @@
         <div style="padding:7px 10px;background:var(--input-bg);border-radius:6px;border:1px solid var(--border);font-size:14px;font-weight:600;color:var(--red)" id="r_buyCostTotal">-</div>
       </div>
     </div>
-    <!-- 크립토 매도 계획 (2회 분할) -->
-    <div style="font-size:11px;font-weight:700;color:var(--sub);margin:10px 0 4px;letter-spacing:.3px;display:flex;align-items:center;gap:8px">🪙 크립토 매도 계획 <button class="btn" style="font-size:11px;padding:2px 10px;margin-left:auto" onclick="fetchCtCryptoPrices()">🔄 시세 갱신</button><span id="ct_priceTime" style="font-size:11px;color:var(--sub)"></span></div>
-
-    <div style="font-size:11px;font-weight:600;color:var(--green);margin:6px 0 3px">1차 — 실계약 시 <span style="color:var(--sub);font-weight:400">🔒 확정 — ③계약 부족분은 아래 '주식+크립토 매도'로 합산 처리</span></div>
-    <div class="grid-4 locked-field">
-      <div class="field">
-        <label>XRP <span id="ct_xrpPriceLabel" style="font-size:10px;color:var(--blue);font-weight:600"></span></label>
-        <div class="field-adjust">
-          <button class="adjust-btn" onclick="adjClamp('ct1XrpQty', -1000, 'xrp')" disabled>▼</button>
-          <input type="number" id="ct1XrpQty" value="0" oninput="clampCryptoQty('ct1XrpQty','xrp')" disabled>
-          <button class="adjust-btn" onclick="adjClamp('ct1XrpQty', 1000, 'xrp')" disabled>▲</button>
-        </div>
-        <div style="font-size:11px;color:var(--sub);margin-top:2px">개 ≈ <span id="ct1_xrpVal" style="color:var(--green);font-weight:600">-</span> 만원</div>
+    <!-- 크립토·자산 매도 — 단계별 정리 -->
+    <div style="font-size:11px;font-weight:700;color:var(--sub);margin:10px 0 4px;letter-spacing:.3px">🪙 크립토·자산 매도 <small style="font-weight:400;color:var(--sub)">— 단계별 실행 금액 (만원)</small></div>
+    <div class="grid-3">
+      <div class="field locked-field">
+        <label>1차 — ③계약 시 🔒 <small style="color:var(--sub);font-weight:400">확정</small></label>
+        <input type="number" id="ctCrypto1" value="0" oninput="calc()" disabled>
+        <div style="font-size:10px;color:var(--sub);margin-top:2px">별도 매도 없음 — 부족분 2,180만원은 아래 '주식+크립토 매도'로 합산</div>
+      </div>
+      <div class="field locked-field">
+        <label>2차 — ④중도금 시 🔒 <small style="color:var(--sub);font-weight:400">확정</small></label>
+        <input type="number" id="ctCrypto2" value="0" oninput="calc()" disabled>
+        <div style="font-size:10px;color:var(--sub);margin-top:2px">별도 매도 없음</div>
       </div>
       <div class="field">
-        <label>BTC <span id="ct_btcPriceLabel" style="font-size:10px;color:var(--blue);font-weight:600"></span></label>
-        <div class="field-adjust">
-          <button class="adjust-btn" onclick="adjClamp('ct1BtcQty', -0.1, 'btc')" disabled>▼</button>
-          <input type="number" id="ct1BtcQty" value="0" step="0.01" oninput="clampCryptoQty('ct1BtcQty','btc')" disabled>
-          <button class="adjust-btn" onclick="adjClamp('ct1BtcQty', 0.1, 'btc')" disabled>▲</button>
-        </div>
-        <div style="font-size:11px;color:var(--sub);margin-top:2px">개 ≈ <span id="ct1_btcVal" style="color:var(--green);font-weight:600">-</span> 만원</div>
-      </div>
-      <div class="field"></div>
-      <div class="field">
-        <label style="font-weight:600">1차 합계</label>
-        <div style="padding:7px 10px;background:var(--input-bg);border-radius:6px;border:1px solid var(--border);font-size:14px;font-weight:600;color:var(--green)" id="r_crypto1">-</div>
-        <div style="font-size:11px;margin-top:4px;display:flex;justify-content:space-between;align-items:center">
-          <span id="r_crypto1_target" style="color:var(--sub)">목표 계산 중…</span>
-          <span id="r_crypto1_diff" style="font-weight:600;font-size:11px"></span>
-        </div>
+        <label>3차 — ⑥잔금 후 <small style="color:var(--sub);font-weight:400">남은 단계</small></label>
+        <input type="number" id="ctCrypto3" value="0" oninput="calc()">
+        <div style="font-size:10px;color:var(--sub);margin-top:2px">이사 후 정산에 반영 — 필요액만큼 입력</div>
       </div>
     </div>
-
-    <div style="font-size:11px;font-weight:600;color:#8b5cf6;margin:8px 0 3px">2차 — 3차 중도금 시</div>
-    <div class="grid-4">
-      <div class="field">
-        <label>XRP</label>
-        <div class="field-adjust">
-          <button class="adjust-btn" onclick="adjClamp('ct2XrpQty', -1000, 'xrp')">▼</button>
-          <input type="number" id="ct2XrpQty" value="0" oninput="clampCryptoQty('ct2XrpQty','xrp')">
-          <button class="adjust-btn" onclick="adjClamp('ct2XrpQty', 1000, 'xrp')">▲</button>
-        </div>
-        <div style="font-size:11px;color:var(--sub);margin-top:2px">개 ≈ <span id="ct2_xrpVal" style="color:var(--green);font-weight:600">-</span> 만원</div>
-      </div>
-      <div class="field">
-        <label>BTC</label>
-        <div class="field-adjust">
-          <button class="adjust-btn" onclick="adjClamp('ct2BtcQty', -0.1, 'btc')">▼</button>
-          <input type="number" id="ct2BtcQty" value="0" step="0.01" oninput="clampCryptoQty('ct2BtcQty','btc')">
-          <button class="adjust-btn" onclick="adjClamp('ct2BtcQty', 0.1, 'btc')">▲</button>
-        </div>
-        <div style="font-size:11px;color:var(--sub);margin-top:2px">개 ≈ <span id="ct2_btcVal" style="color:var(--green);font-weight:600">-</span> 만원</div>
-      </div>
-      <div class="field">
-        <label>기타 자산 (만원)</label>
-        <div class="field-adjust">
-          <button class="adjust-btn" onclick="adjustValue('ctCryptoEtc2', -100)">▼</button>
-          <input type="number" id="ctCryptoEtc2" value="0" oninput="calc()">
-          <button class="adjust-btn" onclick="adjustValue('ctCryptoEtc2', 100)">▲</button>
-        </div>
-      </div>
-      <div class="field">
-        <label style="font-weight:600">2차 합계</label>
-        <div style="padding:7px 10px;background:var(--input-bg);border-radius:6px;border:1px solid var(--border);font-size:14px;font-weight:600;color:#8b5cf6" id="r_crypto2">-</div>
-        <div style="font-size:11px;margin-top:4px;display:flex;justify-content:space-between;align-items:center">
-          <span id="r_crypto2_target" style="color:var(--sub)">목표 계산 중…</span>
-          <span id="r_crypto2_diff" style="font-weight:600;font-size:11px"></span>
-        </div>
-      </div>
-    </div>
-
-    <div style="font-size:11px;font-weight:600;color:var(--orange);margin:8px 0 3px">3차 — 이사 후</div>
-    <div class="grid-4">
-      <div class="field">
-        <label>XRP</label>
-        <div class="field-adjust">
-          <button class="adjust-btn" onclick="adjClamp('ct3XrpQty', -1000, 'xrp')">▼</button>
-          <input type="number" id="ct3XrpQty" value="0" oninput="clampCryptoQty('ct3XrpQty','xrp')">
-          <button class="adjust-btn" onclick="adjClamp('ct3XrpQty', 1000, 'xrp')">▲</button>
-        </div>
-        <div style="font-size:11px;color:var(--sub);margin-top:2px">개 ≈ <span id="ct3_xrpVal" style="color:var(--green);font-weight:600">-</span> 만원</div>
-      </div>
-      <div class="field">
-        <label>BTC</label>
-        <div class="field-adjust">
-          <button class="adjust-btn" onclick="adjClamp('ct3BtcQty', -0.1, 'btc')">▼</button>
-          <input type="number" id="ct3BtcQty" value="0" step="0.01" oninput="clampCryptoQty('ct3BtcQty','btc')">
-          <button class="adjust-btn" onclick="adjClamp('ct3BtcQty', 0.1, 'btc')">▲</button>
-        </div>
-        <div style="font-size:11px;color:var(--sub);margin-top:2px">개 ≈ <span id="ct3_btcVal" style="color:var(--green);font-weight:600">-</span> 만원</div>
-      </div>
-      <div class="field">
-        <label>기타 자산 (만원)</label>
-        <div class="field-adjust">
-          <button class="adjust-btn" onclick="adjustValue('ctCryptoEtc', -100)">▼</button>
-          <input type="number" id="ctCryptoEtc" value="0" oninput="calc()">
-          <button class="adjust-btn" onclick="adjustValue('ctCryptoEtc', 100)">▲</button>
-        </div>
-      </div>
-      <div class="field">
-        <label style="font-weight:600">3차 합계</label>
-        <div style="padding:7px 10px;background:var(--input-bg);border-radius:6px;border:1px solid var(--border);font-size:14px;font-weight:600;color:var(--orange)" id="r_crypto3">-</div>
-        <div style="font-size:11px;margin-top:4px;display:flex;justify-content:space-between;align-items:center">
-          <span style="color:var(--sub)">목표: 잔여현금 0</span>
-          <span id="r_crypto3_diff" style="font-weight:600;font-size:11px"></span>
-        </div>
-      </div>
-    </div>
-
     <div class="grid-4" style="margin-top:4px">
       <div class="field" style="grid-column:span 3"></div>
       <div class="field">
-        <label style="font-weight:600">크립토 총 예상 매도액</label>
+        <label style="font-weight:600">크립토 매도 합계</label>
         <div style="padding:7px 10px;background:var(--input-bg);border-radius:6px;border:1px solid var(--border);font-size:14px;font-weight:600;color:var(--green)" id="r_cryptoProceeds">-</div>
-        <div style="font-size:10px;color:var(--sub);margin-top:3px">* 업비트 시세 미조회 시 XRP·BTC는 0원 처리</div>
-        <div style="font-size:11px;color:var(--sub);margin-top:4px">
-          XRP 1+2차 <span id="r_xrp_total_qty" style="font-weight:600">-</span> / 보유 <span id="r_xrp_hold">-</span>개 &nbsp;잔여 <span id="r_xrp_remain">-</span>개
-        </div>
-        <div style="font-size:11px;color:var(--sub);margin-top:2px">
-          BTC 1+2차 <span id="r_btc_total_qty" style="font-weight:600">-</span> / 보유 <span id="r_btc_hold">-</span>개 &nbsp;잔여 <span id="r_btc_remain">-</span>개
-        </div>
       </div>
     </div>
-    <div id="crypto_qty_warn" style="font-size:12px;font-weight:600;color:var(--red);padding:6px 10px;border-radius:6px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3);margin-top:4px;display:none"></div>
 
     <!-- 계약금 금액 / 중도금 직접 입력 -->
     <div style="font-size:11px;font-weight:700;color:var(--sub);margin:10px 0 6px;letter-spacing:.3px">📊 계약금 및 중도금</div>
@@ -460,13 +361,13 @@
             <button class="adjust-btn" onclick="adjustValue('refSaleDeposit', 1000)" disabled>▲</button>
           </div>
         </div>
-        <div class="field">
-          <label>1차 중도금 (만원)</label>
-          <input type="number" id="saleInterim1" value="30000" oninput="calc()">
+        <div class="field locked-field">
+          <label>1차 중도금 (만원) 🔒 <small style="color:var(--sub);font-weight:400">7/17 수취</small></label>
+          <input type="number" id="saleInterim1" value="30000" oninput="calc()" disabled>
         </div>
-        <div class="field">
-          <label>2차 중도금 (만원)</label>
-          <input type="number" id="saleInterim2" value="12000" oninput="calc()">
+        <div class="field locked-field">
+          <label>2차 중도금 (만원) 🔒 <small style="color:var(--sub);font-weight:400">8/3 수취</small></label>
+          <input type="number" id="saleInterim2" value="12000" oninput="calc()" disabled>
         </div>
       </div>
     </div>
@@ -483,13 +384,13 @@
             <button class="adjust-btn" onclick="adjustValue('refBuyDeposit', 1000)" disabled>▲</button>
           </div>
         </div>
-        <div class="field">
-          <label>1차 중도금 (만원)</label>
-          <input type="number" id="buyInterim1" value="30000" oninput="calc()">
+        <div class="field locked-field">
+          <label>1차 중도금 (만원) 🔒 <small style="color:var(--sub);font-weight:400">7/20 지급</small></label>
+          <input type="number" id="buyInterim1" value="30000" oninput="calc()" disabled>
         </div>
-        <div class="field">
-          <label>2차 중도금 (만원) <small style="color:var(--sub)">조기 퇴거 협의</small></label>
-          <input type="number" id="buyInterim2" value="20000" oninput="calc()">
+        <div class="field locked-field">
+          <label>2차 중도금 (만원) 🔒 <small style="color:var(--sub);font-weight:400">8/5 지급 · 조기 퇴거 협의</small></label>
+          <input type="number" id="buyInterim2" value="20000" oninput="calc()" disabled>
         </div>
       </div>
     </div>
@@ -509,7 +410,7 @@
     </div>
     <!-- 인테리어 계약 납부 일정 -->
     <div style="border:1px solid var(--border);border-left:3px solid #8b5cf6;border-radius:6px;padding:10px 12px;margin-bottom:8px;background:rgba(139,92,246,.04)">
-      <div style="font-size:11px;font-weight:700;color:#6d28d9;margin-bottom:10px">🎨 인테리어 계약 납부 일정 <small style="font-weight:400;color:var(--sub)">(VAT별도 · 총 6,800만원)</small></div>
+      <div style="font-size:11px;font-weight:700;color:#6d28d9;margin-bottom:10px">🎨 인테리어 계약 납부 일정 <small style="font-weight:400;color:var(--sub)">(VAT별도 · 총 6,800만원) — 계약금·착수금 지급 완료, 중도금 9/4 확정</small></div>
       <!-- 숨겨진 고정 금액 -->
       <input type="hidden" id="interiorDeposit" value="680">
       <input type="hidden" id="interiorStartup" value="2720">
@@ -519,27 +420,27 @@
       <div style="display:grid;grid-template-columns:repeat(4,1fr) auto;gap:6px;align-items:start">
         <!-- 계약금 -->
         <div class="field" style="margin-bottom:0">
-          <label>계약금 <small style="color:var(--sub)">680만</small></label>
-          <input type="date" id="date_interior_contract" value="2026-06-08" onchange="calc()" style="width:100%;padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text)">
-          <div style="font-size:10px;color:var(--sub);margin-top:2px">계약서 작성 시</div>
+          <label>계약금 <small style="color:var(--sub)">680만</small> 🔒</label>
+          <input type="date" id="date_interior_contract" value="2026-06-08" onchange="calc()" style="width:100%;padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text)" disabled>
+          <div style="font-size:10px;color:var(--green);margin-top:2px">✓ 지급 완료 (계약서 작성 시)</div>
         </div>
         <!-- 착수금 -->
         <div class="field" style="margin-bottom:0">
           <label>착수금 <small style="color:var(--sub)">2,720만</small></label>
           <input type="date" id="date_interior_startup" onchange="calc()" style="width:100%;padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text)">
-          <div style="font-size:10px;color:var(--sub);margin-top:2px">착공 시</div>
+          <div style="font-size:10px;color:var(--green);margin-top:2px">✓ 지급 완료 (착공 시) — 날짜만 기입</div>
         </div>
         <!-- 중도금 -->
         <div class="field" style="margin-bottom:0">
           <label>중도금 <small style="color:var(--sub)">2,720만</small></label>
-          <input type="date" id="date_interior_interim" onchange="calc()" style="width:100%;padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text)">
-          <div style="font-size:10px;color:var(--sub);margin-top:2px">목공 시작 시</div>
+          <input type="date" id="date_interior_interim" value="2026-09-04" onchange="calc()" style="width:100%;padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text)">
+          <div style="font-size:10px;color:#b45309;margin-top:2px">⚠️ 변경 — 잔금일(9/4) 지급 협의</div>
         </div>
         <!-- 잔금 -->
         <div class="field" style="margin-bottom:0">
           <label>잔금 <small style="color:var(--sub)">680만</small></label>
           <input type="date" id="date_interior_balance" onchange="calc()" style="width:100%;padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text)">
-          <div style="font-size:10px;color:var(--sub);margin-top:2px">공사 완료 시</div>
+          <div style="font-size:10px;color:var(--sub);margin-top:2px">공사 완료 시 (미정)</div>
         </div>
         <!-- 합계 -->
         <div class="field" style="margin-bottom:0">
@@ -618,25 +519,25 @@
         <div class="cs-step" onclick="scrollToStage('stage1')" style="cursor:pointer">
           <div class="cs-dot done" id="dot_stage1">✓</div>
           <div class="cs-label done" id="lbl_stage1">가계약</div>
-          <div class="cs-date"><input type="date" id="date_stage1" value="2026-05-22" onchange="updateStageDate('stage1')" title="가계약 날짜"></div>
+          <div class="cs-date"><input type="date" id="date_stage1" value="2026-05-22" onchange="updateStageDate('stage1')" title="가계약 날짜 (확정)" disabled></div>
         </div>
         <div class="cs-line done" id="line_stage1"></div>
         <div class="cs-step" onclick="scrollToStage('stageYak')" style="cursor:pointer">
           <div class="cs-dot done" id="dot_stageYak">✓</div>
           <div class="cs-label done" id="lbl_stageYak">약정서</div>
-          <div class="cs-date"><input type="date" id="date_stageYak" value="2026-05-22" onchange="updateStageDate('stageYak')" title="약정서 작성일"></div>
+          <div class="cs-date"><input type="date" id="date_stageYak" value="2026-05-22" onchange="updateStageDate('stageYak')" title="약정서 작성일 (확정)" disabled></div>
         </div>
         <div class="cs-line done" id="line_stageYak"></div>
         <div class="cs-step" onclick="scrollToStage('stage2')" style="cursor:pointer">
-          <div class="cs-dot active" id="dot_stage2">⏳</div>
-          <div class="cs-label active" id="lbl_stage2">토지거래허가</div>
+          <div class="cs-dot done" id="dot_stage2">✓</div>
+          <div class="cs-label done" id="lbl_stage2">토지거래허가</div>
           <div class="cs-date" style="font-size:11px;color:var(--sub);text-align:center">6월 첫째주</div>
         </div>
-        <div class="cs-line" id="line_stage2"></div>
+        <div class="cs-line done" id="line_stage2"></div>
         <div class="cs-step" onclick="scrollToStage('stage3')" style="cursor:pointer">
-          <div class="cs-dot" id="dot_stage3">3</div>
-          <div class="cs-label" id="lbl_stage3">계약</div>
-          <div class="cs-date"><input type="date" id="date_stage3" value="2026-06-05" onchange="updateStageDate('stage3')" title="실계약 예정일"></div>
+          <div class="cs-dot done" id="dot_stage3">✓</div>
+          <div class="cs-label done" id="lbl_stage3">계약</div>
+          <div class="cs-date"><input type="date" id="date_stage3" value="2026-06-05" onchange="updateStageDate('stage3')" title="실계약일 (확정)" disabled></div>
         </div>
         <div class="cs-line" id="line_stage3"></div>
         <div class="cs-step" onclick="scrollToStage('stage4')" style="cursor:pointer">
@@ -644,11 +545,11 @@
           <div class="cs-label" id="lbl_stage4">중도금</div>
           <div class="cs-date" style="display:flex;flex-direction:column;gap:2px">
             <div style="font-size:11px;color:var(--sub);margin-bottom:2px">매도</div>
-            <input type="date" id="date_sell_interim1" value="2026-07-17" onchange="updateInterimDates()" title="매도 1차 중도금">
-            <input type="date" id="date_sell_interim2" value="2026-08-03" onchange="updateInterimDates()" title="매도 2차 중도금">
+            <input type="date" id="date_sell_interim1" value="2026-07-17" onchange="updateInterimDates()" title="매도 1차 중도금 (확정)" disabled>
+            <input type="date" id="date_sell_interim2" value="2026-08-03" onchange="updateInterimDates()" title="매도 2차 중도금 (확정)" disabled>
             <div style="font-size:11px;color:var(--sub);margin-top:4px;margin-bottom:2px">매수</div>
-            <input type="date" id="date_buy_interim1" value="2026-07-20" onchange="updateInterimDates()" title="매수 1차 중도금">
-            <input type="date" id="date_buy_interim2" value="2026-08-05" onchange="updateInterimDates()" title="매수 2차 중도금">
+            <input type="date" id="date_buy_interim1" value="2026-07-20" onchange="updateInterimDates()" title="매수 1차 중도금 (확정)" disabled>
+            <input type="date" id="date_buy_interim2" value="2026-08-05" onchange="updateInterimDates()" title="매수 2차 중도금 (확정)" disabled>
           </div>
         </div>
         <div class="cs-line" id="line_stage4"></div>
@@ -724,7 +625,7 @@
         </div>
 
         <!-- ② 토지거래허가 -->
-        <div class="txn-stage-label" id="stage2" onclick="toggleStage('stage2')" style="cursor:pointer">② 토지거래허가 <span id="stage2_date" class="stage-date-badge">6월 첫째주</span><span class="stage-toggle-icon">▼</span><button class="stage-done-btn" id="cbtn_stage2" onclick="event.stopPropagation();toggleComplete('stage2')">□ 완료 처리</button><span class="badge badge-yellow" id="badge_stage2" style="margin-left:6px">진행중</span></div>
+        <div class="txn-stage-label" id="stage2" onclick="toggleStage('stage2')" style="cursor:pointer">② 토지거래허가 <span id="stage2_date" class="stage-date-badge">6월 첫째주</span><span class="stage-toggle-icon">▼</span><button class="stage-done-btn" id="cbtn_stage2" onclick="event.stopPropagation();toggleComplete('stage2')">□ 완료 처리</button><span class="badge badge-green" id="badge_stage2" style="margin-left:6px">완료</span></div>
         <div class="txn-cell sell">
           <div class="txn-na">— 대기</div>
           <div class="txn-note">허가 기간 중 매수자 확정 후 삼익 매도 계약 준비.</div>
@@ -735,7 +636,7 @@
         </div>
 
         <!-- ③ 계약 -->
-        <div class="txn-stage-label" id="stage3" onclick="toggleStage('stage3')" style="cursor:pointer">③ 계약 — 토허가 후 실계약 <span id="stage3_date" class="stage-date-badge"></span><span class="stage-toggle-icon">▼</span><button class="stage-done-btn" id="cbtn_stage3" onclick="event.stopPropagation();toggleComplete('stage3')">□ 완료 처리</button><span class="badge badge-yellow" id="badge_stage3" style="margin-left:6px">예정</span></div>
+        <div class="txn-stage-label" id="stage3" onclick="toggleStage('stage3')" style="cursor:pointer">③ 계약 — 토허가 후 실계약 🔒 <span id="stage3_date" class="stage-date-badge"></span><span class="stage-toggle-icon">▼</span><button class="stage-done-btn" id="cbtn_stage3" onclick="event.stopPropagation();toggleComplete('stage3')">□ 완료 처리</button><span class="badge badge-green" id="badge_stage3" style="margin-left:6px">완료</span></div>
         <div class="txn-cell sell">
           <div class="txn-row">
             <span class="lbl">계약금 합계 (<span id="t_sell_pct">10</span>%)</span>
@@ -805,7 +706,7 @@
         </div>
 
         <!-- ④ 중도금 / 세입자 전세보증금 -->
-        <div class="txn-stage-label" id="stage4" onclick="toggleStage('stage4')" style="cursor:pointer">④ 중도금 <span id="stage4_date" class="stage-date-badge"></span><span class="stage-toggle-icon">▼</span><button class="stage-done-btn" id="cbtn_stage4" onclick="event.stopPropagation();toggleComplete('stage4')">□ 완료 처리</button><span id="ct_interim_badge" class="badge badge-yellow" id="badge_stage4" style="margin-left:6px">예정</span></div>
+        <div class="txn-stage-label" id="stage4" onclick="toggleStage('stage4')" style="cursor:pointer">④ 중도금 🔒 <span id="stage4_date" class="stage-date-badge"></span><span class="stage-toggle-icon">▼</span><button class="stage-done-btn" id="cbtn_stage4" onclick="event.stopPropagation();toggleComplete('stage4')">□ 완료 처리</button><span id="ct_interim_badge" class="badge badge-green" style="margin-left:6px">완료</span></div>
         <div class="txn-cell sell" id="ct_sell_interim_cell">
           <div id="ct_sell_interim_content"><div class="txn-na">— 없음</div></div>
           <div class="txn-row" id="t_sell_crypto2_row">
@@ -826,12 +727,8 @@
         <div class="txn-cell" id="ct_buy_interim_cell">
           <div id="ct_buy_interim_content"><div class="txn-na">— 없음</div></div>
           <div class="txn-row" id="t_buy_interior_startup_row" style="opacity:0.4">
-            <span class="lbl">🎨 인테리어 착수금</span>
+            <span class="lbl">🎨 인테리어 착수금 <small style="color:var(--sub)">(착공 시)</small></span>
             <span class="amt amt-neg" id="t_buy_interior_startup">-</span>
-          </div>
-          <div class="txn-row" id="t_buy_interior_int_row" style="opacity:0.4">
-            <span class="lbl">🎨 인테리어 중도금</span>
-            <span class="amt amt-neg" id="t_buy_interior_int">-</span>
           </div>
           <div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--border)">
             <div class="txn-row">
@@ -941,8 +838,12 @@
             <span class="lbl">추가 비용</span>
             <span class="amt amt-neg" id="t_buy_renovation">—</span>
           </div>
+          <div class="txn-row" id="t_buy_interior_int_row" style="opacity:0.4">
+            <span class="lbl">🎨 인테리어 중도금 <small style="color:var(--sub)">(9/4 지급 협의)</small></span>
+            <span class="amt amt-neg" id="t_buy_interior_int">-</span>
+          </div>
           <div class="txn-row" id="t_buy_interior_bal_row" style="opacity:0.4">
-            <span class="lbl">🎨 인테리어 잔금</span>
+            <span class="lbl">🎨 인테리어 잔금 <small style="color:var(--sub)">(공사 완료 시)</small></span>
             <span class="amt amt-neg" id="t_buy_interior_bal">-</span>
           </div>
         </div>
@@ -1039,28 +940,7 @@ const $ = id => document.getElementById(id);
 const fmt = v => isNaN(v) ? '-' : Math.round(v).toLocaleString('ko-KR');
 const val = id => parseFloat($(id)?.value) || 0;
 
-// ── 크립토 시세 ──
-let ctXrpPriceKRW = 0;
-let ctBtcPriceKRW = 0;
-
-async function fetchCtCryptoPrices() {
-  const timeEl = $('ct_priceTime');
-  if (timeEl) timeEl.textContent = '조회 중…';
-  try {
-    const res  = await fetch('https://api.upbit.com/v1/ticker?markets=KRW-XRP,KRW-BTC');
-    const data = await res.json();
-    data.forEach(item => {
-      if (item.market === 'KRW-XRP') ctXrpPriceKRW = item.trade_price;
-      if (item.market === 'KRW-BTC') ctBtcPriceKRW = item.trade_price;
-    });
-    $('ct_xrpPriceLabel').textContent = ctXrpPriceKRW.toLocaleString('ko-KR') + '원';
-    $('ct_btcPriceLabel').textContent = ctBtcPriceKRW.toLocaleString('ko-KR') + '원';
-    if (timeEl) timeEl.textContent = new Date().toLocaleTimeString('ko-KR') + ' 기준';
-    calc();
-  } catch(e) {
-    if (timeEl) timeEl.textContent = '시세 로드 실패';
-  }
-}
+// 🪙 크립토는 단계별 실행 금액(만원)만 입력 — 시세 조회·수량 환산 없음
 
 // ── localStorage ──
 const CT_SAVE_KEY = 'contract_inputs_v1';
@@ -1073,7 +953,7 @@ const CT_INPUT_IDS = [
   'ctDeposit1',
   'ctExtra1Amt','ctExtra2Amt','ctExtra3Amt',
   'ctExtra1Name','ctExtra2Name','ctExtra3Name',
-  'ct1XrpQty','ct1BtcQty','ct2XrpQty','ct2BtcQty','ct3XrpQty','ct3BtcQty','ctCryptoEtc',
+  'ctCrypto1','ctCrypto2','ctCrypto3',
   'extraAmt1','extraAmt2','extraAmt3','extraAmt4','extraAmt5',
   'extraName1','extraName2','extraName3','extraName4','extraName5',
 ];
@@ -1095,10 +975,10 @@ const FINANCE_SYNC_MAP = {
   moveinCost:      'refMoveinCost',
   renovationCost:  'refRenovationCost',
   bondFee:         'refBondFee',
-  cryptoEtc:   'ctCryptoEtc',
+  cryptoEtc:   'ctCrypto3',
 };
-// 🔒 ct1XrpQty·ct1BtcQty는 ③계약 단계 확정(주식+크립토 매도 2,180만원 합산 처리)으로
-// finance.html 자동동기화 대상에서 제외 — STAGE3_LOCK에서 0으로 고정
+// 🔒 크립토 1차·2차(③계약·④중도금)는 실행 완료 단계라 CONFIRMED_LOCK에서 0으로 고정 —
+// finance.html 동기화는 남은 3차(⑥잔금 후)에만 반영
 
 function _applyFinanceData(d, silent) {
   Object.entries(FINANCE_SYNC_MAP).forEach(([from, to]) => {
@@ -1121,13 +1001,6 @@ function _applyFinanceData(d, silent) {
     const ind = $('ctSaveIndicator');
     if (ind) ind.textContent = '재정계산기에서 동기화됨 ' + new Date().toLocaleString('ko-KR');
   }
-}
-
-function getCryptoHoldings() {
-  try {
-    const d = JSON.parse(localStorage.getItem('finance_inputs_v1') || '{}');
-    return { xrp: parseFloat(d.xrpQty) || 0, btc: parseFloat(d.btcQty) || 0 };
-  } catch(e) { return { xrp: 0, btc: 0 }; }
 }
 
 function syncFromFinance() {
@@ -1209,16 +1082,25 @@ function toggleStage(stageId) {
 const STAGE_DEFAULTS = {
   stage1:   { cls: 'done',   text: '✓' },
   stageYak: { cls: 'done',   text: '✓' },
-  stage2:   { cls: 'active', text: '⏳' },
-  stage3:   { cls: '',       text: '3' },
+  stage2:   { cls: 'done',   text: '✓' },
+  stage3:   { cls: 'done',   text: '✓' },
   stage4:   { cls: 'skip',   text: '—' },
-  stage5:   { cls: '',       text: '5' },
+  stage5:   { cls: 'active', text: '⏳' },
 };
+
+// 오늘(로컬) YYYY-MM-DD — 지난 단계만 완료(✓)로 표시하기 위한 기준
+function todayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
 
 // ── 날짜 입력 → 상단 타임라인 + stage-label 뱃지 업데이트 ──
 function updateStageDate(stageId) {
   if (stageId === 'stage2') return;
-  const dateVal = $('date_' + stageId)?.value;
+  // ④중도금은 date_stage4가 없고 매도·매수 중도금 날짜로 완료 여부를 판정
+  const dateVal = stageId === 'stage4'
+    ? ($('date_sell_interim1')?.value || $('date_buy_interim1')?.value)
+    : $('date_' + stageId)?.value;
 
   // 하단 자금흐름 섹션 날짜 뱃지
   const badge = $(stageId + '_date');
@@ -1238,7 +1120,8 @@ function updateStageDate(stageId) {
   const def = STAGE_DEFAULTS[stageId];
   if (!dot || !lbl || !def) return;
 
-  if (dateVal) {
+  // 날짜가 있어도 아직 오지 않은 단계는 완료 처리하지 않음 (예: ⑤잔금 9/4)
+  if (dateVal && dateVal <= todayStr()) {
     dot.className = 'cs-dot done';
     dot.textContent = '✓';
     lbl.className = 'cs-label done';
@@ -1260,31 +1143,6 @@ function updateExtraLabel(n) {
 function adjustValue(id, amount) {
   const el = $(id);
   if (el) { el.value = Math.max(0, (parseFloat(el.value) || 0) + amount); calc(); }
-}
-
-// 크립토 수량 입력 시 1+2+3차 합이 보유량 초과하면 자동 클램핑
-function clampCryptoQty(changedId, coin) {
-  const holdings = getCryptoHoldings();
-  const maxHeld = coin === 'xrp' ? holdings.xrp : holdings.btc;
-  if (maxHeld > 0) {
-    const othersMap = {
-      ct1XrpQty: ['ct2XrpQty','ct3XrpQty'], ct2XrpQty: ['ct1XrpQty','ct3XrpQty'], ct3XrpQty: ['ct1XrpQty','ct2XrpQty'],
-      ct1BtcQty: ['ct2BtcQty','ct3BtcQty'], ct2BtcQty: ['ct1BtcQty','ct3BtcQty'], ct3BtcQty: ['ct1BtcQty','ct2BtcQty'],
-    };
-    const others = othersMap[changedId] || [];
-    const othersSum = others.reduce((s, id) => s + (parseFloat($(id)?.value) || 0), 0);
-    const thisEl = $(changedId);
-    const thisVal = parseFloat(thisEl?.value) || 0;
-    const maxThis = Math.max(0, maxHeld - othersSum);
-    if (thisVal > maxThis) thisEl.value = coin === 'btc' ? maxThis.toFixed(4) : Math.floor(maxThis);
-  }
-  calc();
-}
-
-function adjClamp(id, delta, coin) {
-  const el = $(id);
-  if (el) el.value = Math.max(0, (parseFloat(el.value) || 0) + delta);
-  clampCryptoQty(id, coin);
 }
 
 function updateInterimDates() {
@@ -1417,77 +1275,13 @@ function calc() {
   const ctInterim     = val('buyInterim1') + val('buyInterim2');   // 1차+2차 합계
   const buyInterim    = ctInterim;
 
-  // ── 크립토 (1차: 실계약 / 2차: 3차 중도금) ──
-  const ct1XrpVal = ctXrpPriceKRW > 0 ? Math.round(val('ct1XrpQty') * ctXrpPriceKRW / 10000) : 0;
-  const ct1BtcVal = ctBtcPriceKRW > 0 ? Math.round(val('ct1BtcQty') * ctBtcPriceKRW / 10000) : 0;
-  const crypto1   = ct1XrpVal + ct1BtcVal;
-
-  const ct2XrpVal = ctXrpPriceKRW > 0 ? Math.round(val('ct2XrpQty') * ctXrpPriceKRW / 10000) : 0;
-  const ct2BtcVal = ctBtcPriceKRW > 0 ? Math.round(val('ct2BtcQty') * ctBtcPriceKRW / 10000) : 0;
-  const ct2EtcVal = val('ctCryptoEtc2');
-  const crypto2   = ct2XrpVal + ct2BtcVal + ct2EtcVal;
-
-  const ct3XrpVal = ctXrpPriceKRW > 0 ? Math.round(val('ct3XrpQty') * ctXrpPriceKRW / 10000) : 0;
-  const ct3BtcVal = ctBtcPriceKRW > 0 ? Math.round(val('ct3BtcQty') * ctBtcPriceKRW / 10000) : 0;
-  const ctEtcVal  = val('ctCryptoEtc');
-  const crypto3   = ct3XrpVal + ct3BtcVal + ctEtcVal;
+  // ── 크립토·자산 매도 (단계별 실행 금액, 만원) ──
+  const crypto1 = val('ctCrypto1');   // ③계약 시 — 확정
+  const crypto2 = val('ctCrypto2');   // ④중도금 시 — 확정
+  const crypto3 = val('ctCrypto3');   // ⑥잔금 후 — 남은 단계
 
   const cryptoProceeds = crypto1 + crypto2 + crypto3;
-
-  $('ct1_xrpVal').textContent = ctXrpPriceKRW > 0 ? fmt(ct1XrpVal) : '(시세 미조회)';
-  $('ct1_btcVal').textContent = ctBtcPriceKRW > 0 ? fmt(ct1BtcVal) : '(시세 미조회)';
-  $('r_crypto1').textContent  = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? fmt(crypto1) : '시세 미조회') + ' 만원';
-
-  $('ct2_xrpVal').textContent = ctXrpPriceKRW > 0 ? fmt(ct2XrpVal) : '(시세 미조회)';
-  $('ct2_btcVal').textContent = ctBtcPriceKRW > 0 ? fmt(ct2BtcVal) : '(시세 미조회)';
-  $('r_crypto2').textContent  = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? fmt(crypto2) : `${fmt(ct2EtcVal)} + α`) + ' 만원';
-
-  $('ct3_xrpVal').textContent = ctXrpPriceKRW > 0 ? fmt(ct3XrpVal) : '(시세 미조회)';
-  $('ct3_btcVal').textContent = ctBtcPriceKRW > 0 ? fmt(ct3BtcVal) : '(시세 미조회)';
-  $('r_crypto3').textContent  = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? fmt(crypto3) : `${fmt(ctEtcVal)} + α`) + ' 만원';
-
-  $('r_cryptoProceeds').textContent = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? fmt(cryptoProceeds) : `${fmt(ctEtcVal)} + α`) + ' 만원';
-
-  // ── 필요액 달성 표시 — 목표액은 stage3/stage4 계산 후 업데이트 ──
-
-  // ── 보유 수량 초과 검증 ──
-  const holdings = getCryptoHoldings();
-  const totalXrpSell = val('ct1XrpQty') + val('ct2XrpQty') + val('ct3XrpQty');
-  const totalBtcSell = val('ct1BtcQty') + val('ct2BtcQty') + val('ct3BtcQty');
-  const xrpExcess = holdings.xrp > 0 && totalXrpSell > holdings.xrp;
-  const btcExcess = holdings.btc > 0 && totalBtcSell > holdings.btc;
-  const xrpRemain = holdings.xrp - totalXrpSell;
-  const btcRemain = holdings.btc - totalBtcSell;
-  if ($('r_xrp_total_qty')) {
-    $('r_xrp_total_qty').textContent = totalXrpSell.toLocaleString('ko-KR');
-    $('r_xrp_total_qty').style.color = xrpExcess ? 'var(--red)' : 'var(--green)';
-  }
-  if ($('r_xrp_hold')) $('r_xrp_hold').textContent = holdings.xrp.toLocaleString('ko-KR');
-  if ($('r_xrp_remain')) {
-    $('r_xrp_remain').textContent = xrpRemain.toLocaleString('ko-KR');
-    $('r_xrp_remain').style.color = xrpExcess ? 'var(--red)' : 'var(--sub)';
-  }
-  if ($('r_btc_total_qty')) {
-    $('r_btc_total_qty').textContent = totalBtcSell.toFixed(4);
-    $('r_btc_total_qty').style.color = btcExcess ? 'var(--red)' : 'var(--green)';
-  }
-  if ($('r_btc_hold')) $('r_btc_hold').textContent = holdings.btc.toFixed(4);
-  if ($('r_btc_remain')) {
-    $('r_btc_remain').textContent = btcRemain.toFixed(4);
-    $('r_btc_remain').style.color = btcExcess ? 'var(--red)' : 'var(--sub)';
-  }
-  const warnEl = $('crypto_qty_warn');
-  if (warnEl) {
-    if (xrpExcess || btcExcess) {
-      const msgs = [];
-      if (xrpExcess) msgs.push(`XRP 보유(${holdings.xrp.toLocaleString('ko-KR')}개) 초과`);
-      if (btcExcess) msgs.push(`BTC 보유(${holdings.btc.toFixed(4)}개) 초과`);
-      warnEl.textContent = '⚠️ ' + msgs.join(' · ') + ' — 1+2차 수량을 줄여주세요';
-      warnEl.style.display = '';
-    } else {
-      warnEl.style.display = 'none';
-    }
-  }
+  $('r_cryptoProceeds').textContent = fmt(cryptoProceeds) + ' 만원';
 
   // ── 매도 ──
   const sellBalance  = salePrice - sellContract - sellInterim;
@@ -1619,7 +1413,7 @@ function calc() {
 
   // ④ 중도금 — 누계 vs 세입자 요청액 체크
   const buyCumBase4   = buyContract + buyInterim;                               // 부동산만
-  const buyCumTotal4Real = buyCumBase4 + interiorStartup + interiorInterim;    // 전체
+  const buyCumTotal4Real = buyCumBase4 + interiorStartup;                       // 전체 (인테리어 중도금은 9/4 잔금일 지급 → ⑥으로 이동)
   const tenantDiff3   = buyCumBase4 - ctTenantDeposit;
   const cumBaseEl3 = $('t_buy_tenant_cum_base');
   cumBaseEl3.textContent = fmt(buyCumBase4) + ' 만원';
@@ -1646,42 +1440,6 @@ function calc() {
       net4El.textContent = `⚠️ 부족 ${fmt(-stage4Net)}만원`; net4El.style.background = 'rgba(239,68,68,.1)'; net4El.style.color = 'var(--red)';
     }
     net4El.style.display = '';
-  }
-
-  // ── 크립토 1차·2차 목표액: 각 단계 여유 0원 기준으로 동적 계산 ──
-  if (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0) {
-    // 1차 목표 = ③계약 단계에서 여유 0원이 되려면 크립토 1차가 얼마여야 하는가
-    //   stage3Net = sellContractCum - buyCumTotal3Real
-    //   sellContractCum = sellContract + crypto1 + ctExtraTotal
-    //   → target1 = buyCumTotal3Real - (sellContract + ctExtraTotal)
-    const target1 = Math.max(0, buyCumTotal3Real - (sellContract + ctExtraTotal));
-    const t1El = $('r_crypto1_target');
-    if (t1El) t1El.textContent = '목표 ' + fmt(target1) + '만원';
-    const diff1 = crypto1 - target1;
-    const d1El = $('r_crypto1_diff');
-    if (d1El) {
-      d1El.textContent = (diff1 >= 0 ? '✅ +' : '⚠️ ') + fmt(Math.abs(diff1)) + '만';
-      d1El.style.color = diff1 >= 0 ? 'var(--green)' : 'var(--red)';
-    }
-
-    // 2차 목표 = ④중도금 단계에서 여유 0원이 되려면 크립토 1차+2차 합계가 얼마여야 하는가
-    //   stage4Net = (sellCumBase4 + crypto1 + crypto2 + ctExtraIncome) - buyCumTotal4Real
-    //   → crypto1 + crypto2 = buyCumTotal4Real - sellCumBase4 - ctExtraIncome
-    //   → target2 = max(0, (buyCumTotal4Real - sellCumBase4 - ctExtraIncome) - crypto1)
-    const target2 = Math.max(0, (buyCumTotal4Real - sellCumBase4 - ctExtraIncome) - crypto1);
-    const t2El = $('r_crypto2_target');
-    if (t2El) t2El.textContent = '목표 ' + fmt(target2) + '만원';
-    const diff2 = crypto2 - target2;
-    const d2El = $('r_crypto2_diff');
-    if (d2El) {
-      d2El.textContent = (diff2 >= 0 ? '✅ +' : '⚠️ ') + fmt(Math.abs(diff2)) + '만';
-      d2El.style.color = diff2 >= 0 ? 'var(--green)' : 'var(--red)';
-    }
-  } else {
-    const t1El = $('r_crypto1_target'); if (t1El) t1El.textContent = '목표 (시세 필요)';
-    const t2El = $('r_crypto2_target'); if (t2El) t2El.textContent = '목표 (시세 필요)';
-    const d1El = $('r_crypto1_diff'); if (d1El) d1El.textContent = '';
-    const d2El = $('r_crypto2_diff'); if (d2El) d2El.textContent = '';
   }
 
   const hasInterim = ctInterim > 0 || ctSaleInterim > 0 || ctTenantDeposit > 0;
@@ -1762,9 +1520,8 @@ function calc() {
   $('t_buy_loan').textContent    = '+' + fmt(loanLeftover)  + ' 만원';
   const buyLoanRow = $('t_buy_loan_row');
   if (buyLoanRow) buyLoanRow.style.opacity = loanLeftover > 0 ? '1' : '0.4';
-  // stage6 크립토: 1차·2차는 이미 stage3·4에서 처리 → 기타(ctEtcVal)만 표시
-  const cryptoEl = $('t_sell_crypto');
-  cryptoEl.textContent = (crypto3 > 0 ? '+' + fmt(crypto3) : (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? '+0' : '+α')) + ' 만원';
+  // stage6 크립토: 1차·2차는 이미 stage3·4에서 처리 → 3차만 표시
+  $('t_sell_crypto').textContent = '+' + fmt(crypto3) + ' 만원';
   $('t_sell_crypto_row').style.opacity = crypto3 > 0 ? '1' : '0.25';
   $('t_buy_acqtax').textContent  = '−' + fmt(refAcqTax)    + ' 만원';
   $('t_buy_bondfee').textContent = '−' + fmt(refBondFee)   + ' 만원';
@@ -1785,7 +1542,7 @@ function calc() {
   if (intBalEl) intBalEl.textContent = '−' + fmt(interiorBalance) + ' 만원';
   const intBalRow = $('t_buy_interior_bal_row');
   if (intBalRow) intBalRow.style.opacity = interiorBalance > 0 ? '1' : '0.3';
-  const stage6Net = stage6SellNet - buyCost - extraTotal - interiorBalance;
+  const stage6Net = stage6SellNet - buyCost - extraTotal - interiorInterim - interiorBalance;
   const stage6NetEl = $('t_stage6_net');
   stage6NetEl.textContent = (stage6Net >= 0 ? '+' : '−') + fmt(Math.abs(stage6Net)) + ' 만원';
   stage6NetEl.className   = stage6Net >= 0 ? 'amt-in' : 'amt-neg';
@@ -1834,7 +1591,7 @@ function calc() {
   $('nr_buy_loan').textContent    = '+' + fmt(newLoan) + ' 만원';
   // 크립토 1+2+3차 매도 예상 + ③계약 단계에 이미 수취한 주식+크립토 등 추가수입(ctExtraIncome) 합산
   const cryptoPlusExtra = cryptoProceeds + ctExtraIncome;
-  $('nr_crypto').textContent      = (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0 ? '+' + fmt(cryptoPlusExtra) : `+${fmt(ctEtcVal + ctExtraIncome)} + α`) + ` 만원 (1+2+3차, 기수취 ${fmt(ctExtraIncome)} 포함)`;
+  $('nr_crypto').textContent      = '+' + fmt(cryptoPlusExtra) + ` 만원 (1+2+3차, 기수취 ${fmt(ctExtraIncome)} 포함)`;
   $('final_buy_net').textContent  = fmt(buyEquityTotal + interiorTotal) + ' 만원';
   const remEl = $('final_remainder');
   remEl.textContent = fmt(remainder) + ' 만원';
@@ -1843,14 +1600,6 @@ function calc() {
     ? `✅ 이사 후 여유 현금 ${fmt(remainder)}만원. 영유비·비상금으로 활용 가능.`
     : `⚠️ 현금 ${fmt(-remainder)}만원 부족. 추가 자금 계획 필요.`;
 
-  // 3차 달성 힌트: remainder = 0 기준
-  const d3El = $('r_crypto3_diff');
-  if (d3El) {
-    if (ctXrpPriceKRW > 0 || ctBtcPriceKRW > 0) {
-      d3El.textContent = (remainder >= 0 ? '✅ +' : '⚠️ ') + fmt(Math.abs(remainder)) + '만';
-      d3El.style.color = remainder >= 0 ? 'var(--green)' : 'var(--red)';
-    } else { d3El.textContent = ''; }
-  }
   ctSaveInputs();
 }
 
@@ -1861,20 +1610,29 @@ try {
   if (fRaw) _applyFinanceData(JSON.parse(fRaw), true);
 } catch(e) {}
 
-// 🔒 ③계약 단계 확정값 강제 고정 — 이전 저장값·동기화 결과를 덮어씀
-// (계약금 부족분 2,180만원은 '주식+크립토 매도' 합산으로 확정, 크립토 1차 매도는 사용 안 함)
-const STAGE3_LOCK = {
+// 🔒 ①~④단계(중도금까지) 확정값 강제 고정 — 이전 저장값·동기화 결과를 덮어씀
+// 남은 단계는 ⑤잔금(9/4)·⑥잔금 후 처리뿐.
+// (계약금 부족분 2,180만원은 '주식+크립토 매도' 합산으로 확정, 크립토 1·2차 매도는 없음)
+const CONFIRMED_LOCK = {
+  // ③ 계약
   refSaleDeposit: '18500', refBuyDeposit: '20000',
-  ct1XrpQty: '0', ct1BtcQty: '0',
   ctExtra1Name: '주식+크립토 매도', ctExtra1Amt: '2180',
   ctExtra2Name: '청약 해지', ctExtra2Amt: '0',
   ctExtra3Name: '기타', ctExtra3Amt: '0',
+  // ④ 중도금 — 매도 7/17·8/3 수취, 매수 7/20·8/5 지급 완료
+  saleInterim1: '30000', saleInterim2: '12000',
+  buyInterim1: '30000',  buyInterim2: '20000',
+  date_sell_interim1: '2026-07-17', date_sell_interim2: '2026-08-03',
+  date_buy_interim1:  '2026-07-20', date_buy_interim2:  '2026-08-05',
+  // 크립토·자산 매도 — ③·④ 단계는 실행분 없음으로 확정
+  ctCrypto1: '0', ctCrypto2: '0',
+  // 🎨 인테리어 계약금 지급 완료
+  date_interior_contract: '2026-06-08',
 };
-Object.entries(STAGE3_LOCK).forEach(([id, v]) => { const el = $(id); if (el) el.value = v; });
+Object.entries(CONFIRMED_LOCK).forEach(([id, v]) => { const el = $(id); if (el) el.value = v; });
 
 calc();
 ['stage1','stage2','stage3','stage4','stage5'].forEach(updateStageDate);
-fetchCtCryptoPrices();
 
 // ===== 단계 완료 체크 =====
 const COMPLETE_KEY = 'contract_complete_v1';
@@ -1884,7 +1642,7 @@ const STAGE_ORIG_BADGE = {
   stageYak: { cls: 'badge-green',  text: '완료' },
   stage2:   { cls: 'badge-green',  text: '완료' },
   stage3:   { cls: 'badge-green',  text: '완료' },
-  stage4:   { cls: 'badge-yellow', text: '예정' },
+  stage4:   { cls: 'badge-green',  text: '완료' },
   stage5:   { cls: 'badge-yellow', text: '예정' },
   stage6:   { cls: 'badge-blue',   text: '예정' },
 };
