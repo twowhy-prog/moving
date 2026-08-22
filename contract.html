@@ -813,6 +813,11 @@
           <span>⑥ 단계 소계 (매도+매수 합산)</span>
           <span id="t_stage6_net">-</span>
         </div>
+        <div class="txn-subtotal-full" style="border-top:2px solid var(--border);font-size:14px">
+          <span>⑤+⑥ 잔금일 정산 후 남는 현금 <small style="font-weight:400;color:var(--sub)">(매도 잔금 수취 − 본인 이체 − ⑥ 지출)</small></span>
+          <span id="t_balday_net">-</span>
+        </div>
+        <div style="grid-column:1/-1;padding:2px 14px 8px;font-size:11px;color:var(--sub);background:var(--input-bg)" id="t_balday_note"></div>
 
       </div><!-- /txn-grid -->
 
@@ -1487,6 +1492,23 @@ function calc() {
   const stage6NetEl = $('t_stage6_net');
   stage6NetEl.textContent = (stage6Net >= 0 ? '+' : '−') + fmt(Math.abs(stage6Net)) + ' 만원';
   stage6NetEl.className   = stage6Net >= 0 ? 'amt-in' : 'amt-neg';
+
+  // ⑤+⑥ 잔금일 실제 현금 포지션 — 매도 잔금 수취 − 본인 이체분 − ⑥ 지출
+  // (주담대는 은행이 매도인에게 직접 입금하므로 본인 현금 흐름에서 제외)
+  const balDayNet = sellBalance - buyBalanceSelf + stage6Net;
+  const balDayEl  = $('t_balday_net');
+  if (balDayEl) {
+    balDayEl.textContent = (balDayNet >= 0 ? '+' : '−') + fmt(Math.abs(balDayNet)) + ' 만원';
+    balDayEl.className   = balDayNet >= 0 ? 'amt-in' : 'amt-neg';
+  }
+  const balDayNoteEl = $('t_balday_note');
+  if (balDayNoteEl) {
+    balDayNoteEl.textContent =
+      `잔금 수취 +${fmt(sellBalance)} − 본인 이체 ${fmt(buyBalanceSelf)} − ⑥ 지출 ${fmt(Math.abs(stage6Net))} `
+      + `= ${balDayNet >= 0 ? '+' : '−'}${fmt(Math.abs(balDayNet))}만원 · `
+      + `주담대 ${fmt(buyBalanceLoan)}만원은 은행이 매도인에게 직접 입금 (본인 현금 흐름 제외) · `
+      + `①~④ 단계 자체 부담분은 아래 '이사 후 잔여 현금'에 반영`;
+  }
 
   // 매도 내역
   $('nr_sell_earnest').textContent  = '+' + fmt(ctSaleDeposit1) + ' 만원';
