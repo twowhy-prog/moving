@@ -319,32 +319,6 @@
         <div style="padding:7px 10px;background:var(--input-bg);border-radius:6px;border:1px solid var(--border);font-size:14px;font-weight:600;color:var(--red)" id="r_buyCostTotal">-</div>
       </div>
     </div>
-    <!-- 크립토·자산 매도 — 단계별 정리 -->
-    <div style="font-size:11px;font-weight:700;color:var(--sub);margin:10px 0 4px;letter-spacing:.3px">🪙 크립토·자산 매도 <small style="font-weight:400;color:var(--sub)">— 단계별 실행 금액 (만원)</small></div>
-    <div class="grid-3">
-      <div class="field locked-field">
-        <label>1차 — ③계약 시 🔒 <small style="color:var(--sub);font-weight:400">확정</small></label>
-        <input type="number" id="ctCrypto1" value="0" oninput="calc()" disabled>
-        <div style="font-size:10px;color:var(--sub);margin-top:2px">별도 매도 없음 — 부족분 2,180만원은 아래 '주식+크립토 매도'로 합산</div>
-      </div>
-      <div class="field locked-field">
-        <label>2차 — ④중도금 시 🔒 <small style="color:var(--sub);font-weight:400">확정</small></label>
-        <input type="number" id="ctCrypto2" value="0" oninput="calc()" disabled>
-        <div style="font-size:10px;color:var(--sub);margin-top:2px">별도 매도 없음</div>
-      </div>
-      <div class="field">
-        <label>3차 — ⑥잔금 후 <small style="color:var(--sub);font-weight:400">남은 단계</small></label>
-        <input type="number" id="ctCrypto3" value="0" oninput="calc()">
-        <div style="font-size:10px;color:var(--sub);margin-top:2px">이사 후 정산에 반영 — 필요액만큼 입력</div>
-      </div>
-    </div>
-    <div class="grid-4" style="margin-top:4px">
-      <div class="field" style="grid-column:span 3"></div>
-      <div class="field">
-        <label style="font-weight:600">크립토 매도 합계</label>
-        <div style="padding:7px 10px;background:var(--input-bg);border-radius:6px;border:1px solid var(--border);font-size:14px;font-weight:600;color:var(--green)" id="r_cryptoProceeds">-</div>
-      </div>
-    </div>
 
     <!-- 계약금 금액 / 중도금 직접 입력 -->
     <div style="font-size:11px;font-weight:700;color:var(--sub);margin:10px 0 6px;letter-spacing:.3px">📊 계약금 및 중도금</div>
@@ -650,10 +624,6 @@
             <span class="lbl">추가 수취</span>
             <span class="amt amt-in" id="t_sell_contract_add">-</span>
           </div>
-          <div class="txn-row" id="t_sell_crypto1_row">
-            <span class="lbl">🪙 크립토 1차 매도 (+)</span>
-            <span class="amt amt-in" id="t_sell_crypto1">-</span>
-          </div>
           <!-- 계약 시점 추가 수입 -->
           <div class="txn-row" id="t_sell_extra1_row" style="opacity:0.4">
             <span class="lbl" id="t_sell_extra1_lbl">주식 매도</span>
@@ -672,7 +642,7 @@
             <span class="amt-in" id="t_sell_contract_cum_base">-</span>
           </div>
           <div class="txn-subtotal" style="margin-top:2px;border-top:none;padding-top:0">
-            <span>수령 누계 <small style="font-weight:400;opacity:.7">(크립토·추가수입 전체)</small></span>
+            <span>수령 누계 <small style="font-weight:400;opacity:.7">(추가수입 포함)</small></span>
             <span class="amt-in" id="t_sell_contract_cum">-</span>
           </div>
           <div id="t_sell_contract_cum_note" style="font-size:10px;color:var(--sub);text-align:right;margin-top:2px;display:none"></div>
@@ -709,10 +679,6 @@
         <div class="txn-stage-label" id="stage4" onclick="toggleStage('stage4')" style="cursor:pointer">④ 중도금 🔒 <span id="stage4_date" class="stage-date-badge"></span><span class="stage-toggle-icon">▼</span><button class="stage-done-btn" id="cbtn_stage4" onclick="event.stopPropagation();toggleComplete('stage4')">□ 완료 처리</button><span id="ct_interim_badge" class="badge badge-green" style="margin-left:6px">완료</span></div>
         <div class="txn-cell sell" id="ct_sell_interim_cell">
           <div id="ct_sell_interim_content"><div class="txn-na">— 없음</div></div>
-          <div class="txn-row" id="t_sell_crypto2_row">
-            <span class="lbl">🪙 크립토 2차 매도 (+)</span>
-            <span class="amt amt-in" id="t_sell_crypto2">-</span>
-          </div>
           <div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--border)">
             <div class="txn-row">
               <span class="lbl" style="font-weight:600">①+③+④ 누계 (부동산)</span>
@@ -807,10 +773,6 @@
           <div class="txn-row" id="t_buy_loan_row">
             <span class="lbl">주담대 잔여 <small style="color:var(--sub)">(잔금 초과분, +)</small></span>
             <span class="amt amt-in" id="t_buy_loan">-</span>
-          </div>
-          <div class="txn-row" id="t_sell_crypto_row">
-            <span class="lbl">🪙 크립토 매도 (+)</span>
-            <span class="amt amt-in" id="t_sell_crypto">-</span>
           </div>
         </div>
         <div class="txn-cell">
@@ -913,7 +875,7 @@
           <span id="nr_buy_loan" style="color:var(--green);font-weight:600">-</span>
         </div>
         <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px">
-          <span style="color:var(--sub)">+ 🪙 크립토 매도 예상</span>
+          <span style="color:var(--sub)">+ 💰 계약 시 추가 수입 <small style="color:var(--sub)">(주식+크립토 매도 — ③계약 기수취)</small></span>
           <span id="nr_crypto" style="color:var(--green);font-weight:600">-</span>
         </div>
         <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px">
@@ -940,8 +902,6 @@ const $ = id => document.getElementById(id);
 const fmt = v => isNaN(v) ? '-' : Math.round(v).toLocaleString('ko-KR');
 const val = id => parseFloat($(id)?.value) || 0;
 
-// 🪙 크립토는 단계별 실행 금액(만원)만 입력 — 시세 조회·수량 환산 없음
-
 // ── localStorage ──
 const CT_SAVE_KEY = 'contract_inputs_v1';
 const CT_INPUT_IDS = [
@@ -953,7 +913,6 @@ const CT_INPUT_IDS = [
   'ctDeposit1',
   'ctExtra1Amt','ctExtra2Amt','ctExtra3Amt',
   'ctExtra1Name','ctExtra2Name','ctExtra3Name',
-  'ctCrypto1','ctCrypto2','ctCrypto3',
   'extraAmt1','extraAmt2','extraAmt3','extraAmt4','extraAmt5',
   'extraName1','extraName2','extraName3','extraName4','extraName5',
 ];
@@ -975,10 +934,7 @@ const FINANCE_SYNC_MAP = {
   moveinCost:      'refMoveinCost',
   renovationCost:  'refRenovationCost',
   bondFee:         'refBondFee',
-  cryptoEtc:   'ctCrypto3',
 };
-// 🔒 크립토 1차·2차(③계약·④중도금)는 실행 완료 단계라 CONFIRMED_LOCK에서 0으로 고정 —
-// finance.html 동기화는 남은 3차(⑥잔금 후)에만 반영
 
 function _applyFinanceData(d, silent) {
   Object.entries(FINANCE_SYNC_MAP).forEach(([from, to]) => {
@@ -1275,18 +1231,10 @@ function calc() {
   const ctInterim     = val('buyInterim1') + val('buyInterim2');   // 1차+2차 합계
   const buyInterim    = ctInterim;
 
-  // ── 크립토·자산 매도 (단계별 실행 금액, 만원) ──
-  const crypto1 = val('ctCrypto1');   // ③계약 시 — 확정
-  const crypto2 = val('ctCrypto2');   // ④중도금 시 — 확정
-  const crypto3 = val('ctCrypto3');   // ⑥잔금 후 — 남은 단계
-
-  const cryptoProceeds = crypto1 + crypto2 + crypto3;
-  $('r_cryptoProceeds').textContent = fmt(cryptoProceeds) + ' 만원';
-
   // ── 매도 ──
   const sellBalance  = salePrice - sellContract - sellInterim;
   const ctExtraIncome = val('ctExtra1Amt') + val('ctExtra2Amt') + val('ctExtra3Amt');
-  const sellNet      = salePrice - debt - saleCost + newLoan + cryptoProceeds + ctExtraIncome;
+  const sellNet      = salePrice - debt - saleCost + newLoan + ctExtraIncome;
 
   // ── 매수 ──
   const buyContract    = buyContractAmt;
@@ -1355,9 +1303,6 @@ function calc() {
   $('t_sell_contract').textContent     = fmt(sellContract) + ' 만원';
   $('t_sell_earnest2').textContent     = fmt(totalSaleEarnest) + ' 만원';
   $('t_sell_contract_add').textContent = '+' + fmt(sellContractAddAmt) + ' 만원';
-  // 크립토 1차
-  $('t_sell_crypto1').textContent = '+' + fmt(crypto1) + ' 만원';
-  $('t_sell_crypto1_row').style.opacity = crypto1 > 0 ? '1' : '0.3';
   // 계약 시점 추가 수입 (ctExtraIncome 은 상단에서 이미 계산)
   const ctExtraTotal = ctExtraIncome;
   [1,2,3].forEach(n => {
@@ -1370,13 +1315,12 @@ function calc() {
     const row = $('t_sell_extra' + n + '_row');
     if (row) row.style.opacity = amt > 0 ? '1' : '0.4';
   });
-  const sellContractCum = sellContract + crypto1 + ctExtraTotal;
+  const sellContractCum = sellContract + ctExtraTotal;
   $('t_sell_contract_cum_base').textContent = '+' + fmt(sellContract) + ' 만원';
   $('t_sell_contract_cum').textContent      = '+' + fmt(sellContractCum) + ' 만원';
   const cumNote3El = $('t_sell_contract_cum_note');
   if (cumNote3El) {
     const notes = [];
-    if (crypto1 > 0) notes.push(`크립토 1차 ${fmt(crypto1)}만원`);
     if (ctExtraTotal > 0) notes.push(`추가수입 ${fmt(ctExtraTotal)}만원`);
     if (notes.length) { cumNote3El.textContent = notes.join(' · ') + ' 포함'; cumNote3El.style.display = ''; }
     else { cumNote3El.style.display = 'none'; }
@@ -1392,22 +1336,18 @@ function calc() {
   const buyCumTotal3Real = buyContract + interiorDeposit;
   $('t_buy_contract_cum').textContent       = '−' + fmt(buyContract)       + ' 만원';
   $('t_buy_contract_cum_total').textContent = '−' + fmt(buyCumTotal3Real)  + ' 만원';
-  // ③ 매도-매수 순 잔액 — 전체 지급 누계 기준
-  const stage3Net = sellContractCum - buyCumTotal3Real;
+  // ③ 계약 — 지급 완료 단계. 부족분은 별도 자금으로 이미 해소되어 여유/부족 판정 없음
   const net3El = $('t_stage3_net');
   if (net3El) {
-    if (stage3Net >= 0) {
-      net3El.textContent = `✅ 여유 +${fmt(stage3Net)}만원`; net3El.style.background = 'rgba(34,197,94,.12)'; net3El.style.color = 'var(--green)';
-    } else {
-      net3El.textContent = `⚠️ 부족 ${fmt(-stage3Net)}만원`; net3El.style.background = 'rgba(239,68,68,.1)'; net3El.style.color = 'var(--red)';
-    }
+    net3El.textContent = '✓ 정산 완료';
+    net3El.style.background = 'rgba(34,197,94,.12)';
+    net3El.style.color = 'var(--green)';
     net3El.style.display = '';
   }
 
   // ④ 중도금 — 매도 누계
-  const cryptoTotal12 = crypto1 + crypto2;  // 3차는 이사 후이므로 4단계 누계에서 제외
-  const sellCumBase4  = sellContract + ctSaleInterim;                          // 부동산만
-  const sellCumTotal3 = sellCumBase4 + cryptoTotal12 + ctExtraIncome;          // 전체
+  const sellCumBase4  = sellContract + ctSaleInterim;              // 부동산만
+  const sellCumTotal3 = sellCumBase4 + ctExtraIncome;             // 전체 (추가수입 포함)
   $('t_sell_interim_cum_base').textContent = '+' + fmt(sellCumBase4) + ' 만원';
   $('t_sell_interim_cum').textContent = '+' + fmt(sellCumTotal3) + ' 만원';
 
@@ -1421,24 +1361,31 @@ function calc() {
   const cumEl3 = $('t_buy_tenant_cum');
   cumEl3.textContent = fmt(buyCumTotal4Real) + ' 만원';
   cumEl3.className   = 'amt amt-neg';
-  $('t_tenant_target').textContent = '목표 ' + fmt(ctTenantDeposit) + ' 만원';
-  const chkEl = $('t_tenant_check');
-  if (tenantDiff3 >= 0) {
-    chkEl.textContent = '✅ OK (+' + fmt(tenantDiff3) + '만 여유)';
-    chkEl.style.background = '#f0fdf4'; chkEl.style.color = 'var(--green)';
+  // 세입자 없으면 요청액 체크 자체를 숨김
+  const tenantRow = $('t_tenant_target')?.closest('.txn-row');
+  const chkRow = $('t_tenant_check_row');
+  if (ctTenantDeposit > 0) {
+    if (tenantRow) tenantRow.style.display = '';
+    if (chkRow) chkRow.style.display = '';
+    $('t_tenant_target').textContent = '목표 ' + fmt(ctTenantDeposit) + ' 만원';
+    const chkEl = $('t_tenant_check');
+    if (tenantDiff3 >= 0) {
+      chkEl.textContent = '✅ OK (+' + fmt(tenantDiff3) + '만 여유)';
+      chkEl.style.background = '#f0fdf4'; chkEl.style.color = 'var(--green)';
+    } else {
+      chkEl.textContent = '⚠️ 부족 ' + fmt(-tenantDiff3) + '만원 — 중도금 % 올리거나 계약금 조정 필요';
+      chkEl.style.background = '#fef2f2'; chkEl.style.color = 'var(--red)';
+    }
   } else {
-    chkEl.textContent = '⚠️ 부족 ' + fmt(-tenantDiff3) + '만원 — 중도금 % 올리거나 계약금 조정 필요';
-    chkEl.style.background = '#fef2f2'; chkEl.style.color = 'var(--red)';
+    if (tenantRow) tenantRow.style.display = 'none';
+    if (chkRow) chkRow.style.display = 'none';
   }
-  // ④ 매도 누계(전체) vs 매수 누계(전체) 순잔액
-  const stage4Net = sellCumTotal3 - buyCumTotal4Real;
+  // ④ 중도금 — 지급 완료 단계. 부족분은 별도 자금으로 이미 해소되어 여유/부족 판정 없음
   const net4El = $('t_stage4_net');
   if (net4El) {
-    if (stage4Net >= 0) {
-      net4El.textContent = `✅ 여유 +${fmt(stage4Net)}만원`; net4El.style.background = 'rgba(34,197,94,.12)'; net4El.style.color = 'var(--green)';
-    } else {
-      net4El.textContent = `⚠️ 부족 ${fmt(-stage4Net)}만원`; net4El.style.background = 'rgba(239,68,68,.1)'; net4El.style.color = 'var(--red)';
-    }
+    net4El.textContent = '✓ 정산 완료';
+    net4El.style.background = 'rgba(34,197,94,.12)';
+    net4El.style.color = 'var(--green)';
     net4El.style.display = '';
   }
 
@@ -1484,11 +1431,8 @@ function calc() {
   const intIntRow = $('t_buy_interior_int_row');
   if (intIntRow) intIntRow.style.opacity = interiorInterim > 0 ? '1' : '0.3';
 
-  // 크립토 2차
-  $('t_sell_crypto2').textContent = '+' + fmt(crypto2) + ' 만원';
-  $('t_sell_crypto2_row').style.opacity = crypto2 > 0 ? '1' : '0.3';
 
-  $('ct_sell_interim_cell').style.opacity = (hasInterim || crypto2 > 0) ? '1' : '0.4';
+  $('ct_sell_interim_cell').style.opacity = hasInterim ? '1' : '0.4';
   $('ct_buy_interim_cell').style.opacity  = hasInterim ? '1' : '0.4';
 
   // ⑤ 잔금
@@ -1515,14 +1459,11 @@ function calc() {
   $('t_sell_transfertax').textContent = '−' + fmt(refTransferTax)  + ' 만원';
   $('t_sell_fee').textContent         = '−' + fmt(refSaleFee)      + ' 만원';
   $('t_sell_move').textContent        = '−' + fmt(refMoveCost)     + ' 만원';
-  const stage6SellNet = loanLeftover + crypto3 - debt - saleCost;
+  const stage6SellNet = loanLeftover - debt - saleCost;
 
   $('t_buy_loan').textContent    = '+' + fmt(loanLeftover)  + ' 만원';
   const buyLoanRow = $('t_buy_loan_row');
   if (buyLoanRow) buyLoanRow.style.opacity = loanLeftover > 0 ? '1' : '0.4';
-  // stage6 크립토: 1차·2차는 이미 stage3·4에서 처리 → 3차만 표시
-  $('t_sell_crypto').textContent = '+' + fmt(crypto3) + ' 만원';
-  $('t_sell_crypto_row').style.opacity = crypto3 > 0 ? '1' : '0.25';
   $('t_buy_acqtax').textContent  = '−' + fmt(refAcqTax)    + ' 만원';
   $('t_buy_bondfee').textContent = '−' + fmt(refBondFee)   + ' 만원';
   $('t_buy_fee').textContent     = '−' + fmt(refBuyFee)    + ' 만원';
@@ -1558,7 +1499,7 @@ function calc() {
   $('nr_sell_transfertax').textContent = '−' + fmt(refTransferTax) + ' 만원';
   $('nr_sell_fee').textContent         = '−' + fmt(refSaleFee)     + ' 만원';
   $('nr_sell_move').textContent        = '−' + fmt(refMoveCost)    + ' 만원';
-  const sellOnlyNet = salePrice - debt - saleCost; // 주담대·크립토 제외 순수 매도 수령
+  const sellOnlyNet = salePrice - debt - saleCost; // 주담대·추가수입 제외 순수 매도 수령
   const nrSell = $('nr_sell_net');
   nrSell.textContent = fmt(sellOnlyNet) + ' 만원';
   nrSell.style.color = sellOnlyNet >= 0 ? 'var(--green)' : 'var(--red)';
@@ -1589,9 +1530,8 @@ function calc() {
   // 최종 정산
   $('final_sell_net').textContent = fmt(sellOnlyNet) + ' 만원';
   $('nr_buy_loan').textContent    = '+' + fmt(newLoan) + ' 만원';
-  // 크립토 1+2+3차 매도 예상 + ③계약 단계에 이미 수취한 주식+크립토 등 추가수입(ctExtraIncome) 합산
-  const cryptoPlusExtra = cryptoProceeds + ctExtraIncome;
-  $('nr_crypto').textContent      = '+' + fmt(cryptoPlusExtra) + ` 만원 (1+2+3차, 기수취 ${fmt(ctExtraIncome)} 포함)`;
+  // ③계약 단계에 이미 수취한 주식+크립토 매도 등 추가수입
+  $('nr_crypto').textContent      = '+' + fmt(ctExtraIncome) + ' 만원';
   $('final_buy_net').textContent  = fmt(buyEquityTotal + interiorTotal) + ' 만원';
   const remEl = $('final_remainder');
   remEl.textContent = fmt(remainder) + ' 만원';
@@ -1604,7 +1544,7 @@ function calc() {
 }
 
 ctLoadInputs();
-// 재정계산기 데이터가 있으면 로드 후 자동 동기화 (크립토·공통 필드 갱신)
+// 재정계산기 데이터가 있으면 로드 후 자동 동기화 (공통 필드 갱신)
 try {
   const fRaw = localStorage.getItem('finance_inputs_v1');
   if (fRaw) _applyFinanceData(JSON.parse(fRaw), true);
@@ -1612,7 +1552,7 @@ try {
 
 // 🔒 ①~④단계(중도금까지) 확정값 강제 고정 — 이전 저장값·동기화 결과를 덮어씀
 // 남은 단계는 ⑤잔금(9/4)·⑥잔금 후 처리뿐.
-// (계약금 부족분 2,180만원은 '주식+크립토 매도' 합산으로 확정, 크립토 1·2차 매도는 없음)
+// (계약금 부족분 2,180만원은 '주식+크립토 매도' 추가수입으로 확정)
 const CONFIRMED_LOCK = {
   // ③ 계약
   refSaleDeposit: '18500', refBuyDeposit: '20000',
@@ -1624,8 +1564,6 @@ const CONFIRMED_LOCK = {
   buyInterim1: '30000',  buyInterim2: '20000',
   date_sell_interim1: '2026-07-17', date_sell_interim2: '2026-08-03',
   date_buy_interim1:  '2026-07-20', date_buy_interim2:  '2026-08-05',
-  // 크립토·자산 매도 — ③·④ 단계는 실행분 없음으로 확정
-  ctCrypto1: '0', ctCrypto2: '0',
   // 🎨 인테리어 계약금 지급 완료
   date_interior_contract: '2026-06-08',
 };
