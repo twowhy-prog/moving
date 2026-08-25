@@ -344,6 +344,13 @@
           <input type="number" id="saleInterim2" value="12000" oninput="calc()" disabled>
         </div>
       </div>
+      <div style="font-size:10px;color:var(--sub);font-weight:600;margin:8px 0 4px">잔금 수취 분할 <small style="font-weight:400">— 2번째 수취인은 나머지 자동 계산</small></div>
+      <div style="display:grid;grid-template-columns:1fr 110px;gap:4px 8px;align-items:center">
+        <input type="text" id="saleRecv1Name" value="김상현" oninput="calc()" style="padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text);width:100%">
+        <input type="number" id="saleRecv1Amt" value="34500" oninput="calc()" style="padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text);width:100%">
+        <input type="text" id="saleRecv2Name" value="민서현" oninput="calc()" style="padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text);width:100%">
+        <div id="r_saleRecv2Amt" style="padding:4px 8px;font-size:12px;font-weight:600;color:var(--green);background:var(--input-bg);border:1px solid var(--border);border-radius:4px;text-align:right">-</div>
+      </div>
     </div>
 
     <!-- 매수 라인 -->
@@ -723,6 +730,14 @@
             <span class="lbl">잔금 수취</span>
             <span class="amt amt-in" id="t_sell_balance">-</span>
           </div>
+          <div class="txn-row" style="padding-left:10px">
+            <span class="lbl">└ <span id="t_sell_bal_r1_lbl">김상현</span></span>
+            <span class="amt amt-in" id="t_sell_bal_r1">-</span>
+          </div>
+          <div class="txn-row" style="padding-left:10px">
+            <span class="lbl">└ <span id="t_sell_bal_r2_lbl">민서현</span> <small style="color:var(--sub)">(나머지)</small></span>
+            <span class="amt amt-in" id="t_sell_bal_r2">-</span>
+          </div>
           <div class="txn-subtotal">
             <span>수령 누계 (가계약~잔금)</span>
             <span class="amt-in" id="t_sell_total_cum">-</span>
@@ -914,6 +929,7 @@ const CT_INPUT_IDS = [
   'refTransferTax','refSaleFee','refMoveCost',
   'refAcqTax','refBuyFee','refRegFee','refMoveinCost','refBondFee',
   'refSaleDeposit','saleInterim1','saleInterim2',
+  'saleRecv1Name','saleRecv1Amt','saleRecv2Name',
   'refBuyDeposit','buyInterim1','buyInterim2',
   'ctDeposit1',
   'ctExtra1Amt','ctExtra2Amt','ctExtra3Amt',
@@ -1450,6 +1466,16 @@ function calc() {
   const loanLeftover = Math.max(0, newLoan - buyBalanceLoan);
 
   $('t_sell_balance').textContent    = '+' + fmt(sellBalance) + ' 만원';
+  // 잔금 수취 분할 — 1번째 수취인은 지정액, 2번째는 나머지
+  const saleRecv1 = Math.min(Math.max(0, val('saleRecv1Amt')), sellBalance);
+  const saleRecv2 = Math.max(0, sellBalance - saleRecv1);
+  const recv1Name = $('saleRecv1Name')?.value?.trim() || '수취인 1';
+  const recv2Name = $('saleRecv2Name')?.value?.trim() || '수취인 2';
+  $('t_sell_bal_r1_lbl').textContent = recv1Name;
+  $('t_sell_bal_r2_lbl').textContent = recv2Name;
+  $('t_sell_bal_r1').textContent = '+' + fmt(saleRecv1) + ' 만원';
+  $('t_sell_bal_r2').textContent = '+' + fmt(saleRecv2) + ' 만원';
+  $('r_saleRecv2Amt').textContent = fmt(saleRecv2);
   $('t_sell_total_cum').textContent  = '+' + fmt(sellTotalCum) + ' 만원';
   $('t_buy_balance').textContent     = '−' + fmt(buyBalance) + ' 만원';
   $('t_buy_balance_loan').textContent = '−' + fmt(buyBalanceLoan) + ' 만원';
