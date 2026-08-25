@@ -225,7 +225,7 @@
         <label>신규 주담대 실행액 (만원) 🔒 <small style="color:var(--sub);font-weight:400">확정</small></label>
         <div class="field-adjust">
           <button class="adjust-btn" onclick="adjustValue('refNewLoan', -1000)" disabled>▼</button>
-          <input type="number" id="refNewLoan" value="37000" oninput="calc()" disabled>
+          <input type="number" id="refNewLoan" value="36790" oninput="calc()" disabled>
           <button class="adjust-btn" onclick="adjustValue('refNewLoan', 1000)" disabled>▲</button>
         </div>
       </div>
@@ -945,7 +945,7 @@ function _applyFinanceData(d, silent) {
   Object.entries(FINANCE_SYNC_MAP).forEach(([from, to]) => {
     if (d[from] !== undefined && $(to)) $(to).value = d[from];
   });
-  // 🔒 refNewLoan은 실행액 37,000만원으로 확정 — finance.html 동기화 대상에서 제외
+  // 🔒 refNewLoan은 실행액 36,790만원으로 확정 — finance.html 동기화 대상에서 제외
   if (d._currentTransferTax !== undefined && $('refTransferTax')) $('refTransferTax').value = d._currentTransferTax;
   // 부채 합계 → refDebt(잔금일분) + refDebtOther(별도분) 으로 배분
   // 🔒 마통·기타대출은 2026-07 상환 완료로 제외 (finance.html 참조)
@@ -1577,7 +1577,7 @@ try {
 // (계약금 부족분 2,180만원은 '주식·자산 매도' 추가수입으로 확정)
 const CONFIRMED_LOCK = {
   // 주담대 실행액 — 잔금일(9/4) 실행 확정
-  refNewLoan: '37000',
+  refNewLoan: '36790',
   // ③ 계약
   refSaleDeposit: '18500', refBuyDeposit: '20000',
   ctExtra1Name: '주식·자산 매도', ctExtra1Amt: '2180',
