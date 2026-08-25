@@ -753,7 +753,7 @@
             <span class="amt amt-neu" id="t_buy_balance_loan">-</span>
           </div>
           <div class="txn-row" style="padding-left:10px">
-            <span class="lbl">└ 본인 이체</span>
+            <span class="lbl">└ 민서현 이체</span>
             <span class="amt amt-out" id="t_buy_balance_self">-</span>
           </div>
           <div class="txn-subtotal">
@@ -829,7 +829,7 @@
           <span id="t_stage6_net">-</span>
         </div>
         <div class="txn-subtotal-full" style="border-top:2px solid var(--border);font-size:14px">
-          <span>⑤+⑥ 잔금일 정산 후 남는 현금 <small style="font-weight:400;color:var(--sub)">(매도 잔금 수취 − 본인 이체 − ⑥ 지출)</small></span>
+          <span>⑤+⑥ 잔금일 정산 후 남는 현금 <small style="font-weight:400;color:var(--sub)">(매도 잔금 수취 − 민서현 이체 − ⑥ 지출)</small></span>
           <span id="t_balday_net">-</span>
         </div>
         <div style="grid-column:1/-1;padding:2px 14px 8px;font-size:11px;color:var(--sub);background:var(--input-bg)" id="t_balday_note"></div>
@@ -1459,7 +1459,7 @@ function calc() {
   // ⑤ 잔금
   const sellTotalCum = sellContract + sellInterim + sellBalance;
   const buyTotalCum  = buyContract + buyInterim + buyBalance;
-  // 잔금 주담대/본인 이체 분리
+  // 잔금 주담대/민서현 이체 분리
   const buyBalanceLoan = Math.min(newLoan, buyBalance);
   const buyBalanceSelf = Math.max(0, buyBalance - newLoan);
   // 주담대 중 잔금 지급에 쓰이고 남은 금액 (은행 직접 입금으로 이미 반영된 분은 제외 → 이중계상 방지)
@@ -1519,7 +1519,7 @@ function calc() {
   stage6NetEl.textContent = (stage6Net >= 0 ? '+' : '−') + fmt(Math.abs(stage6Net)) + ' 만원';
   stage6NetEl.className   = stage6Net >= 0 ? 'amt-in' : 'amt-neg';
 
-  // ⑤+⑥ 잔금일 실제 현금 포지션 — 매도 잔금 수취 − 본인 이체분 − ⑥ 지출
+  // ⑤+⑥ 잔금일 실제 현금 포지션 — 매도 잔금 수취 − 민서현 이체분 − ⑥ 지출
   // (주담대는 은행이 매도인에게 직접 입금하므로 본인 현금 흐름에서 제외)
   const balDayNet = sellBalance - buyBalanceSelf + stage6Net;
   const balDayEl  = $('t_balday_net');
@@ -1530,7 +1530,7 @@ function calc() {
   const balDayNoteEl = $('t_balday_note');
   if (balDayNoteEl) {
     balDayNoteEl.textContent =
-      `잔금 수취 +${fmt(sellBalance)} − 본인 이체 ${fmt(buyBalanceSelf)} − ⑥ 지출 ${fmt(Math.abs(stage6Net))} `
+      `잔금 수취 +${fmt(sellBalance)} − 민서현 이체 ${fmt(buyBalanceSelf)} − ⑥ 지출 ${fmt(Math.abs(stage6Net))} `
       + `= ${balDayNet >= 0 ? '+' : '−'}${fmt(Math.abs(balDayNet))}만원 · `
       + `주담대 ${fmt(buyBalanceLoan)}만원은 은행이 매도인에게 직접 입금 (본인 현금 흐름 제외) · `
       + `①~④ 단계 자체 부담분은 아래 '이사 후 잔여 현금'에 반영`;
