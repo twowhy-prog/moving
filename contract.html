@@ -159,7 +159,6 @@
 
 <!-- 탭 네비게이션 -->
 <div style="background:#0f172a;display:flex;padding:0 20px">
-  <a href="finance.html" style="display:inline-block;padding:10px 20px;color:#94a3b8;font-size:13px;font-weight:600;border-bottom:3px solid transparent;text-decoration:none" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'">💰 재정 계산기</a>
   <a href="compare.html" style="display:inline-block;padding:10px 20px;color:#94a3b8;font-size:13px;font-weight:600;border-bottom:3px solid transparent;text-decoration:none" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'">📊 입지 비교</a>
   <a href="contract.html" style="display:inline-block;padding:10px 20px;color:#fff;font-size:13px;font-weight:700;border-bottom:3px solid #3b82f6;text-decoration:none">📋 계약 일정</a>
   <a href="tax_guide.html" style="display:inline-block;padding:10px 20px;color:#94a3b8;font-size:13px;font-weight:600;border-bottom:3px solid transparent;text-decoration:none" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'">🧾 세금 가이드</a>
@@ -169,7 +168,6 @@
   <h1>📋 계약 일정 — 매도·매수 자금 흐름</h1>
   <div class="header-actions">
     <button class="btn" onclick="toggleTheme()">🌙 다크모드</button>
-    <button class="btn" onclick="syncFromFinance()" style="color:var(--green);border-color:var(--green)">↺ 재정계산기 동기화</button>
     <button class="btn" onclick="ctSaveInputs()" style="color:var(--blue);border-color:var(--blue)">💾 저장</button>
     <span id="ctSaveIndicator" style="font-size:11px;color:var(--sub);align-self:center"></span>
   </div>
@@ -179,7 +177,7 @@
 
   <!-- ===== 입력값 ===== -->
   <div class="ref-box">
-    <div class="ref-box-title">📎 거래 기본 정보 (finance.html 값 참조)</div>
+    <div class="ref-box-title">📎 거래 기본 정보</div>
     <div class="grid-4">
       <div class="field">
         <label>매도가 — 삼익그린2차 (만원)</label>
@@ -910,9 +908,6 @@
         <div class="info" id="final_note" style="margin-top:6px"></div>
       </div>
 
-      <div class="info" style="margin-top:10px">
-        * 영유비·월 현금흐름은 finance.html S5·S6 참고.
-      </div>
     </div>
   </div>
 
@@ -945,45 +940,10 @@ const CT_DATE_IDS = [
   'date_extra1','date_extra2','date_extra3','date_extra4','date_extra5',
 ];
 
-// finance_inputs_v1 → contract 필드 매핑
-const FINANCE_SYNC_MAP = {
-  salePrice:       'refSalePrice',
-  buyPrice:        'refBuyPrice',
-  saleFeeInput:    'refSaleFee',
-  moveCost:        'refMoveCost',
-  registrationFee: 'refRegFee',
-  buyFeeInput:     'refBuyFee',
-  moveinCost:      'refMoveinCost',
-  renovationCost:  'refRenovationCost',
-  bondFee:         'refBondFee',
-};
-
-function _applyFinanceData(d, silent) {
-  Object.entries(FINANCE_SYNC_MAP).forEach(([from, to]) => {
-    if (d[from] !== undefined && $(to)) $(to).value = d[from];
-  });
-  // 🔒 refNewLoan은 실행액 36,790만원으로 확정 — finance.html 동기화 대상에서 제외
-  if (d._currentTransferTax !== undefined && $('refTransferTax')) $('refTransferTax').value = d._currentTransferTax;
-  // 🔒 refDebt(담보대출 27,000) · refDebtOther(기타부채 3,700)은 9/3 상환 완료로 확정 —
-  //    finance.html 동기화 대상에서 제외 (동기화 시 미상환 잔액으로 되돌아가는 것 방지)
-  if (!silent) {
-    calc();
-    ctSaveInputs();
-    const ind = $('ctSaveIndicator');
-    if (ind) ind.textContent = '재정계산기에서 동기화됨 ' + new Date().toLocaleString('ko-KR');
-  }
-}
-
-function syncFromFinance() {
-  const raw = localStorage.getItem('finance_inputs_v1');
-  if (!raw) {
-    alert('재정계산기에 저장된 데이터가 없습니다.\nfinance.html에서 💾 저장 버튼을 누른 후 다시 시도하세요.');
-    return;
-  }
-  try {
-    _applyFinanceData(JSON.parse(raw), false);
-  } catch(e) { alert('동기화 오류: ' + e.message); }
-}
+// 📌 이 페이지는 단독으로 동작한다.
+// finance.html(재정계산기) 동기화는 제거했다 — 모든 값은 아래 HTML 기본값과
+// CONFIRMED_LOCK 확정값, 그리고 이 페이지가 저장한 contract_inputs_v1만 사용한다.
+// 양도세는 '자동' 버튼(autoTransferTax)으로 이 페이지에서 직접 계산한다.
 
 function ctSaveInputs() {
   const data = {};
@@ -1598,17 +1558,12 @@ function calc() {
 }
 
 ctLoadInputs();
-// 재정계산기 데이터가 있으면 로드 후 자동 동기화 (공통 필드 갱신)
-try {
-  const fRaw = localStorage.getItem('finance_inputs_v1');
-  if (fRaw) _applyFinanceData(JSON.parse(fRaw), true);
-} catch(e) {}
 
-// 🔒 ①~④단계(중도금까지) 확정값 강제 고정 — 이전 저장값·동기화 결과를 덮어씀
+// 🔒 ①~④단계(중도금까지) 확정값 강제 고정 — 이전 저장값을 덮어씀
 // 남은 단계는 ⑤잔금(9/4)·⑥잔금 후 처리뿐.
 // (계약금 부족분 2,180만원은 '주식·자산 매도' 추가수입으로 확정)
 const CONFIRMED_LOCK = {
-  // 주담대 실행액 — 잔금일(9/4) 실행 확정
+  // 주담대 실행액 — 잔금일(9/4) 실행 확정 36,790만원
   refNewLoan: '36790',
   // ⑤ 잔금 수취 분할 — 김상현 수취분 50,000만원 9/3 선수취 완료
   // (나머지 74,500만원은 9/4 잔금일 민서현 수취 → 자동 계산)
