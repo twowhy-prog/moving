@@ -1009,8 +1009,11 @@ function ctLoadInputs() {
     CT_INPUT_IDS.forEach(id => { const el = $(id); if (el && id in data) el.value = data[id]; });
     CT_DATE_IDS.forEach(id  => { const el = $(id); if (el && id in data && data[id]) el.value = data[id]; });
     // 마이그레이션: 구버전 refDebt(합산) → refDebt(잔금일 27,000) + refDebtOther(나머지)
+    // 구버전 저장값(refDebt는 있고 refDebtOther는 없는 경우)에만 적용한다.
+    // 저장값이 아예 없는 새 브라우저까지 실행되면 refDebt의 HTML 기본값(27,000)을
+    // '합산 부채'로 오인해 기타 부채 기본값(자동차대출 3,700만원)을 0으로 지워버림.
     const debtEl = $('refDebt'), otherEl = $('refDebtOther');
-    if (debtEl && otherEl && !('refDebtOther' in data)) {
+    if (debtEl && otherEl && ('refDebt' in data) && !('refDebtOther' in data)) {
       const total = parseFloat(debtEl.value) || 0;
       const balDay = 27000;
       debtEl.value  = Math.min(total, balDay);
