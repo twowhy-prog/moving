@@ -205,20 +205,20 @@
           <button class="adjust-btn" onclick="adjustValue('refBuyPrice', 1000)">▲</button>
         </div>
       </div>
-      <div class="field">
-        <label>담보대출 상환 — 잔금일(9/4) (만원)</label>
+      <div class="field locked-field">
+        <label>담보대출 상환 (만원) 🔒 <small style="color:var(--sub);font-weight:400">9/3 상환 완료</small></label>
         <div class="field-adjust">
-          <button class="adjust-btn" onclick="adjustValue('refDebt', -500)">▼</button>
-          <input type="number" id="refDebt" value="27000" oninput="calc()">
-          <button class="adjust-btn" onclick="adjustValue('refDebt', 500)">▲</button>
+          <button class="adjust-btn" onclick="adjustValue('refDebt', -500)" disabled>▼</button>
+          <input type="number" id="refDebt" value="27000" oninput="calc()" disabled>
+          <button class="adjust-btn" onclick="adjustValue('refDebt', 500)" disabled>▲</button>
         </div>
       </div>
-      <div class="field">
-        <label>기타 부채 상환 — 잔금일(9/4) (만원)</label>
+      <div class="field locked-field">
+        <label>기타 부채 상환 (만원) 🔒 <small style="color:var(--sub);font-weight:400">9/3 전액 상환 완료</small></label>
         <div class="field-adjust">
-          <button class="adjust-btn" onclick="adjustValue('refDebtOther', -500)">▼</button>
-          <input type="number" id="refDebtOther" value="3700" oninput="calc()">
-          <button class="adjust-btn" onclick="adjustValue('refDebtOther', 500)">▲</button>
+          <button class="adjust-btn" onclick="adjustValue('refDebtOther', -500)" disabled>▼</button>
+          <input type="number" id="refDebtOther" value="3700" oninput="calc()" disabled>
+          <button class="adjust-btn" onclick="adjustValue('refDebtOther', 500)" disabled>▲</button>
         </div>
       </div>
       <div class="field locked-field">
@@ -738,6 +738,7 @@
             <span class="lbl">└ <span id="t_sell_bal_r2_lbl">민서현</span> <small style="color:var(--sub)">(9/4 잔금일 · 나머지)</small></span>
             <span class="amt amt-in" id="t_sell_bal_r2">-</span>
           </div>
+          <div class="txn-note" id="t_sell_prepaid_use"></div>
           <div class="txn-subtotal">
             <span>수령 누계 (가계약~잔금)</span>
             <span class="amt-in" id="t_sell_total_cum">-</span>
@@ -766,11 +767,11 @@
         <div class="txn-stage-label" id="stage6" onclick="toggleStage('stage6')" style="cursor:pointer">⑥ 잔금 후 처리 — 당일 자금 정산 <span id="stage6_date" class="stage-date-badge"></span><span class="stage-toggle-icon">▼</span><button class="stage-done-btn" id="cbtn_stage6" onclick="event.stopPropagation();toggleComplete('stage6')">□ 완료 처리</button><span class="badge badge-blue" id="badge_stage6" style="margin-left:6px">예정</span></div>
         <div class="txn-cell sell">
           <div class="txn-row">
-            <span class="lbl">담보대출 상환</span>
+            <span class="lbl">담보대출 상환 <small style="color:var(--green)">(9/3 상환 완료)</small></span>
             <span class="amt amt-neg" id="t_sell_debt">-</span>
           </div>
           <div class="txn-row" id="t_sell_debt_other_row" style="opacity:0.4">
-            <span class="lbl">기타 부채 상환</span>
+            <span class="lbl">기타 부채 상환 <small style="color:var(--green)">(9/3 전액 상환 완료)</small></span>
             <span class="amt amt-neg" id="t_sell_debt_other">-</span>
           </div>
           <div class="txn-row">
@@ -963,15 +964,8 @@ function _applyFinanceData(d, silent) {
   });
   // 🔒 refNewLoan은 실행액 36,790만원으로 확정 — finance.html 동기화 대상에서 제외
   if (d._currentTransferTax !== undefined && $('refTransferTax')) $('refTransferTax').value = d._currentTransferTax;
-  // 부채 합계 → refDebt(잔금일분) + refDebtOther(별도분) 으로 배분
-  // 🔒 마통·기타대출은 2026-07 상환 완료로 제외 (finance.html 참조)
-  if ($('refDebt') && d.debtMortgage !== undefined) {
-    const _m  = parseFloat(d.debtMortgage) || 0;
-    const _c  = d.debt_car   !== false ? (parseFloat(d.debtCar)   || 0) : 0;
-    const _totalDebt = _m + _c;
-    const _balanceDebt = val('refDebt') || 0;  // 사용자가 설정한 잔금일 상환분 유지
-    $('refDebtOther').value = Math.max(0, _totalDebt - _balanceDebt);
-  }
+  // 🔒 refDebt(담보대출 27,000) · refDebtOther(기타부채 3,700)은 9/3 상환 완료로 확정 —
+  //    finance.html 동기화 대상에서 제외 (동기화 시 미상환 잔액으로 되돌아가는 것 방지)
   if (!silent) {
     calc();
     ctSaveInputs();
@@ -1479,6 +1473,14 @@ function calc() {
   $('t_sell_bal_r1').textContent = '+' + fmt(saleRecv1) + ' 만원';
   $('t_sell_bal_r2').textContent = '+' + fmt(saleRecv2) + ' 만원';
   $('r_saleRecv2Amt').textContent = fmt(saleRecv2);
+  // 9/3 선수취분 사용처 — 담보대출·기타부채 상환 후 잔여
+  const prepaidUseEl = $('t_sell_prepaid_use');
+  if (prepaidUseEl) {
+    const prepaidLeft = saleRecv1 - debt;
+    prepaidUseEl.textContent =
+      `9/3 선수취 ${fmt(saleRecv1)} − 담보대출 ${fmt(debtBalance)} − 기타부채 ${fmt(debtOther)} `
+      + `= ${prepaidLeft >= 0 ? '잔여' : '부족'} ${fmt(Math.abs(prepaidLeft))}만원`;
+  }
   $('t_sell_total_cum').textContent  = '+' + fmt(sellTotalCum) + ' 만원';
   $('t_buy_balance').textContent     = '−' + fmt(buyBalance) + ' 만원';
   $('t_buy_balance_loan').textContent = '−' + fmt(buyBalanceLoan) + ' 만원';
@@ -1611,6 +1613,9 @@ const CONFIRMED_LOCK = {
   // ⑤ 잔금 수취 분할 — 김상현 수취분 50,000만원 9/3 선수취 완료
   // (나머지 74,500만원은 9/4 잔금일 민서현 수취 → 자동 계산)
   saleRecv1Amt: '50000',
+  // 부채 상환 — 9/3 선수취 50,000만원으로 전액 상환 완료
+  // 담보대출 27,000 + 기타부채(자동차대출) 3,700 = 30,700만원, 잔여 19,300만원
+  refDebt: '27000', refDebtOther: '3700',
   // ③ 계약
   refSaleDeposit: '18500', refBuyDeposit: '20000',
   ctExtra1Name: '주식·자산 매도', ctExtra1Amt: '2180',
