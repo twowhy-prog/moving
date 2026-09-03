@@ -344,10 +344,10 @@
           <input type="number" id="saleInterim2" value="12000" oninput="calc()" disabled>
         </div>
       </div>
-      <div style="font-size:10px;color:var(--sub);font-weight:600;margin:8px 0 4px">잔금 수취 분할 <small style="font-weight:400">— 2번째 수취인은 나머지 자동 계산</small></div>
+      <div style="font-size:10px;color:var(--sub);font-weight:600;margin:8px 0 4px">잔금 수취 분할 🔒 <small style="font-weight:400">— 1번째 수취인 9/3 선수취 확정 · 2번째 수취인은 9/4 잔금일 나머지 자동 계산</small></div>
       <div style="display:grid;grid-template-columns:1fr 110px;gap:4px 8px;align-items:center">
         <input type="text" id="saleRecv1Name" value="김상현" oninput="calc()" style="padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text);width:100%">
-        <input type="number" id="saleRecv1Amt" value="34500" oninput="calc()" style="padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text);width:100%">
+        <input type="number" id="saleRecv1Amt" value="50000" oninput="calc()" style="padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text);width:100%" disabled>
         <input type="text" id="saleRecv2Name" value="민서현" oninput="calc()" style="padding:4px 6px;font-size:12px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text);width:100%">
         <div id="r_saleRecv2Amt" style="padding:4px 8px;font-size:12px;font-weight:600;color:var(--green);background:var(--input-bg);border:1px solid var(--border);border-radius:4px;text-align:right">-</div>
       </div>
@@ -731,11 +731,11 @@
             <span class="amt amt-in" id="t_sell_balance">-</span>
           </div>
           <div class="txn-row" style="padding-left:10px">
-            <span class="lbl">└ <span id="t_sell_bal_r1_lbl">김상현</span></span>
+            <span class="lbl">└ <span id="t_sell_bal_r1_lbl">김상현</span> <small style="color:var(--green)">(9/3 선수취 완료)</small></span>
             <span class="amt amt-in" id="t_sell_bal_r1">-</span>
           </div>
           <div class="txn-row" style="padding-left:10px">
-            <span class="lbl">└ <span id="t_sell_bal_r2_lbl">민서현</span> <small style="color:var(--sub)">(나머지)</small></span>
+            <span class="lbl">└ <span id="t_sell_bal_r2_lbl">민서현</span> <small style="color:var(--sub)">(9/4 잔금일 · 나머지)</small></span>
             <span class="amt amt-in" id="t_sell_bal_r2">-</span>
           </div>
           <div class="txn-subtotal">
@@ -1532,6 +1532,7 @@ function calc() {
     balDayNoteEl.textContent =
       `잔금 수취 +${fmt(sellBalance)} − 민서현 이체 ${fmt(buyBalanceSelf)} − ⑥ 지출 ${fmt(Math.abs(stage6Net))} `
       + `= ${balDayNet >= 0 ? '+' : '−'}${fmt(Math.abs(balDayNet))}만원 · `
+      + `매도 잔금 중 ${recv1Name} 수취분 ${fmt(saleRecv1)}만원은 9/3 선수취 완료, 나머지 ${fmt(saleRecv2)}만원은 9/4 ${recv2Name} 수취 · `
       + `주담대 ${fmt(buyBalanceLoan)}만원은 은행이 매도인에게 직접 입금 (본인 현금 흐름 제외) · `
       + `①~④ 단계 자체 부담분은 아래 '이사 후 잔여 현금'에 반영`;
   }
@@ -1604,6 +1605,9 @@ try {
 const CONFIRMED_LOCK = {
   // 주담대 실행액 — 잔금일(9/4) 실행 확정
   refNewLoan: '36790',
+  // ⑤ 잔금 수취 분할 — 김상현 수취분 50,000만원 9/3 선수취 완료
+  // (나머지 74,500만원은 9/4 잔금일 민서현 수취 → 자동 계산)
+  saleRecv1Amt: '50000',
   // ③ 계약
   refSaleDeposit: '18500', refBuyDeposit: '20000',
   ctExtra1Name: '주식·자산 매도', ctExtra1Amt: '2180',
