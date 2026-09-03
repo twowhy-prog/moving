@@ -403,7 +403,12 @@
 
       <!-- 부채 상환 내역
            🔒 마통·기타대출은 2026-07 상환 완료로 항목 자체를 삭제함.
-           사용자의 명시적 요청 없이는 재추가하지 말 것. -->
+           사용자의 명시적 요청 없이는 재추가하지 말 것.
+           🔒 자동차대출은 2026-09-03 매도 잔금 선수취금(5억)으로 상환 완료.
+              단, 항목을 삭제하지 말 것 — 매도 대금으로 갚았으므로
+              S3 가용자금에서 3,700만원이 계속 차감돼야 한다.
+              (마통·기타대출은 매도 전 자기 자금으로 갚아 삭제한 것)
+              DSR(S4)은 대출 신청 시점 기준이라 월상환액을 계속 포함한다. -->
       <div style="margin-bottom:10px"><strong>부채 상환 내역</strong> <small style="color:var(--sub)">— 매도 대금으로 상환할 부채</small></div>
       <div class="debt-item">
         <input type="checkbox" id="debt_mortgage" checked disabled>
@@ -416,14 +421,15 @@
         <input type="number" id="debtMortgageRate" value="2.61" step="0.01" oninput="calc()" style="width:60px">%
       </div>
       <div class="debt-item">
-        <input type="checkbox" id="debt_car" checked onchange="calc()">
+        <input type="checkbox" id="debt_car" checked disabled>
         <label>자동차대출</label>
-        <span class="badge badge-yellow">선택상환</span>
-        <button class="adjust-btn" onclick="adjustValue('debtCar', -100)">▼</button>
-        <input type="number" id="debtCar" value="3700" oninput="calc()" style="width:80px">
-        <button class="adjust-btn" onclick="adjustValue('debtCar', 100)">▲</button>
-        <span>만원 / 잔여</span>
-        <input type="number" id="debtCarMonths" value="30" oninput="calc()" style="width:50px">개월
+        <span class="badge badge-green">상환완료</span>
+        <button class="adjust-btn" onclick="adjustValue('debtCar', -100)" disabled>▼</button>
+        <input type="number" id="debtCar" value="3700" oninput="calc()" style="width:80px" disabled>
+        <button class="adjust-btn" onclick="adjustValue('debtCar', 100)" disabled>▲</button>
+        <span>만원 / DSR 기준 잔여</span>
+        <input type="number" id="debtCarMonths" value="30" oninput="calc()" style="width:50px" disabled>개월
+        <small style="color:var(--green);font-weight:600">🔒 9/3 상환 완료</small>
       </div>
 
       <div class="sep"></div>
@@ -1455,7 +1461,7 @@ function calc() {
   $('r_remainDaycareQ').textContent     = totalDaycareQ;
   $('r_remainDaycareMonths').textContent = daycareMonths;
 
-  // 기타부채 월상환: 체크박스 ON = 매도수익으로 상환 완료 → 월납입 없음, OFF = 계속 상환 중
+  // 기타부채 월상환: 자동차대출은 9/3 매도 선수취금으로 상환 완료 → 월납입 없음
   const cfCarMonthly   = $('debt_car').checked   ? 0 : carMonthly;
   const otherDebtMonthly = cfCarMonthly;
   const totalIncome = totalIncomeInput;
@@ -1803,6 +1809,12 @@ function toggleTheme() {
 
 // ===== 초기 실행 =====
 loadInputs(); // 저장된 값 복원
+
+// 🔒 확정 상태 강제 고정 — 이전 저장값을 덮어씀
+// 자동차대출: 2026-09-03 매도 잔금 선수취금으로 상환 완료 (3,700만원)
+if ($('debt_car')) $('debt_car').checked = true;
+if ($('debtCar'))  $('debtCar').value = '3700';
+
 calc();
 fetchCryptoPrices();
 // 기본 접힘 섹션
